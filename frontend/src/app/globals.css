@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens as CSS variables (shadcn/ui convention).
+ * The palette is inspired by Karnataka heritage: warm sandalwood/saffron
+ * accents over a calm neutral base. Dark mode is a true deep-charcoal, not
+ * pure black, for a premium feel.
+ */
+@layer base {
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 24 10% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 10%;
+
+    --primary: 24 90% 48%;        /* saffron / sandalwood */
+    --primary-foreground: 40 33% 98%;
+
+    --secondary: 40 20% 94%;
+    --secondary-foreground: 24 10% 12%;
+
+    --muted: 40 16% 93%;
+    --muted-foreground: 24 6% 42%;
+
+    --accent: 32 80% 92%;
+    --accent-foreground: 24 30% 18%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 40 33% 98%;
+
+    --border: 30 12% 88%;
+    --input: 30 12% 88%;
+    --ring: 24 90% 48%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 24 10% 7%;
+    --foreground: 40 20% 92%;
+
+    --card: 24 9% 10%;
+    --card-foreground: 40 20% 92%;
+
+    --primary: 28 95% 56%;
+    --primary-foreground: 24 10% 8%;
+
+    --secondary: 24 8% 16%;
+    --secondary-foreground: 40 20% 92%;
+
+    --muted: 24 8% 15%;
+    --muted-foreground: 40 8% 62%;
+
+    --accent: 24 12% 18%;
+    --accent-foreground: 40 20% 92%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 40 20% 92%;
+
+    --border: 24 8% 18%;
+    --input: 24 8% 18%;
+    --ring: 28 95% 56%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Themed text selection. */
+  ::selection {
+    background: hsl(var(--primary) / 0.22);
+    color: hsl(var(--foreground));
+  }
+
+  /* Slim, themed scrollbar for a more polished feel. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.35) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.3);
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.55);
+    background-clip: content-box;
+  }
+}
+
+/*
+ * Ambient page backdrop — a whisper-soft heritage mesh that gives every page
+ * depth without distracting from content. Fixed so it stays put on scroll.
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38rem 38rem at 12% -8%, hsl(var(--primary) / 0.10), transparent 60%),
+    radial-gradient(34rem 34rem at 100% 0%, hsl(40 90% 55% / 0.08), transparent 55%),
+    radial-gradient(40rem 40rem at 50% 120%, hsl(18 85% 50% / 0.07), transparent 60%);
+}
+.dark body::before {
+  background:
+    radial-gradient(40rem 40rem at 10% -10%, hsl(var(--primary) / 0.14), transparent 60%),
+    radial-gradient(36rem 36rem at 100% 0%, hsl(40 90% 55% / 0.10), transparent 55%),
+    radial-gradient(42rem 42rem at 50% 120%, hsl(18 85% 50% / 0.10), transparent 60%);
+}
+
+/* Subtle radial heritage glow used behind the hero. */
+.heritage-glow {
+  background:
+    radial-gradient(60% 50% at 50% 0%, hsl(var(--primary) / 0.18), transparent 70%);
+}
+
+/* Warm saffron→amber gradient text. */
+.gradient-text {
+  background-image: linear-gradient(
+    100deg,
+    hsl(var(--primary)),
+    hsl(38 95% 55%),
+    hsl(14 90% 55%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Frosted glass surface for premium cards / panels. */
+.glass {
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid hsl(var(--border) / 0.7);
+}
+
+/* Faint dotted grid texture (use as an overlay layer). */
+.bg-dotgrid {
+  background-image: radial-gradient(
+    hsl(var(--foreground) / 0.06) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* Animated conic gradient ring revealed on hover (feature cards). */
+.glow-ring {
+  position: relative;
+}
+.glow-ring::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    hsl(var(--primary) / 0.65) 90deg,
+    transparent 180deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.glow-ring:hover::after {
+  opacity: 1;
+  animation: spin-angle 3s linear infinite;
+}
+
+/* Floating decorative blobs for the hero aurora. */
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+

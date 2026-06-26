@@ -1,0 +1,41 @@
+# ---------- Node / Next.js ----------
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# ---------- Python / FastAPI ----------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------- Environment ----------
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.local.example
+
+# ---------- AI / Vector store ----------
+chroma_db/
+*.chroma
+data/embeddings/
+
+# ---------- Logs & OS ----------
+*.log
+logs/
+.DS_Store
+Thumbs.db
+
+# ---------- IDE ----------
+.idea/
+.vscode/*
+!.vscode/extensions.json
