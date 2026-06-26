@@ -31,6 +31,18 @@ async function fetchT(url, opts = {}, ms = 20000) {
   }
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** fetchT that backs off and retries when Wikimedia rate-limits us (HTTP 429). */
+async function fetchR(url, opts = {}, ms = 20000) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetchT(url, opts, ms);
+    if (res.status !== 429) return res;
+    await sleep(1500 * (attempt + 1)); // 1.5s, 3s, 4.5s, 6s
+  }
+  return fetchT(url, opts, ms);
+}
+
 /** Parse the minimal fields we need out of the TS data file. */
 async function parseDistricts() {
   const text = await readFile(DATA_FILE, "utf8");
@@ -53,7 +65,7 @@ async function parseDistricts() {
 
 async function fetchSummary(lang, title) {
   try {
-    const res = await fetchT(
+    const res = await fetchR(
       `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
       { headers: { Accept: "application/json" } },
     );
@@ -70,12 +82,13 @@ async function fetchPageImage(lang, title) {
       `https://${lang}.wikipedia.org/w/api.php?action=query&format=json` +
       `&origin=*&prop=pageimages&piprop=original|thumbnail&pithumbsize=900` +
       `&titles=${encodeURIComponent(title)}`;
-    const res = await fetchT(url);
+    const res = await fetchR(url);
     if (!res.ok) return null;
     const data = await res.json();
     const pages = data?.query?.pages ?? {};
     for (const p of Object.values(pages)) {
-      const src = p.original?.source ?? p.thumbnail?.source;
+      // Prefer the bounded 900px thumbnail over the (potentially huge) original.
+      const src = p.thumbnail?.source ?? p.original?.source;
       if (src) return src;
     }
     return null;
@@ -89,19 +102,19 @@ async function resolveImage(enTitle, knTitle, imageTitle) {
     fetchSummary("en", enTitle),
     knTitle ? fetchSummary("kn", knTitle) : Promise.resolve(null),
   ]);
+  // PageImages returns a properly-formed 900px thumbnail URL (valid to fetch),
+  // so we try it first, then fall back to the summary thumbnails.
   let imageUrl =
-    en?.originalimage?.source ??
+    (await fetchPageImage("en", enTitle)) ??
     en?.thumbnail?.source ??
-    kn?.originalimage?.source ??
     kn?.thumbnail?.source ??
     null;
-  if (!imageUrl) imageUrl = await fetchPageImage("en", enTitle);
   if (!imageUrl && knTitle) imageUrl = await fetchPageImage("kn", knTitle);
   if (!imageUrl && imageTitle) {
     imageUrl =
       (await fetchPageImage("en", imageTitle)) ??
       (await fetchSummary("en", imageTitle).then(
-        (s) => s?.originalimage?.source ?? s?.thumbnail?.source ?? null,
+        (s) => s?.thumbnail?.source ?? s?.originalimage?.source ?? null,
       ));
   }
   return {
@@ -123,18 +136,23 @@ function extFromUrl(url) {
 async function downloadImage(url, dest) {
   let lastErr;
   for (let attempt = 1; attempt <= 3; attempt++) {
+    const ctrl = new AbortController();
+    // Keep the abort active through the *body* download, not just the headers.
+    const timer = setTimeout(() => ctrl.abort(), 30000);
     try {
-      const res = await fetchT(
-        url,
-        { headers: { "User-Agent": "AkkaverseCacheBot/1.0 (heritage project)" } },
-        25000,
-      );
+      const res = await fetch(url, {
+        headers: { "User-Agent": "AkkaverseCacheBot/1.0 (heritage project)" },
+        signal: ctrl.signal,
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const buf = Buffer.from(await res.arrayBuffer());
+      if (buf.length === 0) throw new Error("empty body");
       await writeFile(dest, buf);
       return;
     } catch (e) {
       lastErr = e;
+    } finally {
+      clearTimeout(timer);
     }
   }
   throw lastErr ?? new Error("download failed");
@@ -145,8 +163,23 @@ async function main() {
   const districts = await parseDistricts();
   console.log(`Caching ${districts.length} districts…`);
 
-  const manifest = {};
+  // Merge with any previous run so we only re-fetch the incomplete districts
+  // (keeps us well under Wikimedia's rate limit on repeat runs).
+  let manifest = {};
+  try {
+    manifest = JSON.parse(await readFile(OUT_FILE, "utf8"));
+  } catch {
+    manifest = {};
+  }
+  const isComplete = (e) =>
+    e && e.extractEn && typeof e.imageUrl === "string" &&
+    e.imageUrl.startsWith("/districts/");
+
   for (const d of districts) {
+    if (isComplete(manifest[d.id])) {
+      console.log(`  • ${d.id.padEnd(22)} ✓ cached`);
+      continue;
+    }
     process.stdout.write(`  • ${d.id.padEnd(22)} `);
     const info = await resolveImage(d.wiki, d.nameKn, d.imageTitle);
     let localImage = null;
@@ -160,12 +193,13 @@ async function main() {
       }
     }
     manifest[d.id] = {
-      extractEn: info.extractEn,
-      extractKn: info.extractKn,
-      imageUrl: localImage ?? info.imageUrl,
-      pageUrl: info.pageUrl,
+      extractEn: info.extractEn || manifest[d.id]?.extractEn || "",
+      extractKn: info.extractKn ?? manifest[d.id]?.extractKn ?? null,
+      imageUrl: localImage ?? info.imageUrl ?? manifest[d.id]?.imageUrl ?? null,
+      pageUrl: info.pageUrl ?? manifest[d.id]?.pageUrl ?? null,
     };
     console.log(localImage ? "✓" : info.imageUrl ? "↺ remote" : "no image");
+    await sleep(900); // be polite to Wikimedia
   }
 
   await writeFile(OUT_FILE, JSON.stringify(manifest, null, 2) + "\n", "utf8");

@@ -31,6 +31,7 @@ const ICONS: Record<string, LucideIcon> = {
   ScanText,
   Brain,
   PartyPopper,
+  Heart,
 };
 
 /**

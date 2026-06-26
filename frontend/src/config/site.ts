@@ -34,6 +34,7 @@ export const siteConfig = {
     { labelKey: "nav.stories", href: "/stories" },
     { labelKey: "nav.timeline", href: "/timeline" },
     { labelKey: "nav.quiz", href: "/quiz" },
+    { labelKey: "nav.memories", href: "/memories" },
     { labelKey: "nav.about", href: "/about" },
   ] as NavItem[],
 } as const;
@@ -94,5 +95,12 @@ export const features: FeatureItem[] = [
     icon: "ScanText",
     available: true,
     href: "/tools",
+  },
+  {
+    titleKey: "feature.memories.title",
+    descKey: "feature.memories.desc",
+    icon: "Heart",
+    available: true,
+    href: "/memories",
   },
 ];
