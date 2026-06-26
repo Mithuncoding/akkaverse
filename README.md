@@ -1,71 +1,42 @@
 # 🪔 Akkaverse
 
-> An AI-powered platform to **preserve, teach, and celebrate** Kannada language, history, culture, and heritage.
+> A bilingual (English + ಕನ್ನಡ) platform to **preserve, teach, and celebrate**
+> Kannada language, history, culture, and heritage.
 
-Akkaverse is not a chatbot. It is a production-grade, RAG-powered cultural learning
-platform for Karnataka — combining a Kannada AI assistant, structured language
-lessons, AI storytelling, an interactive heritage explorer, OCR, and voice.
+Akkaverse is a fully client-side **Next.js** app. It runs entirely in the
+browser with **no backend, no database, and no API keys** — which makes it
+free to run and a one-click deploy on **Vercel**.
 
 ---
 
-## ✨ Vision
+## ✨ What's inside
 
-Karnataka has 2,000+ years of literature, dynasties, temples, folklore, and art.
-Most of it is scattered, untranslated, or inaccessible to younger generations.
-Akkaverse uses modern AI (RAG + embeddings + Gemini) grounded in a curated
-knowledge base so that answers are **accurate, cited, and culturally faithful** —
-not hallucinated.
+- **Assistant** — ask about Karnataka's history, temples, festivals and food.
+- **Learn** — structured Kannada lessons with read-aloud.
+- **Explore** — interactive Karnataka district map with cached Wikipedia info & photos.
+- **Festivals, Stories & Timeline** — curated heritage content.
+- **Quiz** — test your Karnataka knowledge.
+- **Tools** — in-browser Kannada OCR (private, nothing is uploaded).
+- **Memory Wall** — a community scrapbook of proverbs, folk songs and memories (saved locally).
+- **Our Story** — a personal note from the maker.
+
+Everything is bilingual and works in English, ಕನ್ನಡ, or both at once.
 
 ---
 
 ## 🧱 Tech Stack
 
-| Layer            | Technology |
-|------------------|------------|
-| Frontend         | Next.js (App Router), React, TypeScript, Tailwind CSS, shadcn/ui |
-| Backend          | FastAPI (Python), Pydantic v2 |
-| Database         | PostgreSQL |
-| Auth             | Clerk |
-| Storage          | Supabase Storage |
-| AI               | Gemini API (OpenAI-compatible abstraction), RAG, embeddings |
-| Vector DB        | ChromaDB (initial), pgvector-ready |
-| Deploy           | Vercel (frontend), Render / Fly.io (backend) |
+| Layer    | Technology |
+|----------|------------|
+| Framework | Next.js (App Router), React, TypeScript |
+| Styling   | Tailwind CSS, shadcn/ui |
+| Voice     | Web Speech API (browser TTS) |
+| OCR       | Tesseract.js (runs in the browser) |
+| Data      | Curated local datasets + cached Wikipedia (REST + PageImages) |
+| Storage   | `localStorage` (Memory Wall) |
+| Deploy    | Vercel |
 
----
-
-## 🏛️ Architecture
-
-Akkaverse follows a **clean, layered architecture** with a clear separation
-between the presentation layer (Next.js), the API layer (FastAPI), and the
-domain/data layers. The frontend never talks to the database or AI providers
-directly — everything flows through a versioned REST API.
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                        Browser (User)                          │
-└──────────────────────────────┬───────────────────────────────┘
-                               │  HTTPS
-┌──────────────────────────────▼───────────────────────────────┐
-│   Next.js (Vercel)  —  UI, SSR/RSC, Clerk auth, Tailwind       │
-└──────────────────────────────┬───────────────────────────────┘
-                               │  REST  (/api/v1/*)  + JWT
-┌──────────────────────────────▼───────────────────────────────┐
-│   FastAPI (Render/Fly)                                          │
-│   ┌─────────┐   ┌──────────┐   ┌──────────┐   ┌────────────┐  │
-│   │  API    │──▶│ Services │──▶│  Repos   │──▶│ PostgreSQL │  │
-│   │ (routes)│   │ (domain) │   │ (data)   │   └────────────┘  │
-│   └─────────┘   └────┬─────┘                                   │
-│                      │                                          │
-│                ┌─────▼──────┐   ┌──────────┐                   │
-│                │ RAG engine │──▶│ ChromaDB │   Gemini / LLM    │
-│                └────────────┘   └──────────┘                   │
-└────────────────────────────────────────────────────────────────┘
-```
-
-**Why this design?** It is the standard pattern interviewers expect: testable
-(each layer is mockable), swappable (Gemini ⇄ OpenAI, Chroma ⇄ pgvector without
-touching routes), and scalable (frontend and backend deploy and scale
-independently).
+No server, database, or third-party API keys are required.
 
 ---
 
@@ -73,87 +44,62 @@ independently).
 
 ```
 akkaverse/
-├── frontend/            # Next.js app (UI, SSR, client interactions)
-├── backend/             # FastAPI app (API, AI/RAG, business logic)
-├── docker-compose.yml   # Local dev orchestration (db + backend + frontend)
-├── .env.example         # Shared/root environment template
+├── frontend/            # The Next.js app (everything lives here)
+│   ├── src/
+│   │   ├── app/         # App Router routes, layouts, pages
+│   │   ├── components/  # React components (+ ui/ primitives)
+│   │   ├── lib/         # Helpers (wiki, speech, utils)
+│   │   ├── config/      # Site config (nav, features, metadata)
+│   │   ├── data/        # Cached district manifest, curated datasets
+│   │   └── i18n/        # English + Kannada translations
+│   ├── public/          # Static assets (district images, geojson, photo)
+│   └── scripts/         # Build-time helpers (district image cache)
 └── README.md
 ```
-
-See [frontend/README-structure](#frontend-structure) and
-[backend/README-structure](#backend-structure) below for per-app details.
-
-### Frontend structure
-```
-frontend/
-├── src/
-│   ├── app/             # App Router routes, layouts, pages
-│   ├── components/      # Reusable React components
-│   │   └── ui/          # shadcn/ui primitives (button, card, ...)
-│   ├── lib/             # Helpers (cn, api client, fetch wrappers)
-│   ├── config/          # Static site config (nav, metadata, features)
-│   └── styles/          # Global CSS / Tailwind layers
-├── public/              # Static assets (images, icons, fonts)
-└── ...config files
-```
-
-### Backend structure
-```
-backend/
-├── app/
-│   ├── main.py          # FastAPI entrypoint + app factory
-│   ├── core/            # Cross-cutting concerns: config, logging, security
-│   ├── api/v1/          # Versioned REST API (routes grouped by feature)
-│   ├── schemas/         # Pydantic request/response models (API contracts)
-│   ├── services/        # Business logic / domain layer
-│   ├── repositories/    # Data access (PostgreSQL queries)
-│   ├── models/          # ORM / DB models
-│   ├── ai/              # LLM clients, RAG engine, embeddings, prompts
-│   └── db/              # Session, engine, migrations bootstrap
-└── ...config files
-```
-
----
-
-## 🗺️ Development Plan
-
-The project is built **incrementally**, one feature at a time.
-
-| Phase | Focus |
-|-------|-------|
-| **Phase 1** | Foundation, Auth (Clerk), Homepage, Kannada AI Chat, Database |
-| **Phase 2** | Learn Kannada, Heritage Timeline, Karnataka Explorer |
-| **Phase 3** | Voice, OCR, RAG ingestion pipeline, Admin Dashboard |
-| **Phase 4** | Deployment, Testing, Performance optimization |
-
-✅ **Current status:** Phase 1 — Foundation scaffolding.
 
 ---
 
 ## 🚀 Getting Started (local)
 
-> Full setup instructions are added as each part is implemented.
-
 ```bash
-# 1. Backend
-cd backend
-python -m venv .venv && .venv\Scripts\activate   # Windows
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-
-# 2. Frontend
 cd frontend
 npm install
 npm run dev
 ```
 
-Or run everything with Docker:
+Open http://localhost:3000.
+
+Useful scripts (run from `frontend/`):
+
 ```bash
-docker compose up --build
+npm run dev         # start the dev server
+npm run build       # production build
+npm run typecheck   # tsc --noEmit
+npm run lint        # eslint
 ```
+
+### Refresh district images (optional)
+
+District photos and summaries are cached locally so the Explore map loads
+instantly. To refresh them from Wikipedia:
+
+```bash
+node --use-system-ca frontend/scripts/cache-districts.mjs
+```
+
+---
+
+## ▲ Deploy to Vercel
+
+1. Push this repo to GitHub.
+2. In Vercel, **Import** the repository.
+3. Set the **Root Directory** to `frontend`.
+4. Framework preset auto-detects **Next.js** — keep the defaults
+   (`npm run build`). No environment variables are needed.
+5. Deploy. 🎉
 
 ---
 
 ## 📜 License
 
-MIT — built as an open, educational heritage project.
+MIT — built as an open, educational heritage project by Mithun Rajanna.

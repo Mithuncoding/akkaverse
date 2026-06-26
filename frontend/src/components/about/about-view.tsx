@@ -84,7 +84,7 @@ export function AboutView() {
             {photoOk ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src="/mithun.jpg"
+                src="/mithun.png"
                 alt="Mithun Rajanna"
                 className="h-full w-full object-cover"
                 onError={() => setPhotoOk(false)}

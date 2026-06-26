@@ -171,7 +171,7 @@ const en: Dict = {
   "chat.thinking": "Thinking…",
   "chat.empty": "Try one of these to get started:",
   "chat.disclaimer":
-    "Demo assistant — connect a Gemini API key in the backend for full AI answers.",
+    "Demo assistant — answers are illustrative and may not be exhaustive.",
   "chat.suggest1": "Who built Hampi?",
   "chat.suggest2": "Explain Basavanna.",
   "chat.suggest3": "Tell me about Mysore Dasara.",
@@ -218,7 +218,7 @@ const en: Dict = {
   "tools.tryImage": "Try a sample",
   "tools.clear": "Clear",
   "tools.note":
-    "Demo OCR runs in your browser. Connect the backend OCR service for production-grade accuracy.",
+    "OCR runs entirely in your browser — no upload, fully private.",
 };
 
 const kn: Dict = {
@@ -371,7 +371,7 @@ const kn: Dict = {
   "chat.thinking": "ಯೋಚಿಸುತ್ತಿದೆ…",
   "chat.empty": "ಪ್ರಾರಂಭಿಸಲು ಇವುಗಳಲ್ಲಿ ಒಂದನ್ನು ಪ್ರಯತ್ನಿಸಿ:",
   "chat.disclaimer":
-    "ಡೆಮೊ ಸಹಾಯಕ — ಪೂರ್ಣ AI ಉತ್ತರಗಳಿಗಾಗಿ ಬ್ಯಾಕೆಂಡ್‌ನಲ್ಲಿ Gemini API ಕೀ ಸಂಪರ್ಕಿಸಿ.",
+    "ಡೆಮೊ ಸಹಾಯಕ — ಉತ್ತರಗಳು ನಿದರ್ಶನಾತ್ಮಕ, ಸಂಪೂರ್ಣವಲ್ಲದಿರಬಹುದು.",
   "chat.suggest1": "ಹಂಪಿಯನ್ನು ಯಾರು ಕಟ್ಟಿದರು?",
   "chat.suggest2": "ಬಸವಣ್ಣನ ಬಗ್ಗೆ ವಿವರಿಸಿ.",
   "chat.suggest3": "ಮೈಸೂರು ದಸರಾ ಬಗ್ಗೆ ಹೇಳಿ.",
@@ -418,7 +418,7 @@ const kn: Dict = {
   "tools.tryImage": "ಮಾದರಿ ಪ್ರಯತ್ನಿಸಿ",
   "tools.clear": "ಅಳಿಸಿ",
   "tools.note":
-    "ಡೆಮೊ OCR ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಚಲಿಸುತ್ತದೆ. ಉತ್ಪಾದನಾ-ಮಟ್ಟದ ನಿಖರತೆಗಾಗಿ ಬ್ಯಾಕೆಂಡ್ OCR ಸೇವೆ ಸಂಪರ್ಕಿಸಿ.",
+    "OCR ಸಂಪೂರ್ಣವಾಗಿ ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಚಲಿಸುತ್ತದೆ — ಅಪ್‌ಲೋಡ್ ಇಲ್ಲ, ಸಂಪೂರ್ಣ ಖಾಸಗಿ.",
 };
 
 /** Only English and Kannada have real dictionaries; "both" is rendered by
