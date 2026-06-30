@@ -6,7 +6,7 @@ import { Send, Mic, Sparkles, BookOpen, Compass, Landmark, PartyPopper, Language
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
 import { answerQuestion } from "@/data/knowledge";
-import { askGemini, geminiEnabled } from "@/lib/gemini";
+import { askGemini, getAiEnabled } from "@/lib/gemini";
 import { listen, canListen, canSpeak } from "@/lib/speech";
 import { ReadAloud } from "@/components/ui/read-aloud";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ export function ChatView() {
   const [input, setInput] = React.useState("");
   const [thinking, setThinking] = React.useState(false);
   const [listening, setListening] = React.useState(false);
+  const [aiEnabled, setAiEnabled] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const streamTimer = React.useRef<number | null>(null);
 
@@ -52,6 +53,15 @@ export function ChatView() {
   React.useEffect(() => {
     return () => {
       if (streamTimer.current) window.clearInterval(streamTimer.current);
+    };
+  }, []);
+
+  // Resolve whether the server-side AI is available (badge only — no secrets).
+  React.useEffect(() => {
+    let alive = true;
+    void getAiEnabled().then((on) => alive && setAiEnabled(on));
+    return () => {
+      alive = false;
     };
   }, []);
 
@@ -105,7 +115,7 @@ export function ChatView() {
         let replyText = local.text;
         let sources = local.sources;
 
-        if (geminiEnabled()) {
+        if (aiEnabled) {
           const ai = await askGemini(text, local.text);
           if (ai?.text) {
             replyText = ai.text;
@@ -122,7 +132,7 @@ export function ChatView() {
         streamReply(id, replyText, sources);
       })();
     },
-    [locale, streamReply],
+    [locale, streamReply, aiEnabled],
   );
 
   const onMic = React.useCallback(() => {
@@ -146,7 +156,7 @@ export function ChatView() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
           </span>
           ✨ {t("chat.badge")}
-          {geminiEnabled() && (
+          {aiEnabled && (
             <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-primary">
               Gemini
             </span>

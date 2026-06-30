@@ -1,73 +1,53 @@
 /**
- * Gemini client — the optional AI brain behind the Kannada Assistant.
+ * Gemini client helper — now a thin, secure bridge to the server.
  *
- * The app works fully offline from a curated knowledge base (data/knowledge.ts).
- * When a Gemini key is present (NEXT_PUBLIC_GEMINI_API_KEY) we let the model
- * compose a richer, grounded answer; otherwise callers fall back gracefully.
- *
- * Model: gemini-2.5-flash-lite — Google's cheapest text model, with a free
- * tier, ideal for low-cost hackathon usage.
+ * The browser NEVER talks to Google directly anymore (that would expose the
+ * API key). Instead it POSTs to our own /api/ask route, which holds the key
+ * server-side, caches answers, and degrades gracefully. The app still works
+ * fully offline from the curated knowledge base (data/knowledge.ts) — these
+ * helpers simply return null when AI is unavailable.
  */
-
-const KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? "";
-const MODEL = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-2.5-flash-lite";
-
-/** True when a key is configured, so the UI can show an "AI" badge. */
-export const geminiEnabled = (): boolean => KEY.trim().length > 0;
-
-const SYSTEM = `You are Akka, a warm, knowledgeable guide to the culture, history,
-heritage, festivals, language and places of Karnataka, India. Answer in a friendly,
-concise way (2-4 short paragraphs max). Prefer facts grounded in the provided
-context. If the user writes in Kannada, reply in Kannada; otherwise reply in English.
-Never invent citations. Keep it vivid but accurate.`;
 
 export type GeminiResult = { text: string } | null;
 
 /**
- * Ask Gemini a question, optionally grounded with local context snippets.
- * Returns null on any error / missing key so callers can fall back.
+ * Ask the server-side assistant a question, optionally grounded with local
+ * context. Returns null on any error so callers can fall back to the knowledge
+ * base. Never throws.
  */
 export async function askGemini(
   question: string,
   context?: string,
   opts: { signal?: AbortSignal } = {},
 ): Promise<GeminiResult> {
-  if (!geminiEnabled()) return null;
-
-  const grounding = context?.trim()
-    ? `\n\nContext you may use (Karnataka knowledge base):\n${context.trim()}`
-    : "";
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
-    MODEL,
-  )}:generateContent?key=${encodeURIComponent(KEY)}`;
-
   try {
-    const res = await fetch(url, {
+    const res = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       signal: opts.signal,
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM }] },
-        contents: [{ role: "user", parts: [{ text: `${question}${grounding}` }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 512,
-          topP: 0.95,
-        },
-      }),
+      body: JSON.stringify({ question, context: context ?? "" }),
     });
-
     if (!res.ok) return null;
-    const data = (await res.json()) as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-    const text = data.candidates?.[0]?.content?.parts
-      ?.map((p) => p.text ?? "")
-      .join("")
-      .trim();
-    return text ? { text } : null;
+    const data = (await res.json()) as { text?: string | null };
+    return data?.text ? { text: data.text } : null;
   } catch {
     return null;
   }
+}
+
+/**
+ * Whether the server has a Gemini key configured. Cached after the first check
+ * so the UI badge resolves once and stays put. Never leaks the key.
+ */
+let cachedEnabled: boolean | null = null;
+export async function getAiEnabled(): Promise<boolean> {
+  if (cachedEnabled !== null) return cachedEnabled;
+  try {
+    const res = await fetch("/api/ask", { method: "GET" });
+    const data = (await res.json()) as { enabled?: boolean };
+    cachedEnabled = Boolean(data?.enabled);
+  } catch {
+    cachedEnabled = false;
+  }
+  return cachedEnabled;
 }
