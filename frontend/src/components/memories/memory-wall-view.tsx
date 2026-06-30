@@ -133,18 +133,18 @@ export function MemoryWallView() {
         <div className="absolute inset-0 bg-dotgrid [mask-image:radial-gradient(60%_45%_at_50%_15%,#000,transparent)]" />
       </div>
 
-      <div className="container py-16 md:py-24">
+      <div className="container py-12 md:py-24">
         {/* Header */}
-        <header className="mx-auto mb-10 max-w-2xl text-center">
+        <header className="mx-auto mb-8 max-w-2xl text-center md:mb-10">
           <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm text-muted-foreground shadow-soft">
             🧱 {bi("Memory Wall", "ನೆನಪಿನ ಗೋಡೆ")}
           </span>
-          <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
             <span className="gradient-text">
               {bi("Leave a memory", "ಒಂದು ನೆನಪು ಬಿಡಿ")}
             </span>
           </h1>
-          <p className="mt-4 text-pretty text-lg text-muted-foreground">
+          <p className="mt-4 text-pretty text-base text-muted-foreground sm:text-lg">
             {bi(
               "Add a proverb, a folk song, a story, or a memory from your elders. Every note helps keep Kannada heritage alive for the next generation.",
               "ಒಂದು ಗಾದೆ, ಜನಪದ ಹಾಡು, ಕಥೆ ಅಥವಾ ಹಿರಿಯರ ನೆನಪನ್ನು ಸೇರಿಸಿ. ಪ್ರತಿ ಬರಹವೂ ಕನ್ನಡ ಪರಂಪರೆಯನ್ನು ಮುಂದಿನ ಪೀಳಿಗೆಗೆ ಜೀವಂತವಾಗಿಡಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.",

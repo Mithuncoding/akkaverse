@@ -43,22 +43,22 @@ export function AboutView() {
         <div className="absolute inset-0 bg-dotgrid [mask-image:radial-gradient(60%_45%_at_50%_20%,#000,transparent)]" />
       </div>
 
-      <article className="container max-w-3xl py-20 md:py-28">
+      <article className="container max-w-3xl py-14 md:py-28">
         {/* Eyebrow */}
         <div className="flex justify-center">
           <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm text-muted-foreground shadow-soft">
-            ✿ {bi("Our Story", "ನಮ್ಮ ಕಥೆ")}
+            ✯ {bi("Our Story", "ನಮ್ಮ ಕಥೆ")}
           </span>
         </div>
 
-        <h1 className="animate-fade-up mt-7 text-center text-4xl font-bold tracking-tight md:text-5xl">
+        <h1 className="animate-fade-up mt-7 text-center text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
           <span className="gradient-text">
             {bi("Hello, everyone", "ನಮಸ್ಕಾರ ಎಲ್ಲರಿಗೂ")}
           </span>
         </h1>
 
         {/* Note body */}
-        <div className="animate-fade-up mt-10 space-y-6 text-pretty text-lg leading-relaxed text-muted-foreground">
+        <div className="animate-fade-up mt-9 space-y-5 text-pretty text-base leading-relaxed text-muted-foreground sm:mt-10 sm:space-y-6 sm:text-lg">
           {paragraphs.map(([en, kn], i) => (
             <p key={i}>{bi(en, kn)}</p>
           ))}

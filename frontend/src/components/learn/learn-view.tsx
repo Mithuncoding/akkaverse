@@ -30,27 +30,27 @@ export function LearnView() {
   ];
 
   return (
-    <div className="container py-16 md:py-24">
-      <header className="mx-auto mb-10 max-w-2xl text-center">
+    <div className="container py-12 md:py-24">
+      <header className="mx-auto mb-8 max-w-2xl text-center md:mb-10">
         <span className="rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
           🎓 {t("learn.badge")}
         </span>
-        <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl">
+        <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
           {t("learn.title")}
         </h1>
-        <p className="mt-4 text-pretty text-lg text-muted-foreground">
+        <p className="mt-4 text-pretty text-base text-muted-foreground sm:text-lg">
           {t("learn.subtitle")}
         </p>
       </header>
 
       {/* Tab switcher */}
-      <div className="mx-auto mb-12 flex w-fit gap-1 rounded-full border border-border bg-secondary/40 p-1">
+      <div className="mx-auto mb-8 flex w-fit gap-1 rounded-full border border-border bg-secondary/40 p-1 md:mb-12">
         {tabs.map((item) => (
           <button
             key={item.id}
             onClick={() => setTab(item.id)}
             className={cn(
-              "rounded-full px-5 py-2 text-sm font-medium transition-colors",
+              "rounded-full px-4 py-2 text-sm font-medium transition-colors sm:px-5",
               tab === item.id
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",

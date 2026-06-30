@@ -117,7 +117,7 @@ export const festivals: Festival[] = [
     nameEn: "Makara Sankranti",
     nameKn: "ಮಕರ ಸಂಕ್ರಾಂತಿ",
     emoji: "🪁",
-    month: 1,
+         month: 1,
     whenEn: "14 January",
     whenKn: "ಜನವರಿ 14",
     district: "Statewide",
@@ -353,6 +353,34 @@ export const festivals: Festival[] = [
       "ಮೊದಲ ಕಡಲೆಕಾಯಿ ಬೆಳೆ ನಂದಿಗೆ ಅರ್ಪಣೆ",
       "ಕಡಲೆಕಾಯಿ ಮಳಿಗೆಗಳಿಂದ ತುಂಬಿದ ಬೀದಿಗಳು",
       "ಹಳೆಯ ಬೆಂಗಳೂರಿನ ಪ್ರೀತಿಯ ಸಂಪ್ರದಾಯ",
+    ],
+  },
+  {
+    id: "deepavali",
+    nameEn: "Deepavali",
+    nameKn: "ದೀಪಾವಳಿ",
+    emoji: "🪔",
+    month: 11,
+    whenEn: "October – November",
+    whenKn: "ಅಕ್ಟೋಬರ್ – ನವೆಂಬರ್",
+    district: "Statewide",
+    placeEn: "Across Karnataka",
+    placeKn: "ಕರ್ನಾಟಕದಾದ್ಯಂತ",
+    wiki: "Diwali",
+    imageTitle: "Diwali",
+    descEn:
+      "The festival of lights. Karnataka celebrates over three days — Naraka Chaturdashi's dawn oil-bath, Lakshmi Puja, and Bali Padyami — as rows of clay diyas, lanterns and fireworks turn every home and street into a river of light.",
+    descKn:
+      "ಬೆಳಕಿನ ಹಬ್ಬ. ಕರ್ನಾಟಕದಲ್ಲಿ ಮೂರು ದಿನ — ನರಕ ಚತುರ್ದಶಿಯ ಬೆಳಗಿನ ಎಣ್ಣೆ ಸ್ನಾನ, ಲಕ್ಷ್ಮೀ ಪೂಜೆ ಮತ್ತು ಬಲಿ ಪಾಡ್ಯಮಿ — ಮಣ್ಣಿನ ದೀಪ, ಹಣತೆ ಮತ್ತು ಪಟಾಕಿಗಳಿಂದ ಪ್ರತಿ ಮನೆಯೂ ಬೆಳಕಿನ ನದಿಯಾಗುತ್ತದೆ.",
+    highlightsEn: [
+      "Pre-dawn oil-bath on Naraka Chaturdashi",
+      "Rows of clay diyas and sky lanterns",
+      "Lakshmi Puja and Bali Padyami offerings",
+    ],
+    highlightsKn: [
+      "ನರಕ ಚತುರ್ದಶಿಯಂದು ಬೆಳಗಿನ ಎಣ್ಣೆ ಸ್ನಾನ",
+      "ಸಾಲು ಸಾಲು ಮಣ್ಣಿನ ದೀಪ ಮತ್ತು ಆಕಾಶ ಹಣತೆ",
+      "ಲಕ್ಷ್ಮೀ ಪೂಜೆ ಮತ್ತು ಬಲಿ ಪಾಡ್ಯಮಿ ಸಮರ್ಪಣೆ",
     ],
   },
 ];

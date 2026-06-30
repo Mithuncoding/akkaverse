@@ -1,287 +1,317 @@
 "use client";
 
 import * as React from "react";
-import { CalendarDays, MapPin, Sparkles, Clock } from "lucide-react";
+import { Compass, Sparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
-import { ReadAloud } from "@/components/ui/read-aloud";
-import { getDistrictInfo, type WikiInfo } from "@/lib/wiki";
+import { JourneyFigure } from "@/components/timeline/journey-figure";
+import { FestivalWorld } from "@/components/festivals/festival-world";
+import { festivals, MONTHS_EN, MONTHS_KN, type Festival } from "@/data/festivals";
 import {
-  festivals,
-  MONTHS_EN,
-  MONTHS_KN,
-  type Festival,
-} from "@/data/festivals";
+  EMOTIONS,
+  experienceFor,
+  type Emotion,
+} from "@/data/festival-experience";
 
-/** Festival Calendar — the cultural heartbeat of Karnataka, month by month. */
+/**
+ * Festivals — Karnataka's digital cultural museum.
+ *
+ * Discovery happens two ways: by *feeling* (emotion chips) and by *time* (a
+ * living wheel of the Kannada year). Choosing a festival opens an immersive,
+ * colour-shifting full-screen "world" (see FestivalWorld).
+ */
 export function FestivalsView() {
-  const { t, bi, locale } = useTranslation();
-  const [month, setMonth] = React.useState<number | "all">("all");
+  const { t, bi } = useTranslation();
+  const [emotion, setEmotion] = React.useState<Emotion | null>(null);
   const [active, setActive] = React.useState<Festival | null>(null);
 
-  const monthName = (m: number) =>
-    locale === "kn"
-      ? MONTHS_KN[m - 1]
-      : locale === "both"
-        ? `${MONTHS_EN[m - 1]} · ${MONTHS_KN[m - 1]}`
-        : MONTHS_EN[m - 1];
+  const matches = React.useCallback(
+    (f: Festival) => !emotion || experienceFor(f.id).emotions.includes(emotion),
+    [emotion],
+  );
 
-  // Months that actually have festivals, for the filter row.
-  const activeMonths = React.useMemo(
-    () =>
-      Array.from(new Set(festivals.map((f) => f.month))).sort((a, b) => a - b),
+  const ordered = React.useMemo(
+    () => [...festivals].sort((a, b) => a.month - b.month),
     [],
   );
 
-  // "Coming up" — the festivals nearest in the calendar from today.
-  const upcoming = React.useMemo(() => {
-    const now = new Date().getMonth() + 1;
-    return [...festivals]
-      .map((f) => ({ f, away: (f.month - now + 12) % 12 }))
-      .sort((a, b) => a.away - b.away)
-      .slice(0, 3)
-      .map((x) => x.f);
-  }, []);
-
-  const list = React.useMemo(
-    () =>
-      month === "all"
-        ? [...festivals].sort((a, b) => a.month - b.month)
-        : festivals.filter((f) => f.month === month),
-    [month],
-  );
-
   return (
-    <div className="container py-16 md:py-24">
-      <header className="mx-auto mb-10 max-w-2xl text-center">
-        <span className="rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
-          🎉 {t("festival.badge")}
-        </span>
-        <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl">
-          {t("festival.title")}
-        </h1>
-        <p className="mt-4 text-pretty text-lg text-muted-foreground">
-          {t("festival.subtitle")}
-        </p>
-      </header>
+    <div className="relative overflow-hidden">
+      {/* Soft ambient backdrop */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(70%_60%_at_50%_0%,hsl(var(--primary)/0.12),transparent)]" />
 
-      {/* Coming up */}
-      <section className="mb-12">
-        <h2 className="mb-4 flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          <Clock className="h-4 w-4 text-primary" /> {t("festival.upcoming")}
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {upcoming.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setActive(f)}
-              className="heritage-glow flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4 text-left transition-all hover:-translate-y-0.5"
-            >
-              <span className="text-3xl">{f.emoji}</span>
-              <div>
-                <p className="font-semibold leading-tight">
-                  {bi(f.nameEn, f.nameKn)}
-                </p>
-                <p className="mt-0.5 text-xs text-primary">
-                  {bi(f.whenEn, f.whenKn)}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </section>
+      <div className="container relative py-12 md:py-20">
+        {/* Header */}
+        <header className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
+            <Sparkles className="h-4 w-4 text-primary" /> {t("festival.badge")}
+          </span>
+          <h1 className="mt-5 text-balance text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+            {bi(
+              "Step inside Karnataka's festivals",
+              "ಕರ್ನಾಟಕದ ಹಬ್ಬಗಳ ಒಳಗೆ ಹೆಜ್ಜೆ ಇಡಿ",
+            )}
+          </h1>
+          <p className="mt-4 text-pretty text-base text-muted-foreground sm:text-lg">
+            {bi(
+              "Don't read about them — attend them. Choose a feeling, or travel the year, and step into a world of light, colour and sound.",
+              "ಓದಬೇಡಿ — ಅನುಭವಿಸಿ. ಒಂದು ಭಾವವನ್ನು ಆರಿಸಿ, ಅಥವಾ ವರ್ಷವನ್ನು ಸುತ್ತಿ, ಬೆಳಕು-ಬಣ್ಣ-ನಾದದ ಲೋಕಕ್ಕೆ ಪ್ರವೇಶಿಸಿ.",
+            )}
+          </p>
+        </header>
 
-      {/* Month filter */}
-      <div className="mb-10 flex flex-wrap justify-center gap-2">
-        <Chip
-          label={t("festival.all")}
-          active={month === "all"}
-          onClick={() => setMonth("all")}
-        />
-        {activeMonths.map((m) => (
-          <Chip
-            key={m}
-            label={monthName(m)}
-            active={month === m}
-            onClick={() => setMonth(m)}
-          />
-        ))}
+        {/* Discover by feeling */}
+        <section className="mx-auto mt-12 max-w-3xl">
+          <h2 className="mb-4 flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            <Compass className="h-4 w-4 text-primary" />
+            {bi("How do you want to feel?", "ನಿಮಗೆ ಹೇಗೆ ಅನಿಸಬೇಕು?")}
+          </h2>
+          <div className="flex flex-wrap justify-center gap-2">
+            {EMOTIONS.map((e) => {
+              const on = emotion === e.id;
+              return (
+                <button
+                  key={e.id}
+                  onClick={() => setEmotion(on ? null : e.id)}
+                  aria-pressed={on}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-all active:scale-95",
+                    on
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                  )}
+                >
+                  <span>{e.emoji}</span>
+                  {bi(e.labelEn, e.labelKn)}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Living wheel of the year */}
+        <section className="mt-14">
+          <WheelOfYear matches={matches} onPick={(f) => setActive(f)} />
+        </section>
+
+        {/* Festival portals — image-led, not text cards */}
+        <section className="mt-16">
+          <h2 className="mb-6 text-center text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {emotion
+              ? bi("Festivals for that feeling", "ಆ ಭಾವದ ಹಬ್ಬಗಳು")
+              : bi("Enter a festival", "ಒಂದು ಹಬ್ಬವನ್ನು ಪ್ರವೇಶಿಸಿ")}
+          </h2>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+            {ordered.map((f) => (
+              <Portal
+                key={f.id}
+                festival={f}
+                dim={!matches(f)}
+                onOpen={() => setActive(f)}
+              />
+            ))}
+          </div>
+        </section>
       </div>
 
-      {/* Festival grid */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {list.map((f) => (
-          <button
-            key={f.id}
-            onClick={() => setActive(f)}
-            className="group flex flex-col rounded-2xl border border-border bg-card p-6 text-left transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-4xl">{f.emoji}</span>
-              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                <CalendarDays className="h-3 w-3" /> {bi(f.whenEn, f.whenKn)}
-              </span>
-            </div>
-            <h3 className="mt-4 text-lg font-semibold tracking-tight">
-              {bi(f.nameEn, f.nameKn)}
-            </h3>
-            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" /> {bi(f.placeEn, f.placeKn)}
-            </p>
-            <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
-              {bi(f.descEn, f.descKn)}
-            </p>
-          </button>
-        ))}
-      </div>
-
-      {active && <FestivalModal festival={active} onClose={() => setActive(null)} />}
+      {active && (
+        <FestivalWorld festival={active} onClose={() => setActive(null)} />
+      )}
     </div>
   );
 }
 
-function Chip({
-  label,
-  active,
-  onClick,
+/* ------------------------------------------------------------------ *
+ * Festival portal — an image doorway into the world
+ * ------------------------------------------------------------------ */
+function Portal({
+  festival,
+  dim,
+  onOpen,
 }: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
+  festival: Festival;
+  dim: boolean;
+  onOpen: () => void;
 }) {
+  const { bi } = useTranslation();
+  const exp = experienceFor(festival.id);
   return (
     <button
-      onClick={onClick}
+      onClick={onOpen}
+      aria-label={festival.nameEn}
+      style={
+        {
+          ["--accent" as string]: exp.accent,
+          ["--accent2" as string]: exp.accent2,
+        } as React.CSSProperties
+      }
       className={cn(
-        "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
-        active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "border-border bg-card text-muted-foreground hover:text-foreground",
+        "group relative aspect-[3/4] overflow-hidden rounded-3xl text-left ring-1 ring-border transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl active:scale-[0.98] sm:aspect-[4/5]",
+        dim ? "opacity-40 saturate-50" : "opacity-100",
       )}
-      aria-pressed={active}
     >
-      {label}
+      <JourneyFigure
+        wiki={exp.heroImageTitle ?? exp.hero}
+        alt={festival.nameEn}
+        rounded="none"
+        kenBurns
+        className="absolute inset-0 h-full w-full"
+      />
+      {/* themed gradient + readability scrim */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_120%,rgb(var(--accent)/0.45),transparent_60%)] opacity-70 transition-opacity group-hover:opacity-100" />
+
+      {/* content */}
+      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+        <span className="text-3xl drop-shadow-lg sm:text-4xl">
+          {festival.emoji}
+        </span>
+        <h3 className="mt-2 text-balance text-base font-bold leading-tight text-white drop-shadow sm:text-xl">
+          {bi(festival.nameEn, festival.nameKn)}
+        </h3>
+        <p className="mt-1 text-[11px] font-medium text-white/75 sm:text-xs">
+          {bi(festival.whenEn, festival.whenKn)}
+        </p>
+        <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-[rgb(var(--accent))] px-3 py-1 text-[11px] font-semibold text-black opacity-0 transition-all duration-300 group-hover:opacity-100 sm:text-xs">
+          {bi("Enter", "ಪ್ರವೇಶಿಸಿ")} →
+        </span>
+      </div>
     </button>
   );
 }
 
-function FestivalModal({
-  festival,
-  onClose,
+/* ------------------------------------------------------------------ *
+ * Wheel of the year — a living seasonal dial
+ * ------------------------------------------------------------------ */
+function WheelOfYear({
+  matches,
+  onPick,
 }: {
-  festival: Festival;
-  onClose: () => void;
+  matches: (f: Festival) => boolean;
+  onPick: (f: Festival) => void;
 }) {
-  const { t, bi } = useTranslation();
-  const [info, setInfo] = React.useState<WikiInfo | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const { bi, locale } = useTranslation();
+  const now = new Date().getMonth() + 1;
+  const [hover, setHover] = React.useState<Festival | null>(null);
 
-  React.useEffect(() => {
-    let alive = true;
-    setLoading(true);
-    getDistrictInfo(festival.wiki, undefined, festival.imageTitle)
-      .then((i) => alive && setInfo(i))
-      .finally(() => alive && setLoading(false));
-    return () => {
-      alive = false;
-    };
-  }, [festival]);
+  // Group festivals by month, then fan out collisions around the dial.
+  const nodes = React.useMemo(() => {
+    const byMonth = new Map<number, Festival[]>();
+    for (const f of festivals) {
+      byMonth.set(f.month, [...(byMonth.get(f.month) ?? []), f]);
+    }
+    const out: { f: Festival; angle: number }[] = [];
+    for (const [month, list] of byMonth) {
+      const base = ((month - 1) / 12) * 360;
+      const spread = 18;
+      list.forEach((f, i) => {
+        const offset =
+          list.length === 1 ? 0 : (i - (list.length - 1) / 2) * spread;
+        out.push({ f, angle: base + offset });
+      });
+    }
+    return out;
+  }, []);
 
-  React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  const seasonEn =
+    now <= 2 || now === 12
+      ? "Winter harvest"
+      : now <= 5
+        ? "Spring renewal"
+        : now <= 9
+          ? "Monsoon & devotion"
+          : "Festival autumn";
+  const seasonKn =
+    now <= 2 || now === 12
+      ? "ಚಳಿಗಾಲದ ಸುಗ್ಗಿ"
+      : now <= 5
+        ? "ವಸಂತದ ನವೀಕರಣ"
+        : now <= 9
+          ? "ಮಳೆ ಮತ್ತು ಭಕ್ತಿ"
+          : "ಹಬ್ಬಗಳ ಶರತ್ಕಾಲ";
 
-  const highlights = festival.highlightsEn.map((en, i) =>
-    bi(en, festival.highlightsKn[i] ?? en),
-  );
+  const current = hover;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Live image header */}
-        <div className="relative h-44 w-full overflow-hidden rounded-t-2xl bg-secondary/40">
-          {loading ? (
-            <div className="h-full w-full animate-pulse bg-secondary" />
-          ) : info?.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={info.imageUrl}
-              alt={festival.nameEn}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-6xl opacity-30">
-              {festival.emoji}
-            </div>
-          )}
-          <button
-            onClick={onClose}
-            className="absolute right-3 top-3 rounded-full bg-background/80 p-1.5 text-muted-foreground backdrop-blur hover:text-foreground"
-            aria-label="Close"
-          >
-            ✕
-          </button>
+    <div className="mx-auto max-w-md">
+      <div className="relative mx-auto aspect-square w-full">
+        {/* slowly rotating decorative ring */}
+        <div className="absolute inset-0 animate-[spin_90s_linear_infinite] rounded-full bg-[conic-gradient(from_0deg,hsl(var(--primary)/0.35),transparent_25%,hsl(var(--primary)/0.25)_50%,transparent_75%,hsl(var(--primary)/0.35))] opacity-60 [mask:radial-gradient(circle,transparent_61%,black_62%,black_70%,transparent_71%)]" />
+        {/* static dial ring */}
+        <div className="absolute inset-[10%] rounded-full border border-dashed border-border" />
+
+        {/* current-month pointer at top */}
+        <div className="absolute left-1/2 top-[3%] -translate-x-1/2 text-primary">
+          ▼
         </div>
 
-        <div className="p-6">
-          <div className="flex items-start gap-3">
-            <span className="text-4xl">{festival.emoji}</span>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">
-                {bi(festival.nameEn, festival.nameKn)}
-              </h2>
-              <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1">
-                  <CalendarDays className="h-3.5 w-3.5" />
-                  {bi(festival.whenEn, festival.whenKn)}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {bi(festival.placeEn, festival.placeKn)}
-                </span>
+        {/* center hub */}
+        <div className="absolute inset-[26%] grid place-items-center rounded-full border border-border bg-card/80 p-4 text-center shadow-inner backdrop-blur">
+          {current ? (
+            <div className="fest-mode-in">
+              <div className="text-4xl">{current.emoji}</div>
+              <p className="mt-1 text-sm font-bold leading-tight">
+                {bi(current.nameEn, current.nameKn)}
+              </p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">
+                {bi(current.whenEn, current.whenKn)}
               </p>
             </div>
-          </div>
-
-          <p className="mt-4 text-pretty text-muted-foreground">
-            {bi(festival.descEn, festival.descKn)}
-          </p>
-
-          <div className="mt-4">
-            <ReadAloud
-              textEn={festival.descEn}
-              textKn={festival.descKn}
-              label={t("common.listen")}
-            />
-          </div>
-
-          <div className="mt-6">
-            <p className="flex items-center gap-1.5 text-sm font-semibold">
-              <Sparkles className="h-4 w-4 text-primary" />{" "}
-              {t("festival.whatHappens")}
-            </p>
-            <ul className="mt-3 space-y-2">
-              {highlights.map((h) => (
-                <li key={h} className="flex gap-2 text-sm text-muted-foreground">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                  {h}
-                </li>
-              ))}
-            </ul>
-          </div>
+          ) : (
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-primary">
+                {bi("Right now", "ಈಗ")}
+              </p>
+              <p className="mt-1 text-sm font-bold leading-tight">
+                {bi(seasonEn, seasonKn)}
+              </p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {locale === "kn" ? MONTHS_KN[now - 1] : MONTHS_EN[now - 1]}
+              </p>
+            </div>
+          )}
         </div>
+
+        {/* festival nodes */}
+        {nodes.map(({ f, angle }) => {
+          const rad = (angle * Math.PI) / 180;
+          const r = 43; // % from center
+          const x = (50 + r * Math.sin(rad)).toFixed(3);
+          const y = (50 - r * Math.cos(rad)).toFixed(3);
+          const dim = !matches(f);
+          const soon = (f.month - now + 12) % 12 <= 1;
+          return (
+            <button
+              key={f.id}
+              onClick={() => onPick(f)}
+              onMouseEnter={() => setHover(f)}
+              onMouseLeave={() => setHover(null)}
+              onFocus={() => setHover(f)}
+              onBlur={() => setHover(null)}
+              aria-label={f.nameEn}
+              className={cn(
+                "absolute z-10 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border bg-card text-xl shadow-md transition-all duration-300 hover:scale-125 hover:border-primary active:scale-110 sm:h-12 sm:w-12 sm:text-2xl",
+                dim ? "opacity-30 saturate-0" : "opacity-100",
+                soon && !dim ? "border-primary" : "border-border",
+              )}
+              style={{ left: `${x}%`, top: `${y}%` }}
+            >
+              {soon && !dim && (
+                <span className="journey-pin-ping absolute inline-flex h-full w-full rounded-full border border-primary" />
+              )}
+              {f.emoji}
+            </button>
+          );
+        })}
       </div>
+
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        {bi(
+          "Tap any festival on the wheel to step inside · the ring turns through Karnataka's year",
+          "ಒಳಗೆ ಹೋಗಲು ಚಕ್ರದ ಯಾವುದೇ ಹಬ್ಬವನ್ನು ಮುಟ್ಟಿ · ಚಕ್ರ ಕರ್ನಾಟಕದ ವರ್ಷವನ್ನು ಸುತ್ತುತ್ತದೆ",
+        )}
+      </p>
     </div>
   );
 }

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a1f1f"/>
+      <stop offset="1" stop-color="#b3471a"/>
+    </linearGradient>
+    <linearGradient id="lamp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe7a3"/>
+      <stop offset="1" stop-color="#e0992a"/>
+    </linearGradient>
+    <radialGradient id="flame" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#fff6d6"/>
+      <stop offset="0.5" stop-color="#ffd24a"/>
+      <stop offset="1" stop-color="#ff7a18"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffcf66" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#ffcf66" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+
+  <!-- warm glow behind the flame -->
+  <circle cx="32" cy="26" r="20" fill="url(#glow)"/>
+
+  <!-- flame -->
+  <path d="M32 13 C36 19 37 23 34.5 27 C33.4 28.8 30.8 28.8 29.6 27 C27.4 23.6 28.6 19.8 32 13 Z" fill="url(#flame)"/>
+  <path d="M32 18 C33.8 21 34.2 23.2 33 25 C32.3 26 30.9 26 30.2 25 C29 23.2 30 21.4 32 18 Z" fill="#fff4cf" opacity="0.9"/>
+
+  <!-- diya lamp bowl -->
+  <path d="M14 36 C14 33 18 32 32 32 C46 32 50 33 50 36 C50 41 42 46 32 46 C22 46 14 41 14 36 Z" fill="url(#lamp)"/>
+  <path d="M14 36 C14 33 18 32 32 32 C46 32 50 33 50 36 C50 37.5 44 39 32 39 C20 39 14 37.5 14 36 Z" fill="#fff1c4" opacity="0.7"/>
+  <ellipse cx="32" cy="47.5" rx="11" ry="2.4" fill="#000" opacity="0.18"/>
+</svg>

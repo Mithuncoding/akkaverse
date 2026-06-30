@@ -20,7 +20,7 @@ export function LanguageToggle() {
   return (
     <div className="flex items-center gap-0.5 rounded-full border border-border bg-secondary/50 p-0.5">
       <Languages
-        className="ml-1.5 mr-0.5 h-3.5 w-3.5 text-muted-foreground"
+        className="ml-1.5 mr-0.5 hidden h-3.5 w-3.5 text-muted-foreground sm:block"
         aria-hidden
       />
       {LOCALES.map((l) => (
@@ -30,7 +30,7 @@ export function LanguageToggle() {
           aria-pressed={locale === l.code}
           title={l.label}
           className={cn(
-            "rounded-full px-2.5 py-1 text-xs font-semibold transition-colors",
+            "rounded-full px-2 py-1 text-xs font-semibold transition-colors sm:px-2.5",
             locale === l.code
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground",

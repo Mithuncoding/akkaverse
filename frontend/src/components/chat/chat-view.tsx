@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Send, Mic, Sparkles, BookOpen } from "lucide-react";
+import { Send, Mic, Sparkles, BookOpen, Compass, Landmark, PartyPopper, Languages } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
 import { answerQuestion } from "@/data/knowledge";
+import { askGemini, geminiEnabled } from "@/lib/gemini";
 import { listen, canListen, canSpeak } from "@/lib/speech";
 import { ReadAloud } from "@/components/ui/read-aloud";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,8 @@ type Message = {
   role: "user" | "assistant";
   text: string;
   sources?: string[];
+  /** While true the bubble streams in word-by-word with a caret. */
+  streaming?: boolean;
 };
 
 /**
@@ -33,17 +36,56 @@ export function ChatView() {
   const [thinking, setThinking] = React.useState(false);
   const [listening, setListening] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const streamTimer = React.useRef<number | null>(null);
 
   const suggestions = [
-    t("chat.suggest1"),
-    t("chat.suggest2"),
-    t("chat.suggest3"),
-    t("chat.suggest4"),
+    { icon: Landmark, text: t("chat.suggest1") },
+    { icon: Compass, text: t("chat.suggest2") },
+    { icon: PartyPopper, text: t("chat.suggest3") },
+    { icon: Languages, text: t("chat.suggest4") },
   ];
 
   React.useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, thinking]);
+
+  React.useEffect(() => {
+    return () => {
+      if (streamTimer.current) window.clearInterval(streamTimer.current);
+    };
+  }, []);
+
+  /** Reveal an assistant reply word-by-word for a generative feel. */
+  const streamReply = React.useCallback(
+    (id: string, full: string, sources: string[]) => {
+      const words = full.split(/(\s+)/); // keep whitespace tokens
+      let shown = 0;
+      if (streamTimer.current) window.clearInterval(streamTimer.current);
+      streamTimer.current = window.setInterval(() => {
+        shown += 1;
+        const partial = words.slice(0, shown).join("");
+        const done = shown >= words.length;
+        setMessages((m) =>
+          m.map((msg) =>
+            msg.id === id
+              ? {
+                  ...msg,
+                  text: partial,
+                  streaming: !done,
+                  sources: done ? sources : undefined,
+                }
+              : msg,
+          ),
+        );
+        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+        if (done && streamTimer.current) {
+          window.clearInterval(streamTimer.current);
+          streamTimer.current = null;
+        }
+      }, 22);
+    },
+    [],
+  );
 
   const send = React.useCallback(
     (raw: string) => {
@@ -55,22 +97,32 @@ export function ChatView() {
       setInput("");
       setThinking(true);
 
-      // Simulate retrieval latency for a natural feel.
-      window.setTimeout(() => {
-        const reply = answerQuestion(text, locale);
+      // Always retrieve the curated, cited answer first — it grounds Gemini
+      // and is the fallback when no key is set or the call fails.
+      const local = answerQuestion(text, locale);
+
+      void (async () => {
+        let replyText = local.text;
+        let sources = local.sources;
+
+        if (geminiEnabled()) {
+          const ai = await askGemini(text, local.text);
+          if (ai?.text) {
+            replyText = ai.text;
+            sources = Array.from(new Set([...local.sources, "Gemini 2.5 Flash-Lite"]));
+          }
+        }
+
+        const id = crypto.randomUUID();
+        setThinking(false);
         setMessages((m) => [
           ...m,
-          {
-            id: crypto.randomUUID(),
-            role: "assistant",
-            text: reply.text,
-            sources: reply.sources,
-          },
+          { id, role: "assistant", text: "", streaming: true },
         ]);
-        setThinking(false);
-      }, 650);
+        streamReply(id, replyText, sources);
+      })();
     },
-    [locale],
+    [locale, streamReply],
   );
 
   const onMic = React.useCallback(() => {
@@ -86,55 +138,77 @@ export function ChatView() {
   }, [listening, speechLang, send]);
 
   return (
-    <div className="container py-10 md:py-14">
-      <header className="mx-auto mb-8 max-w-2xl text-center">
-        <span className="rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
+    <div className="container py-6 md:py-14">
+      <header className="mx-auto mb-5 max-w-2xl text-center md:mb-8">
+        <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-muted-foreground shadow-soft sm:text-sm">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/70" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+          </span>
           ✨ {t("chat.badge")}
+          {geminiEnabled() && (
+            <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-primary">
+              Gemini
+            </span>
+          )}
         </span>
-        <h1 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">
+        <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
           {t("chat.title")}
         </h1>
-        <p className="mt-3 text-muted-foreground">{t("chat.subtitle")}</p>
+        <p className="mt-2 text-sm text-muted-foreground sm:mt-3 sm:text-base">
+          {t("chat.subtitle")}
+        </p>
       </header>
 
-      <div className="mx-auto flex h-[calc(100vh-20rem)] min-h-[420px] max-w-3xl flex-col">
+      <div className="mx-auto flex h-[calc(100dvh-15rem)] min-h-[360px] max-w-3xl flex-col md:h-[calc(100vh-20rem)] md:min-h-[440px]">
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="flex-1 space-y-4 overflow-y-auto rounded-2xl border border-border bg-card/40 p-4 md:p-6"
+        className="glass flex-1 space-y-4 overflow-y-auto rounded-2xl border border-border p-4 md:p-6"
       >
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Sparkles className="h-7 w-7" />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-amber-500 text-primary-foreground shadow-glow">
+              <span className="orbit-ping absolute inset-0 rounded-2xl border-2 border-primary/50" />
+              <Sparkles className="h-8 w-8" />
             </div>
-            <p className="mt-4 text-sm font-medium text-muted-foreground">
+            <p className="mt-5 text-sm font-medium text-muted-foreground">
               {t("chat.empty")}
             </p>
-            <div className="mt-4 flex max-w-lg flex-wrap justify-center gap-2">
-              {suggestions.map((s) => (
+            <div className="mt-4 grid w-full max-w-lg gap-2 sm:grid-cols-2">
+              {suggestions.map(({ icon: Icon, text }) => (
                 <button
-                  key={s}
-                  onClick={() => send(s)}
-                  className="rounded-full border border-border bg-background px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/40 hover:bg-accent"
+                  key={text}
+                  onClick={() => send(text)}
+                  className="group flex items-center gap-2.5 rounded-xl border border-border bg-background/60 px-4 py-3 text-left text-sm text-foreground transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:bg-accent hover:shadow-soft"
                 >
-                  {s}
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Icon className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="line-clamp-2">{text}</span>
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          messages.map((msg) => (
-            <MessageBubble key={msg.id} msg={msg} speakLang={speechLang()} listenLabel={t("common.listen")} />
-          ))
+          <div aria-live="polite" className="space-y-4">
+            {messages.map((msg) => (
+              <MessageBubble key={msg.id} msg={msg} speakLang={speechLang()} listenLabel={t("common.listen")} />
+            ))}
+          </div>
         )}
 
         {thinking && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="flex gap-1">
-              <Dot /> <Dot delay="150ms" /> <Dot delay="300ms" />
+          <div className="flex items-center gap-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-amber-500 text-primary-foreground">
+              <Sparkles className="h-4 w-4" />
             </span>
-            {t("chat.thinking")}
+            <div className="flex items-center gap-2 rounded-2xl rounded-bl-sm border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
+              <span className="flex gap-1">
+                <Dot /> <Dot delay="150ms" /> <Dot delay="300ms" />
+              </span>
+              {t("chat.thinking")}
+            </div>
           </div>
         )}
       </div>
@@ -146,7 +220,7 @@ export function ChatView() {
             e.preventDefault();
             send(input);
           }}
-          className="flex items-center gap-2 rounded-xl border border-border bg-background p-2 shadow-sm focus-within:border-primary/50"
+          className="flex items-center gap-2 rounded-xl border border-border bg-background p-2 shadow-sm transition-colors focus-within:border-primary/50 focus-within:shadow-glow"
         >
           {canListen() && (
             <Button
@@ -164,7 +238,9 @@ export function ChatView() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={listening ? t("chat.listening") : t("chat.placeholder")}
-            className="flex-1 bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground"
+            enterKeyHint="send"
+            autoComplete="off"
+            className="flex-1 bg-transparent px-2 text-base outline-none placeholder:text-muted-foreground sm:text-sm"
           />
           <Button type="submit" size="icon" disabled={!input.trim()} aria-label={t("chat.send")}>
             <Send className="h-4 w-4" />
@@ -189,25 +265,39 @@ function MessageBubble({
   listenLabel: string;
 }) {
   const isUser = msg.role === "user";
-  return (
-    <div className={cn("flex", isUser ? "justify-end" : "justify-start")}>
-      <div
-        className={cn(
-          "max-w-[85%] rounded-2xl px-4 py-3 text-sm",
-          isUser
-            ? "rounded-br-sm bg-primary text-primary-foreground"
-            : "rounded-bl-sm border border-border bg-background",
-        )}
-      >
-        <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
 
-        {!isUser && msg.sources && msg.sources.length > 0 && (
-          <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-border pt-2">
-            <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+  if (isUser) {
+    return (
+      <div className="flex justify-end">
+        <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-4 py-3 text-sm text-primary-foreground shadow-soft">
+          <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-start gap-3">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-amber-500 text-primary-foreground shadow-soft">
+        <Sparkles className="h-4 w-4" />
+      </span>
+      <div className="max-w-[85%] rounded-2xl rounded-bl-sm border border-border bg-background px-4 py-3 text-sm shadow-soft">
+        <p
+          className={cn(
+            "whitespace-pre-wrap leading-relaxed",
+            msg.streaming && "type-caret",
+          )}
+        >
+          {msg.text}
+        </p>
+
+        {!msg.streaming && msg.sources && msg.sources.length > 0 && (
+          <div className="mt-3 flex animate-fade-up flex-wrap items-center gap-1.5 border-t border-border pt-2.5">
+            <BookOpen className="h-3.5 w-3.5 text-primary" />
             {msg.sources.map((s) => (
               <span
                 key={s}
-                className="rounded-full bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground"
+                className="rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground"
               >
                 {s}
               </span>
@@ -215,7 +305,7 @@ function MessageBubble({
           </div>
         )}
 
-        {!isUser && canSpeak() && (
+        {!msg.streaming && canSpeak() && (
           <div className="mt-2">
             <ReadAloud text={msg.text} lang={speakLang} label={listenLabel} />
           </div>

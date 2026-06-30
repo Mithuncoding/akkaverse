@@ -31,15 +31,15 @@ export function ExploreView() {
   );
 
   return (
-    <div className="container py-16 md:py-24">
+    <div className="container py-12 md:py-24">
       <header className="mx-auto mb-8 max-w-2xl text-center">
         <span className="rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
           🗺️ {t("explore.badge")}
         </span>
-        <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl">
+        <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
           {t("explore.title")}
         </h1>
-        <p className="mt-4 text-pretty text-lg text-muted-foreground">
+        <p className="mt-4 text-pretty text-base text-muted-foreground sm:text-lg">
           {t("explore.subtitle")}
         </p>
       </header>
@@ -64,8 +64,8 @@ export function ExploreView() {
 
       {tab === "places" && (
         <>
-          {/* Category filters */}
-          <div className="mb-10 flex flex-wrap justify-center gap-2">
+          {/* Category filters — scroll rail on mobile, wraps on larger */}
+          <div className="scroll-touch no-scrollbar -mx-[1.15rem] mb-10 flex gap-2 overflow-x-auto px-[1.15rem] pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0">
             <Chip
               label={t("explore.all")}
               active={category === "All"}
@@ -160,7 +160,7 @@ function Chip({
     <button
       onClick={onClick}
       className={cn(
-        "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
+        "shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors active:scale-95 sm:py-1.5",
         active
           ? "border-primary bg-primary text-primary-foreground"
           : "border-border bg-card text-muted-foreground hover:text-foreground",
@@ -196,20 +196,24 @@ function DetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center sm:p-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className="w-full max-w-lg rounded-2xl border border-border bg-card p-8 shadow-2xl"
+        className="max-h-[88vh] w-full overflow-y-auto overscroll-contain rounded-t-3xl border border-border bg-card p-6 shadow-2xl animate-fade-up sm:max-w-lg sm:rounded-2xl sm:p-8"
         onClick={(e) => e.stopPropagation()}
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.5rem)" }}
       >
+        <div className="mb-2 flex justify-center sm:hidden">
+          <span className="h-1.5 w-12 rounded-full bg-border" />
+        </div>
         <div className="flex items-start justify-between">
           <span className="text-5xl">{item.emoji}</span>
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-muted-foreground hover:bg-secondary hover:text-foreground"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground active:scale-90"
             aria-label="Close"
           >
             ✕

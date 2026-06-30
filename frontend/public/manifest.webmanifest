@@ -1,0 +1,20 @@
+{
+  "name": "Akkaverse — Kannada heritage",
+  "short_name": "Akkaverse",
+  "description": "The living universe of Kannada heritage — language, history, festivals, stories and more, grounded in real sources.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#141210",
+  "theme_color": "#141210",
+  "categories": ["education", "lifestyle", "books"],
+  "icons": [
+    {
+      "src": "/icon-app.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

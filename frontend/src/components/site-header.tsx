@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
@@ -21,15 +22,18 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 backdrop-blur-xl">
+    <header
+      className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
       {/* hairline saffron accent */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container flex h-14 items-center justify-between md:h-16">
         <Link href="/" className="group flex items-center gap-2">
           <span className="text-xl transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
             🪔
           </span>
-          <span className="text-lg font-semibold tracking-tight">
+          <span className="text-base font-semibold tracking-tight sm:text-lg">
             Akka<span className="gradient-text">verse</span>
           </span>
         </Link>
@@ -72,12 +76,24 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <LanguageToggle />
           <ModeToggle />
-          <Button size="sm" className="hidden shadow-glow sm:inline-flex" asChild>
+          <Button size="sm" className="hidden shadow-glow lg:inline-flex" asChild>
             <Link href="/chat">{t("common.getStarted")}</Link>
           </Button>
+          {/* Mobile hamburger — opens the full navigation sheet */}
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("akkaverse:toggle-nav"))
+            }
+            aria-label={translations.en["nav.menu"]}
+            aria-haspopup="dialog"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/70 bg-background/60 text-foreground transition-all hover:border-primary/40 hover:text-primary active:scale-90 md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </header>

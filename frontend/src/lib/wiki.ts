@@ -151,3 +151,26 @@ export async function getDistrictInfo(
   cache.set(key, info);
   return info;
 }
+
+/**
+ * Lightweight image-only lookup for any English Wikipedia article title.
+ * Used by the Heritage Journey to fetch correct, high-quality lead photos for
+ * monuments, rulers and artifacts at runtime — Wikipedia article titles are
+ * stable, so this is far more reliable than hard-coding Commons file paths.
+ * Cached in-memory for the session. Returns null on any failure so callers can
+ * fall back to a designed placeholder.
+ */
+const imageCache = new Map<string, string | null>();
+
+export async function getPageImage(title: string): Promise<string | null> {
+  const cached = imageCache.get(title);
+  if (cached !== undefined) return cached;
+
+  const summary = await fetchSummary("en", title);
+  let src =
+    summary?.originalimage?.source ?? summary?.thumbnail?.source ?? null;
+  if (!src) src = await fetchPageImage("en", title);
+
+  imageCache.set(title, src);
+  return src;
+}

@@ -30,7 +30,7 @@ export function SpeechBar() {
   };
 
   return (
-    <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 animate-fade-up">
+    <div className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] left-1/2 z-40 -translate-x-1/2 px-3 animate-fade-up md:bottom-5 md:z-50">
       <div className="flex items-center gap-1.5 rounded-full border border-border bg-card/95 p-1.5 pl-3 shadow-lg backdrop-blur">
         <span className="mr-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
           <Volume2 className="h-3.5 w-3.5 text-primary" />

@@ -24,6 +24,7 @@ type Dict = Record<string, string>;
 const en: Dict = {
   // ---- brand / nav ----
   "brand.tagline": "The living universe of Kannada heritage.",
+  "nav.home": "Home",
   "nav.assistant": "Assistant",
   "nav.learn": "Learn",
   "nav.explore": "Explore",
@@ -31,13 +32,17 @@ const en: Dict = {
   "nav.stories": "Stories",
   "nav.timeline": "Timeline",
   "nav.quiz": "Quiz",
+  "nav.tools": "Tools",
   "nav.about": "Our Story",
   "nav.memories": "Memory Wall",
+  "nav.more": "More",
+  "nav.menu": "Menu",
   "common.getStarted": "Get started",
   "common.soon": "Soon",
   "common.all": "All",
   "common.backHome": "Back to home",
   "common.listen": "Listen",
+  "common.close": "Close",
 
   // ---- home ----
   "home.badge": "Preserving Kannada heritage with AI",
@@ -224,6 +229,7 @@ const en: Dict = {
 const kn: Dict = {
   // ---- brand / nav ----
   "brand.tagline": "ಕನ್ನಡ ಪರಂಪರೆಯ ಜೀವಂತ ವಿಶ್ವ.",
+  "nav.home": "ಮುಖಪುಟ",
   "nav.assistant": "ಸಹಾಯಕ",
   "nav.learn": "ಕಲಿ",
   "nav.explore": "ಅನ್ವೇಷಿಸಿ",
@@ -231,13 +237,17 @@ const kn: Dict = {
   "nav.stories": "ಕಥೆಗಳು",
   "nav.timeline": "ಕಾಲರೇಖೆ",
   "nav.quiz": "ರಸಪ್ರಶ್ನೆ",
+  "nav.tools": "ಉಪಕರಣಗಳು",
   "nav.about": "ನಮ್ಮ ಕಥೆ",
   "nav.memories": "ನೆನಪಿನ ಗೋಡೆ",
+  "nav.more": "ಇನ್ನಷ್ಟು",
+  "nav.menu": "ಮೆನು",
   "common.getStarted": "ಪ್ರಾರಂಭಿಸಿ",
   "common.soon": "ಶೀಘ್ರದಲ್ಲೇ",
   "common.all": "ಎಲ್ಲಾ",
   "common.backHome": "ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ",
   "common.listen": "ಕೇಳಿ",
+  "common.close": "ಮುಚ್ಚಿ",
 
   // ---- home ----
   "home.badge": "AI ಮೂಲಕ ಕನ್ನಡ ಪರಂಪರೆಯ ಸಂರಕ್ಷಣೆ",

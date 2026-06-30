@@ -1,17 +1,26 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/i18n/language-provider";
 import { SiteHeader } from "@/components/site-header";
+import { MobileNav } from "@/components/mobile-nav";
 import { SpeechBar } from "@/components/ui/speech-bar";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { ServiceWorker } from "@/components/service-worker";
 import "./globals.css";
 
 // `variable` exposes the font as the `--font-sans` CSS var used by Tailwind.
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://akkaverse.vercel.app"),
+  applicationName: siteConfig.name,
   title: {
     default: `${siteConfig.name} — The living universe of Kannada heritage`,
     template: `%s · ${siteConfig.name}`,
@@ -27,6 +36,23 @@ export const metadata: Metadata = {
     "language learning",
     "history",
     "culture",
+  ],
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: siteConfig.name,
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbf8f3" },
+    { media: "(prefers-color-scheme: dark)", color: "#141210" },
   ],
 };
 
@@ -44,11 +70,16 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
+            <ScrollProgress />
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:pb-0">
+                {children}
+              </main>
             </div>
+            <MobileNav />
             <SpeechBar />
+            <ServiceWorker />
           </LanguageProvider>
         </ThemeProvider>
       </body>

@@ -210,3 +210,694 @@ body::before {
   }
 }
 
+/* =====================================================================
+ * Premium motion layer
+ * Scroll-reveal, animated gradients, signature glyph, and the small
+ * delight details that separate a portfolio piece from a product.
+ * ===================================================================== */
+
+/* Living gradient text — the saffron→amber drifts slowly for a premium,
+ * never-quite-static feel. Reuses the .gradient-text colors. */
+.gradient-text {
+  background-size: 200% auto;
+  animation: text-sheen 8s ease-in-out infinite;
+}
+@keyframes text-sheen {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/* Top-of-page scroll progress meter (saffron hairline). */
+.scroll-progress {
+  transform-origin: 0 50%;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary)),
+    hsl(38 95% 55%),
+    hsl(14 90% 55%)
+  );
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.6);
+}
+
+/* Scroll-reveal: elements start lowered + faded, then settle into place.
+ * Toggled by an IntersectionObserver adding `.is-visible`. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Giant ambient Kannada glyph behind the hero — culture as texture. */
+.signature-glyph {
+  background-image: linear-gradient(
+    160deg,
+    hsl(var(--primary) / 0.16),
+    hsl(38 95% 55% / 0.05) 60%,
+    transparent
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  user-select: none;
+}
+
+/* Cursor caret for the streaming assistant typewriter. */
+.type-caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.5ch;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: hsl(var(--primary));
+  animation: caret-blink 1s steps(2, start) infinite;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Interactive cursor-tracked spotlight wash for premium cards. Pairs with
+ * the `.spotlight` class + --mx/--my custom props set on pointermove. */
+.spotlight {
+  position: relative;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    16rem 16rem at var(--mx, 50%) var(--my, 0%),
+    hsl(var(--primary) / 0.16),
+    transparent 60%
+  );
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Soft entrance for the assistant's avatar pulse-ring. */
+@keyframes orbit-ping {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  80%,
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+.orbit-ping {
+  animation: orbit-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* --- Heritage Journey: cinematic motion --- */
+@keyframes ken-burns {
+  0% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+    transform-origin: 50% 50%;
+  }
+  100% {
+    transform: scale(1.14) translate3d(0, -1.5%, 0);
+    transform-origin: 50% 40%;
+  }
+}
+
+.animate-ken-burns {
+  animation: ken-burns 18s ease-out forwards alternate;
+}
+
+@keyframes journey-pin-ping {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.8;
+  }
+  80%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.journey-pin-ping {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: journey-pin-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* --- Story Theater: cinematic scenes, storybook & ambient particles --- */
+@keyframes scene-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(40px, 8px, 0);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+@keyframes scene-in-rev {
+  0% {
+    opacity: 0;
+    transform: translate3d(-40px, 8px, 0);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+.animate-scene-in {
+  animation: scene-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-scene-in-rev {
+  animation: scene-in-rev 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes page-turn {
+  0% {
+    opacity: 0;
+    transform: rotateY(-22deg) translateX(40px);
+    transform-origin: left center;
+  }
+  100% {
+    opacity: 1;
+    transform: rotateY(0) translateX(0);
+  }
+}
+@keyframes page-turn-rev {
+  0% {
+    opacity: 0;
+    transform: rotateY(22deg) translateX(-40px);
+    transform-origin: right center;
+  }
+  100% {
+    opacity: 1;
+    transform: rotateY(0) translateX(0);
+  }
+}
+.animate-page-turn {
+  animation: page-turn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-page-turn-rev {
+  animation: page-turn-rev 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Aged parchment for Storybook mode */
+.story-paper {
+  background-color: #f4ecd8;
+  background-image:
+    radial-gradient(circle at 20% 18%, rgba(120, 90, 40, 0.07), transparent 60%),
+    radial-gradient(circle at 80% 82%, rgba(120, 90, 40, 0.08), transparent 55%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(150, 120, 70, 0.025) 0,
+      rgba(150, 120, 70, 0.025) 1px,
+      transparent 1px,
+      transparent 22px
+    );
+}
+.story-book {
+  background: #15100b;
+}
+.story-hand {
+  font-family: "Segoe Script", "Bradley Hand", "Comic Sans MS", cursive;
+}
+
+/* Ambient particles — shapes differ per mood */
+.story-bit {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform, opacity;
+}
+.story-bit--firefly {
+  background: radial-gradient(circle, rgba(255, 240, 170, 0.95), rgba(255, 200, 80, 0));
+  box-shadow: 0 0 8px rgba(255, 220, 120, 0.7);
+  animation: bit-firefly linear infinite;
+}
+.story-bit--ember {
+  background: radial-gradient(circle, rgba(255, 180, 90, 0.95), rgba(255, 90, 30, 0));
+  box-shadow: 0 0 10px rgba(255, 120, 50, 0.7);
+  animation: bit-rise linear infinite;
+}
+.story-bit--spark {
+  background: radial-gradient(circle, rgba(255, 235, 170, 0.95), rgba(245, 190, 60, 0));
+  box-shadow: 0 0 10px rgba(250, 204, 80, 0.7);
+  animation: bit-rise linear infinite;
+}
+.story-bit--lotus {
+  border-radius: 60% 0 60% 0;
+  background: linear-gradient(135deg, rgba(221, 200, 255, 0.9), rgba(167, 139, 250, 0.4));
+  animation: bit-float-up linear infinite;
+}
+.story-bit--dust {
+  background: radial-gradient(circle, rgba(210, 210, 225, 0.6), rgba(150, 150, 170, 0));
+  animation: bit-drift linear infinite;
+}
+@keyframes bit-firefly {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(var(--drift), -40px, 0);
+    opacity: 0;
+  }
+}
+@keyframes bit-rise {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift), -90vh, 0);
+    opacity: 0;
+  }
+}
+@keyframes bit-float-up {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift), -85vh, 0) rotate(220deg);
+    opacity: 0;
+  }
+}
+@keyframes bit-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift), 30px, 0);
+    opacity: 0;
+  }
+}
+
+/* =====================================================================
+ * Mobile-first refinements
+ * Touch ergonomics, momentum scrolling, safe areas and carousel helpers
+ * that make the phone experience feel like a native app rather than a
+ * shrunk-down website.
+ * ===================================================================== */
+
+html {
+  /* iOS: never auto-inflate font sizes in landscape. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Anchored jumps clear the sticky header. */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  /* Kill accidental sideways scroll from decorative blobs/glyphs without
+     creating a new scroll container (clip, not hidden). */
+  overflow-x: clip;
+}
+
+/* Snappier taps: remove the 300ms delay + grey flash on touch. */
+a,
+button,
+[role="button"],
+input,
+select,
+textarea,
+label,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+a,
+button,
+[role="button"],
+summary {
+  touch-action: manipulation;
+}
+
+/* Comfortable, native-feeling momentum scroll for horizontal rails. */
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* Hide scrollbars on swipeable carousels (keep it clean, keep it scrollable). */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Edge-to-edge horizontal carousel: full-bleed on mobile, padded ends so the
+   first/last card isn't glued to the screen edge. Pair with snap utilities. */
+.edge-carousel {
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 1.15rem;
+}
+.edge-carousel > * {
+  scroll-snap-align: start;
+}
+
+/* Dynamic viewport height — fills the screen accounting for mobile browser
+   chrome (address bar) without the classic 100vh overflow. */
+.min-h-dvh {
+  min-height: 100vh; /* fallback */
+  min-height: 100dvh;
+}
+.h-dvh {
+  height: 100vh; /* fallback */
+  height: 100dvh;
+}
+
+/* Safe-area helpers for notched devices / installed PWA. */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* On touch devices, hover-only lift/spotlight effects can feel sticky after a
+   tap. Disable the translate-on-hover micro-interactions where there's no
+   real hover, but keep active (press) feedback. */
+@media (hover: none) {
+  .glow-ring:hover::after {
+    opacity: 0;
+    animation: none;
+  }
+  .spotlight:hover::before {
+    opacity: 0;
+  }
+}
+
+/* Respect users who prefer less motion — turn off the showy stuff. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns,
+  .journey-pin-ping,
+  .story-bit,
+  .fest-bit,
+  .fest-invite,
+  .animate-page-turn,
+  .animate-page-turn-rev {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .gradient-text,
+  .orbit-ping,
+  .type-caret::after {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* =====================================================================
+ * Festival Worlds — immersive, per-festival cinematic motion
+ * Each festival sets --accent / --accent2 and an ambient particle theme.
+ * ===================================================================== */
+
+/* The full-screen colour wash behind a festival world. */
+.fest-sky {
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgb(var(--accent) / 0.22), transparent 60%),
+    radial-gradient(100% 80% at 80% 110%, rgb(var(--accent2) / 0.18), transparent 55%),
+    linear-gradient(180deg, rgb(var(--sky-top)) 0%, rgb(var(--sky-bottom)) 100%);
+}
+
+/* Ambient particle field — shapes & motion vary per festival. */
+.fest-bit {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.fest-bit--petal {
+  width: 14px;
+  height: 14px;
+  border-radius: 70% 0 70% 0;
+  background: linear-gradient(135deg, rgb(var(--accent) / 0.95), rgb(var(--accent2) / 0.5));
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.15));
+  animation: fest-fall linear infinite;
+}
+.fest-bit--diya,
+.fest-bit--spark {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 224, 150, 0.98), rgb(var(--accent) / 0));
+  box-shadow: 0 0 10px 2px rgb(var(--accent) / 0.75);
+  animation: fest-rise linear infinite;
+}
+.fest-bit--royal {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 236, 170, 0.95), rgb(var(--accent) / 0));
+  box-shadow: 0 0 12px 2px rgb(var(--accent) / 0.6);
+  animation: fest-twinkle ease-in-out infinite;
+}
+.fest-bit--torch {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 180, 90, 0.95), rgb(var(--accent) / 0));
+  box-shadow: 0 0 12px 3px rgb(var(--accent) / 0.7);
+  animation: fest-rise linear infinite;
+}
+.fest-bit--rain {
+  width: 2px;
+  height: 54px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, transparent, rgb(var(--accent) / 0.7));
+  animation: fest-rain linear infinite;
+}
+.fest-bit--kite {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, rgb(var(--accent) / 0.95), rgb(var(--accent2) / 0.85));
+  transform: rotate(45deg);
+  animation: fest-fall linear infinite;
+}
+.fest-bit--lotus {
+  width: 16px;
+  height: 16px;
+  border-radius: 60% 0 60% 0;
+  background: linear-gradient(135deg, rgb(var(--accent) / 0.85), rgb(var(--accent2) / 0.45));
+  animation: fest-floatup linear infinite;
+}
+.fest-bit--dust {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(var(--accent) / 0.5), transparent);
+  animation: fest-drift linear infinite;
+}
+
+@keyframes fest-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(var(--drift, 40px), 108vh, 0) rotate(360deg);
+    opacity: 0;
+  }
+}
+@keyframes fest-rise {
+  0% {
+    transform: translate3d(0, 12vh, 0) scale(0.7);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift, 20px), -110vh, 0) scale(1);
+    opacity: 0;
+  }
+}
+@keyframes fest-twinkle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.6);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translate3d(var(--drift, 10px), -10px, 0) scale(1.3);
+    opacity: 1;
+  }
+}
+@keyframes fest-rain {
+  0% {
+    transform: translate3d(0, -12vh, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(var(--drift, -30px), 112vh, 0);
+    opacity: 0.2;
+  }
+}
+@keyframes fest-floatup {
+  0% {
+    transform: translate3d(0, 12vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(var(--drift, 30px), -110vh, 0) rotate(240deg);
+    opacity: 0;
+  }
+}
+@keyframes fest-drift {
+  0% {
+    transform: translate3d(0, 8vh, 0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(var(--drift, 30px), -40px, 0);
+    opacity: 0;
+  }
+}
+
+/* WOW: a single lamp/bulb that ignites. Toggle .is-lit to light it. */
+.fest-lamp {
+  transition:
+    color 0.5s ease,
+    filter 0.6s ease,
+    opacity 0.6s ease,
+    transform 0.5s ease;
+  color: rgb(var(--accent) / 0.18);
+  opacity: 0.45;
+}
+.fest-lamp.is-lit {
+  color: rgb(var(--accent));
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgb(var(--accent) / 0.9))
+    drop-shadow(0 0 14px rgb(var(--accent2) / 0.6));
+  transform: translateZ(0) scale(1.06);
+}
+
+/* WOW: the palace silhouette glow that grows with the lit ratio. */
+.fest-glow-veil {
+  background: radial-gradient(
+    120% 90% at 50% 100%,
+    rgb(var(--accent) / 0.5),
+    rgb(var(--accent2) / 0.18) 45%,
+    transparent 70%
+  );
+  transition: opacity 0.8s ease;
+}
+
+/* A soft pulsing call-to-interact ring. */
+@keyframes fest-invite {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(var(--accent) / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgb(var(--accent) / 0);
+  }
+}
+.fest-invite {
+  animation: fest-invite 2.2s ease-out infinite;
+}
+
+/* Stroke-draw reveal for the self-drawing rangoli wow moment. */
+.fest-draw path,
+.fest-draw circle,
+.fest-draw line,
+.fest-draw polygon {
+  stroke-dasharray: var(--len, 600);
+  stroke-dashoffset: var(--len, 600);
+  transition: stroke-dashoffset 1.4s ease;
+}
+.fest-draw.is-drawn path,
+.fest-draw.is-drawn circle,
+.fest-draw.is-drawn line,
+.fest-draw.is-drawn polygon {
+  stroke-dashoffset: 0;
+}
+
+/* Mode-content cross-fade. */
+@keyframes fest-mode-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+.fest-mode-in {
+  animation: fest-mode-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+

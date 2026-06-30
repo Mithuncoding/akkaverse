@@ -95,15 +95,15 @@ export function QuizView() {
   };
 
   return (
-    <div className="container py-16 md:py-24">
-      <header className="mx-auto mb-10 max-w-2xl text-center">
+    <div className="container py-12 md:py-24">
+      <header className="mx-auto mb-8 max-w-2xl text-center md:mb-10">
         <span className="rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
           🧠 {t("quiz.badge")}
         </span>
-        <h1 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">
+        <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
           {t("quiz.title")}
         </h1>
-        <p className="mt-3 text-muted-foreground">{t("quiz.subtitle")}</p>
+        <p className="mt-3 text-sm text-muted-foreground sm:text-base">{t("quiz.subtitle")}</p>
       </header>
 
       <div className="mx-auto max-w-2xl">
