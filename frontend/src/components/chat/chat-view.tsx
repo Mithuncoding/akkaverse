@@ -36,6 +36,7 @@ export function ChatView() {
   const [thinking, setThinking] = React.useState(false);
   const [listening, setListening] = React.useState(false);
   const [aiEnabled, setAiEnabled] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const streamTimer = React.useRef<number | null>(null);
 
@@ -45,6 +46,10 @@ export function ChatView() {
     { icon: PartyPopper, text: t("chat.suggest3") },
     { icon: Languages, text: t("chat.suggest4") },
   ];
+
+  // Speech APIs only exist in the browser. Render client-only controls after
+  // mount so the server and first client render match (avoids hydration error).
+  React.useEffect(() => setMounted(true), []);
 
   React.useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -263,7 +268,7 @@ export function ChatView() {
           }}
           className="flex items-center gap-2 rounded-xl border border-border bg-background p-2 shadow-sm transition-colors focus-within:border-primary/50 focus-within:shadow-glow"
         >
-          {canListen() && (
+          {mounted && canListen() && (
             <Button
               type="button"
               variant={listening ? "default" : "ghost"}
