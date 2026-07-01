@@ -114,7 +114,7 @@ export function ChatView() {
       void (async () => {
         const id = crypto.randomUUID();
 
-        // Try real, live token streaming from the server (NVIDIA NIM).
+        // Try real, live token streaming from the server.
         if (aiEnabled) {
           setThinking(false);
           setMessages((m) => [
@@ -138,7 +138,7 @@ export function ChatView() {
 
           if (full && full.trim()) {
             const sources = Array.from(
-              new Set([...local.sources, "NVIDIA NIM · Llama 3.1"]),
+              new Set([...local.sources, "Akka AI"]),
             );
             setMessages((m) =>
               m.map((msg) =>
@@ -189,7 +189,7 @@ export function ChatView() {
           ✨ {t("chat.badge")}
           {aiEnabled && (
             <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-primary">
-              NVIDIA NIM
+              AI
             </span>
           )}
         </span>
