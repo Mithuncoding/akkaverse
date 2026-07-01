@@ -6,7 +6,7 @@ import { Send, Mic, Sparkles, BookOpen, Compass, Landmark, PartyPopper, Language
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
 import { answerQuestion } from "@/data/knowledge";
-import { askGemini, getAiEnabled } from "@/lib/gemini";
+import { streamAkka, getAiEnabled } from "@/lib/gemini";
 import { listen, canListen, canSpeak } from "@/lib/speech";
 import { ReadAloud } from "@/components/ui/read-aloud";
 import { Button } from "@/components/ui/button";
@@ -107,29 +107,60 @@ export function ChatView() {
       setInput("");
       setThinking(true);
 
-      // Always retrieve the curated, cited answer first — it grounds Gemini
+      // Always retrieve the curated, cited answer first — it grounds Akka
       // and is the fallback when no key is set or the call fails.
       const local = answerQuestion(text, locale);
 
       void (async () => {
-        let replyText = local.text;
-        let sources = local.sources;
+        const id = crypto.randomUUID();
 
+        // Try real, live token streaming from the server (NVIDIA NIM).
         if (aiEnabled) {
-          const ai = await askGemini(text, local.text);
-          if (ai?.text) {
-            replyText = ai.text;
-            sources = Array.from(new Set([...local.sources, "Gemini 2.5 Flash-Lite"]));
+          setThinking(false);
+          setMessages((m) => [
+            ...m,
+            { id, role: "assistant", text: "", streaming: true },
+          ]);
+          let streamed = "";
+          const full = await streamAkka(text, local.text, {
+            onToken: (tok) => {
+              streamed += tok;
+              setMessages((m) =>
+                m.map((msg) =>
+                  msg.id === id ? { ...msg, text: streamed } : msg,
+                ),
+              );
+              scrollRef.current?.scrollTo({
+                top: scrollRef.current.scrollHeight,
+              });
+            },
+          });
+
+          if (full && full.trim()) {
+            const sources = Array.from(
+              new Set([...local.sources, "NVIDIA NIM · Llama 3.1"]),
+            );
+            setMessages((m) =>
+              m.map((msg) =>
+                msg.id === id
+                  ? { ...msg, text: full, streaming: false, sources }
+                  : msg,
+              ),
+            );
+            return;
           }
+
+          // Streaming failed — gracefully replace with the curated answer.
+          setMessages((m) => m.filter((msg) => msg.id !== id));
         }
 
-        const id = crypto.randomUUID();
+        // Fallback: reveal the curated, cited answer word-by-word.
         setThinking(false);
         setMessages((m) => [
           ...m,
           { id, role: "assistant", text: "", streaming: true },
         ]);
-        streamReply(id, replyText, sources);
+        streamReply(id, local.text, local.sources);
       })();
     },
     [locale, streamReply, aiEnabled],
@@ -158,7 +189,7 @@ export function ChatView() {
           ✨ {t("chat.badge")}
           {aiEnabled && (
             <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-primary">
-              Gemini
+              NVIDIA NIM
             </span>
           )}
         </span>

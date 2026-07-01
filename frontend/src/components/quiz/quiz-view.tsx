@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Trophy, RotateCcw, Check, X, Sparkles } from "lucide-react";
+import { Trophy, RotateCcw, Check, X, Sparkles, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n/language-provider";
+import { streamAkka } from "@/lib/ai/client";
+import { buildQuizContext } from "@/lib/ai/grounding";
 import {
   QUIZ_TOPICS,
   DIFFICULTIES,
@@ -31,7 +33,7 @@ function loadLeaderboard(): LeaderEntry[] {
 
 /** AI Quiz Generator — setup, play, score, and a persistent local leaderboard. */
 export function QuizView() {
-  const { t, bi } = useTranslation();
+  const { t, bi, locale } = useTranslation();
 
   const [phase, setPhase] = React.useState<Phase>("setup");
   const [topic, setTopic] = React.useState<QuizTopic | "All">("All");
@@ -183,6 +185,10 @@ export function QuizView() {
             </div>
 
             {selected !== null && (
+              <QuizExplain key={current.id} q={current} locale={locale} bi={bi} />
+            )}
+
+            {selected !== null && (
               <Button onClick={next} className="mt-6 w-full">
                 {isLast ? t("quiz.finish") : t("quiz.next")}
               </Button>
@@ -209,6 +215,96 @@ export function QuizView() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/**
+ * QuizExplain — a lazy, grounded, streamed "why is this right?" panel.
+ *
+ * Costs nothing until the learner asks: the AI call fires only on click (lazy
+ * generation), grounded with a tiny context (question + options + answer) to
+ * keep tokens minimal. Streams in live; degrades gracefully if AI is offline.
+ */
+function QuizExplain({
+  q,
+  locale,
+  bi,
+}: {
+  q: QuizQuestion;
+  locale: string;
+  bi: (en: string, kn: string) => string;
+}) {
+  const [text, setText] = React.useState("");
+  const [busy, setBusy] = React.useState(false);
+  const [asked, setAsked] = React.useState(false);
+
+  const explain = React.useCallback(async () => {
+    if (busy) return;
+    setBusy(true);
+    setAsked(true);
+    setText("");
+    const context = buildQuizContext({
+      question: q.en.q,
+      options: q.en.options,
+      correct: q.en.options[q.answer],
+      topic: q.topic,
+    });
+    const directive =
+      locale === "kn" ? " Please reply in Kannada." : "";
+    let acc = "";
+    const full = await streamAkka(
+      `Explain why the correct answer is right, and add one memorable fact.${directive}`,
+      context,
+      {
+        onToken: (tok) => {
+          acc += tok;
+          setText(acc);
+        },
+      },
+    );
+    setBusy(false);
+    if (!full || !full.trim()) {
+      setText(
+        bi(
+          "AI explanations aren’t available right now — but the highlighted option above is the correct one.",
+          "ಈಗ AI ವಿವರಣೆ ಲಭ್ಯವಿಲ್ಲ — ಮೇಲಿನ ಹೈಲೈಟ್ ಆದ ಆಯ್ಕೆಯೇ ಸರಿ.",
+        ),
+      );
+    }
+  }, [busy, q, locale, bi]);
+
+  if (!asked) {
+    return (
+      <button
+        onClick={explain}
+        className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-all hover:bg-primary/20 active:scale-95"
+      >
+        <Sparkles className="h-4 w-4" />
+        {bi("Explain with AI", "AI ಮೂಲಕ ವಿವರಿಸಿ")}
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-5 rounded-xl border border-primary/25 bg-primary/5 p-4">
+      <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+        <Sparkles className="h-3.5 w-3.5" />
+        {bi("Akka explains", "ಅಕ್ಕ ವಿವರಿಸುತ್ತಾಳೆ")}
+      </div>
+      {busy && !text ? (
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          {bi("Thinking…", "ಯೋಚಿಸುತ್ತಿದೆ…")}
+        </p>
+      ) : (
+        <p
+          className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90"
+          aria-live="polite"
+        >
+          {text}
+        </p>
+      )}
     </div>
   );
 }

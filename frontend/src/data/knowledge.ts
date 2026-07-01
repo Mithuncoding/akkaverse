@@ -63,8 +63,8 @@ export const knowledgeBase: KnowledgeAnswer[] = [
 ];
 
 const FALLBACK = {
-  en: "I'm the Akkaverse demo assistant. I can tell you about Hampi, Basavanna, Mysore Dasara, Yakshagana, Belur & Halebidu, Karnataka history, and the Kannada language. Connect a Gemini API key in the backend to unlock open-ended RAG answers on any topic.",
-  kn: "ನಾನು ಅಕ್ಕವರ್ಸ್ ಡೆಮೊ ಸಹಾಯಕ. ಹಂಪಿ, ಬಸವಣ್ಣ, ಮೈಸೂರು ದಸರಾ, ಯಕ್ಷಗಾನ, ಬೇಲೂರು-ಹಳೇಬೀಡು, ಕರ್ನಾಟಕ ಇತಿಹಾಸ ಮತ್ತು ಕನ್ನಡ ಭಾಷೆಯ ಬಗ್ಗೆ ಹೇಳಬಲ್ಲೆ. ಯಾವುದೇ ವಿಷಯದ ಮೇಲೆ ಉತ್ತರಗಳಿಗಾಗಿ ಬ್ಯಾಕೆಂಡ್‌ನಲ್ಲಿ Gemini API ಕೀ ಸಂಪರ್ಕಿಸಿ.",
+  en: "I'm Akka, your Akkaverse guide. I can tell you about Hampi, Basavanna, Mysore Dasara, Yakshagana, Belur & Halebidu, Karnataka history, and the Kannada language. Ask me anything about Karnataka's heritage!",
+  kn: "ನಾನು ಅಕ್ಕ, ನಿಮ್ಮ ಅಕ್ಕವರ್ಸ್ ಮಾರ್ಗದರ್ಶಿ. ಹಂಪಿ, ಬಸವಣ್ಣ, ಮೈಸೂರು ದಸರಾ, ಯಕ್ಷಗಾನ, ಬೇಲೂರು-ಹಳೇಬೀಡು, ಕರ್ನಾಟಕ ಇತಿಹಾಸ ಮತ್ತು ಕನ್ನಡ ಭಾಷೆಯ ಬಗ್ಗೆ ಹೇಳಬಲ್ಲೆ. ಕರ್ನಾಟಕದ ಪರಂಪರೆಯ ಬಗ್ಗೆ ಏನಾದರೂ ಕೇಳಿ!",
 };
 
 export type AssistantReply = { text: string; sources: string[] };

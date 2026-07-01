@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Compass, Sparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -60,6 +61,43 @@ export function FestivalsView() {
             )}
           </p>
         </header>
+
+        {/* Flagship: The Living Archive of Mysuru Dasara */}
+        <section className="mx-auto mt-12 max-w-4xl">
+          <Link
+            href="/festivals/dasara"
+            className="group relative block overflow-hidden rounded-3xl ring-1 ring-amber-500/30 transition-all hover:ring-amber-400/60"
+          >
+            <JourneyFigure
+              wiki="Mysore Palace"
+              alt="The Living Archive of Mysuru Dasara"
+              rounded="none"
+              kenBurns
+              className="absolute inset-0 h-full w-full"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0b0805]/95 via-[#0b0805]/70 to-transparent" />
+            <div className="relative flex min-h-[220px] flex-col justify-center gap-3 p-6 sm:p-9">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-amber-300/40 bg-amber-100/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-200 backdrop-blur">
+                🏛 {bi("New · Flagship Archive", "ಹೊಸತು · ಪ್ರಮುಖ ಆರ್ಕೈವ್")}
+              </span>
+              <h2 className="max-w-xl text-balance text-2xl font-black leading-tight text-amber-50 sm:text-4xl">
+                {bi(
+                  "The Living Archive of Mysuru Dasara",
+                  "ಮೈಸೂರು ದಸರಾದ ಜೀವಂತ ಆರ್ಕೈವ್",
+                )}
+              </h2>
+              <p className="max-w-lg text-pretty text-sm text-amber-100/80 sm:text-base">
+                {bi(
+                  "Travel a century year by year. Scrub the Time Machine, compare eras, uncover hidden treasures, and ask the AI historian.",
+                  "ಶತಮಾನವನ್ನು ವರ್ಷದಿಂದ ವರ್ಷಕ್ಕೆ ಪ್ರಯಾಣಿಸಿ. ಟೈಮ್ ಮೆಶೀನ್ ಸರಿಸಿ, ಯುಗಗಳನ್ನು ಹೋಲಿಸಿ, ಗುಪ್ತ ನಿಧಿಗಳನ್ನು ಕಂಡುಕೊಳ್ಳಿ.",
+                )}
+              </p>
+              <span className="mt-1 inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-400 px-4 py-2 text-sm font-bold text-black transition-transform group-hover:translate-x-1">
+                {bi("Enter the archive", "ಆರ್ಕೈವ್ ಪ್ರವೇಶಿಸಿ")} →
+              </span>
+            </div>
+          </Link>
+        </section>
 
         {/* Discover by feeling */}
         <section className="mx-auto mt-12 max-w-3xl">
