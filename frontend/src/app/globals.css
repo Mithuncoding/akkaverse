@@ -705,6 +705,21 @@ summary {
   outline: none;
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   Quiz — confetti burst on correct answers
+   ══════════════════════════════════════════════════════════════════════ */
+.quiz-confetti {
+  animation-name: quiz-confetti-fall;
+  animation-timing-function: cubic-bezier(0.3, 0.7, 0.4, 1);
+  animation-fill-mode: forwards;
+  will-change: transform, opacity;
+}
+@keyframes quiz-confetti-fall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+}
+
 /* Respect users who prefer less motion — turn off the showy stuff. */
 @media (prefers-reduced-motion: reduce) {
   .animate-ken-burns,
@@ -716,7 +731,8 @@ summary {
   .animate-page-turn-rev,
   .dasara-grain,
   .dasara-bulbs,
-  .dasara-capsule-in {
+  .dasara-capsule-in,
+  .quiz-confetti {
     animation: none !important;
   }
   .reveal {

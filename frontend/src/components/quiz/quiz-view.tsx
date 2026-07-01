@@ -1,384 +1,250 @@
 "use client";
 
 import * as React from "react";
-import { Trophy, RotateCcw, Check, X, Sparkles, Loader2 } from "lucide-react";
+import { Trophy, Flame, Sparkles, ChevronRight, RotateCcw } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n/language-provider";
-import { streamAkka } from "@/lib/ai/client";
-import { buildQuizContext } from "@/lib/ai/grounding";
+import { JourneyFigure } from "@/components/timeline/journey-figure";
+import { CountUp } from "@/components/ui/count-up";
+import { QuizArena } from "@/components/quiz/quiz-arena";
+import { QuizMuseum } from "@/components/quiz/quiz-museum";
 import {
-  QUIZ_TOPICS,
-  DIFFICULTIES,
-  generateQuiz,
-  type QuizTopic,
-  type Difficulty,
-  type QuizQuestion,
-} from "@/data/quiz";
-
-type Phase = "setup" | "playing" | "done";
-
-type LeaderEntry = { name: string; score: number; total: number; at: number };
-const LB_KEY = "akkaverse.leaderboard";
-
-function loadLeaderboard(): LeaderEntry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(window.localStorage.getItem(LB_KEY) ?? "[]");
-  } catch {
-    return [];
-  }
-}
-
-/** AI Quiz Generator — setup, play, score, and a persistent local leaderboard. */
-export function QuizView() {
-  const { t, bi, locale } = useTranslation();
-
-  const [phase, setPhase] = React.useState<Phase>("setup");
-  const [topic, setTopic] = React.useState<QuizTopic | "All">("All");
-  const [difficulty, setDifficulty] = React.useState<Difficulty | "All">("All");
-
-  const [questions, setQuestions] = React.useState<QuizQuestion[]>([]);
-  const [index, setIndex] = React.useState(0);
-  const [selected, setSelected] = React.useState<number | null>(null);
-  const [score, setScore] = React.useState(0);
-  const [board, setBoard] = React.useState<LeaderEntry[]>([]);
-
-  React.useEffect(() => setBoard(loadLeaderboard()), []);
-
-  const start = () => {
-    const q = generateQuiz(topic, difficulty, 5);
-    if (q.length === 0) return;
-    setQuestions(q);
-    setIndex(0);
-    setScore(0);
-    setSelected(null);
-    setPhase("playing");
-  };
-
-  const current = questions[index];
-  const isLast = index === questions.length - 1;
-
-  const choose = (optionIndex: number) => {
-    if (selected !== null) return;
-    setSelected(optionIndex);
-    if (optionIndex === current.answer) setScore((s) => s + 1);
-  };
-
-  const next = () => {
-    if (isLast) {
-      finish();
-      return;
-    }
-    setIndex((i) => i + 1);
-    setSelected(null);
-  };
-
-  const finish = () => {
-    const finalScore = score; // score already includes the last correct answer
-    const entry: LeaderEntry = {
-      name: "You",
-      score: finalScore,
-      total: questions.length,
-      at: Date.now(),
-    };
-    const updated = [...loadLeaderboard(), entry]
-      .sort((a, b) => b.score / b.total - a.score / a.total || b.at - a.at)
-      .slice(0, 8);
-    window.localStorage.setItem(LB_KEY, JSON.stringify(updated));
-    setBoard(updated);
-    setPhase("done");
-  };
-
-  const reset = () => {
-    setPhase("setup");
-    setSelected(null);
-  };
-
-  return (
-    <div className="container py-12 md:py-24">
-      <header className="mx-auto mb-8 max-w-2xl text-center md:mb-10">
-        <span className="rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
-          🧠 {t("quiz.badge")}
-        </span>
-        <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
-          {t("quiz.title")}
-        </h1>
-        <p className="mt-3 text-sm text-muted-foreground sm:text-base">{t("quiz.subtitle")}</p>
-      </header>
-
-      <div className="mx-auto max-w-2xl">
-        {phase === "setup" && (
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <Selector
-              label={t("quiz.topic")}
-              options={["All", ...QUIZ_TOPICS]}
-              value={topic}
-              onChange={(v) => setTopic(v as QuizTopic | "All")}
-              render={(v) => (v === "All" ? t("common.all") : t(`quiz.topic.${v}`))}
-            />
-            <div className="h-5" />
-            <Selector
-              label={t("quiz.difficulty")}
-              options={["All", ...DIFFICULTIES]}
-              value={difficulty}
-              onChange={(v) => setDifficulty(v as Difficulty | "All")}
-              render={(v) => (v === "All" ? t("common.all") : t(`diff.${v}`))}
-            />
-            <Button onClick={start} size="lg" className="mt-7 w-full">
-              <Sparkles className="h-4 w-4" /> {t("quiz.start")}
-            </Button>
-
-            {board.length > 0 && <Leaderboard board={board} t={t} />}
-          </div>
-        )}
-
-        {phase === "playing" && current && (
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
-              <span>
-                {t("quiz.question")} {index + 1} {t("quiz.of")} {questions.length}
-              </span>
-              <span className="font-semibold text-primary">
-                {t("quiz.score")}: {score}
-              </span>
-            </div>
-
-            {/* Progress bar */}
-            <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-              <div
-                className="h-full rounded-full bg-primary transition-all"
-                style={{ width: `${((index + 1) / questions.length) * 100}%` }}
-              />
-            </div>
-
-            <h2 className="text-lg font-semibold">
-              {bi(current.en.q, current.kn.q)}
-            </h2>
-
-            <div className="mt-5 space-y-3">
-              {current.en.options.map((enOpt, i) => {
-                  const opt = bi(enOpt, current.kn.options[i] ?? enOpt);
-                  const isCorrect = i === current.answer;
-                  const isChosen = i === selected;
-                  const reveal = selected !== null;
-                  return (
-                    <button
-                      key={i}
-                      onClick={() => choose(i)}
-                      disabled={reveal}
-                      className={cn(
-                        "flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition-all",
-                        !reveal && "border-border hover:border-primary/50 hover:bg-accent",
-                        reveal && isCorrect && "border-emerald-500 bg-emerald-500/10",
-                        reveal && isChosen && !isCorrect && "border-rose-500 bg-rose-500/10",
-                        reveal && !isChosen && !isCorrect && "border-border opacity-60",
-                      )}
-                    >
-                      {opt}
-                      {reveal && isCorrect && <Check className="h-4 w-4 text-emerald-600" />}
-                      {reveal && isChosen && !isCorrect && <X className="h-4 w-4 text-rose-600" />}
-                    </button>
-                  );
-                })}
-            </div>
-
-            {selected !== null && (
-              <QuizExplain key={current.id} q={current} locale={locale} bi={bi} />
-            )}
-
-            {selected !== null && (
-              <Button onClick={next} className="mt-6 w-full">
-                {isLast ? t("quiz.finish") : t("quiz.next")}
-              </Button>
-            )}
-          </div>
-        )}
-
-        {phase === "done" && (
-          <div className="rounded-2xl border border-border bg-card p-8 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Trophy className="h-8 w-8" />
-            </div>
-            <h2 className="mt-4 text-2xl font-bold">{t("quiz.resultTitle")}</h2>
-            <p className="mt-2 text-muted-foreground">
-              {t("quiz.youScored")}{" "}
-              <span className="text-2xl font-bold text-primary">
-                {score}/{questions.length}
-              </span>
-            </p>
-            <Button onClick={reset} className="mt-6">
-              <RotateCcw className="h-4 w-4" /> {t("quiz.restart")}
-            </Button>
-            <Leaderboard board={board} t={t} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+  CATEGORIES,
+  pickQuestions,
+  TOTAL_QUESTIONS,
+  type BankQuestion,
+} from "@/data/quiz-bank";
+import { QUIZ_MODES, type QuizMode } from "@/data/quiz-modes";
+import {
+  COLLECTIBLES,
+  rankFor,
+  useQuizProfile,
+  resetProfile,
+} from "@/lib/quiz/profile";
 
 /**
- * QuizExplain — a lazy, grounded, streamed "why is this right?" panel.
+ * The Quiz — reimagined as an exploration game, not a form.
  *
- * Costs nothing until the learner asks: the AI call fires only on click (lazy
- * generation), grounded with a tiny context (question + options + answer) to
- * keep tokens minimal. Streams in live; degrades gracefully if AI is offline.
+ * A hub of "adventures" (modes) over a large, handcrafted static bank. Play
+ * loads instantly; AI appears only as an on-demand teacher inside the Arena.
+ * Progress, ranks, streaks, achievements and a collectibles museum turn
+ * learning into a journey.
  */
-function QuizExplain({
-  q,
-  locale,
-  bi,
-}: {
-  q: QuizQuestion;
-  locale: string;
-  bi: (en: string, kn: string) => string;
-}) {
-  const [text, setText] = React.useState("");
-  const [busy, setBusy] = React.useState(false);
-  const [asked, setAsked] = React.useState(false);
+export function QuizView() {
+  const { bi } = useTranslation();
+  const profile = useQuizProfile();
+  const [launch, setLaunch] = React.useState<{ mode: QuizMode; questions: BankQuestion[] } | null>(null);
+  const [museum, setMuseum] = React.useState(false);
 
-  const explain = React.useCallback(async () => {
-    if (busy) return;
-    setBusy(true);
-    setAsked(true);
-    setText("");
-    const context = buildQuizContext({
-      question: q.en.q,
-      options: q.en.options,
-      correct: q.en.options[q.answer],
-      topic: q.topic,
-    });
-    const directive =
-      locale === "kn" ? " Please reply in Kannada." : "";
-    let acc = "";
-    const full = await streamAkka(
-      `Explain why the correct answer is right, and add one memorable fact.${directive}`,
-      context,
-      {
-        onToken: (tok) => {
-          acc += tok;
-          setText(acc);
-        },
-      },
-    );
-    setBusy(false);
-    if (!full || !full.trim()) {
-      setText(
-        bi(
-          "AI explanations aren’t available right now — but the highlighted option above is the correct one.",
-          "ಈಗ AI ವಿವರಣೆ ಲಭ್ಯವಿಲ್ಲ — ಮೇಲಿನ ಹೈಲೈಟ್ ಆದ ಆಯ್ಕೆಯೇ ಸರಿ.",
-        ),
-      );
-    }
-  }, [busy, q, locale, bi]);
+  const today = new Date().toISOString().slice(0, 10);
+  const dailyDone = profile.dailyDone === today;
+  const { rank, next, progress } = rankFor(profile.xp);
 
-  if (!asked) {
+  const start = React.useCallback((mode: QuizMode) => {
+    const questions = mode.build();
+    if (questions.length === 0) return;
+    setLaunch({ mode, questions });
+  }, []);
+
+  const startCategory = React.useCallback((catId: (typeof CATEGORIES)[number]) => {
+    const mode: QuizMode = {
+      id: `cat-${catId.id}`,
+      emoji: catId.emoji,
+      en: catId.label.en,
+      kn: catId.label.kn,
+      taglineEn: "",
+      taglineKn: "",
+      accent: catId.accent,
+      accent2: catId.accent2,
+      wiki: catId.wiki,
+      timer: 0,
+      count: 6,
+      build: () => pickQuestions({ cats: [catId.id], n: 6 }),
+    };
+    start(mode);
+  }, [start]);
+
+  if (launch) {
     return (
-      <button
-        onClick={explain}
-        className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-all hover:bg-primary/20 active:scale-95"
-      >
-        <Sparkles className="h-4 w-4" />
-        {bi("Explain with AI", "AI ಮೂಲಕ ವಿವರಿಸಿ")}
-      </button>
+      <QuizArena
+        mode={launch.mode}
+        questions={launch.questions}
+        onExit={() => setLaunch(null)}
+      />
     );
   }
 
-  return (
-    <div className="mt-5 rounded-xl border border-primary/25 bg-primary/5 p-4">
-      <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
-        <Sparkles className="h-3.5 w-3.5" />
-        {bi("Akka explains", "ಅಕ್ಕ ವಿವರಿಸುತ್ತಾಳೆ")}
-      </div>
-      {busy && !text ? (
-        <p className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          {bi("Thinking…", "ಯೋಚಿಸುತ್ತಿದೆ…")}
-        </p>
-      ) : (
-        <p
-          className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90"
-          aria-live="polite"
-        >
-          {text}
-        </p>
-      )}
-    </div>
-  );
-}
+  const collected = COLLECTIBLES.filter((c) => profile.collectibles.includes(c.id)).length;
+  const daily = QUIZ_MODES.find((m) => m.id === "daily")!;
 
-function Selector<T extends string>({
-  label,
-  options,
-  value,
-  onChange,
-  render,
-}: {
-  label: string;
-  options: T[];
-  value: T;
-  onChange: (v: T) => void;
-  render: (v: T) => string;
-}) {
   return (
-    <div>
-      <p className="mb-2 text-sm font-medium">{label}</p>
-      <div className="flex flex-wrap gap-2">
-        {options.map((opt) => (
-          <button
-            key={opt}
-            onClick={() => onChange(opt)}
-            className={cn(
-              "rounded-full border px-4 py-1.5 text-sm transition-all",
-              value === opt
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground",
+    <div className="relative overflow-hidden">
+      {museum && <QuizMuseum onClose={() => setMuseum(false)} />}
+
+      {/* Ambient backdrop */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[380px] bg-[radial-gradient(70%_60%_at_50%_0%,hsl(var(--primary)/0.12),transparent)]" />
+
+      <div className="container relative py-10 md:py-16">
+        {/* Header */}
+        <header className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
+            <Sparkles className="h-4 w-4 text-primary" /> {bi("Play · Explore · Collect", "ಆಡಿ · ಅನ್ವೇಷಿಸಿ · ಸಂಗ್ರಹಿಸಿ")}
+          </span>
+          <h1 className="mt-5 text-balance text-3xl font-black tracking-tight sm:text-4xl md:text-5xl">
+            {bi("Karnataka Quest", "ಕರ್ನಾಟಕ ಕ್ವೆಸ್ಟ್")}
+          </h1>
+          <p className="mt-3 text-pretty text-base text-muted-foreground sm:text-lg">
+            {bi(
+              `Not a quiz — an adventure. ${TOTAL_QUESTIONS}+ handcrafted questions, ${QUIZ_MODES.length} game modes, ranks, streaks and a museum to fill.`,
+              `ಕ್ವಿಜ್ ಅಲ್ಲ — ಒಂದು ಸಾಹಸ. ${TOTAL_QUESTIONS}+ ಕೈಯಿಂದ ರಚಿಸಿದ ಪ್ರಶ್ನೆಗಳು, ${QUIZ_MODES.length} ಆಟದ ಮೋಡ್‌ಗಳು, ಶ್ರೇಣಿಗಳು, ಸರಣಿಗಳು.`,
             )}
+          </p>
+        </header>
+
+        {/* Profile / rank bar */}
+        <section className="mx-auto mt-8 max-w-3xl rounded-3xl border border-border bg-card p-5 shadow-soft">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-primary/10 text-3xl">{rank.emoji}</div>
+            <div className="min-w-[140px] flex-1">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="font-bold">{bi(rank.en, rank.kn)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {profile.xp} XP{next ? ` · ${next.min - profile.xp} ${bi("to", "ಗೆ")} ${bi(next.en, next.kn)}` : ""}
+                </span>
+              </div>
+              <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-secondary">
+                <div className="h-full rounded-full bg-primary [transition:width_.5s_ease]" style={{ width: `${progress * 100}%` }} />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <MiniStat icon={<Flame className="h-4 w-4 text-orange-500" />} value={profile.dayStreak} label={bi("streak", "ಸರಣಿ")} />
+              <MiniStat icon={<Trophy className="h-4 w-4 text-amber-500" />} value={`${collected}/${COLLECTIBLES.length}`} label={bi("museum", "ಮ್ಯೂಸಿಯಂ")} />
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button onClick={() => setMuseum(true)} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform active:scale-95">
+              <Trophy className="h-4 w-4" /> {bi("Open museum", "ಮ್ಯೂಸಿಯಂ ತೆರೆಯಿರಿ")}
+            </button>
+            {profile.answered > 0 && (
+              <button
+                onClick={() => { if (confirm(bi("Reset all quiz progress?", "ಎಲ್ಲಾ ಪ್ರಗತಿಯನ್ನು ಮರುಹೊಂದಿಸುವುದೇ?"))) resetProfile(); }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <RotateCcw className="h-4 w-4" /> {bi("Reset", "ಮರುಹೊಂದಿಸಿ")}
+              </button>
+            )}
+          </div>
+        </section>
+
+        {/* Daily challenge */}
+        <section className="mx-auto mt-6 max-w-3xl">
+          <button
+            onClick={() => start(daily)}
+            style={{ ["--accent" as string]: daily.accent } as React.CSSProperties}
+            className="group relative block w-full overflow-hidden rounded-3xl text-left ring-1 ring-border transition-all hover:-translate-y-0.5 hover:shadow-2xl"
           >
-            {render(opt)}
+            <JourneyFigure wiki={daily.wiki} alt="" rounded="none" kenBurns className="absolute inset-0 h-full w-full" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0b0a12]/95 via-[#0b0a12]/70 to-transparent" />
+            <div className="relative flex items-center gap-4 p-5 sm:p-6">
+              <span className="text-4xl">{dailyDone ? "✅" : "📅"}</span>
+              <div className="flex-1">
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-200/80">{bi("Daily Challenge", "ದೈನಂದಿನ ಸವಾಲು")}</div>
+                <h3 className="text-lg font-black text-white sm:text-xl">
+                  {dailyDone ? bi("Done for today — come back tomorrow!", "ಇಂದಿಗೆ ಮುಗಿದಿದೆ — ನಾಳೆ ಬನ್ನಿ!") : bi("Today's 7 questions are ready", "ಇಂದಿನ ೭ ಪ್ರಶ್ನೆಗಳು ಸಿದ್ಧ")}
+                </h3>
+              </div>
+              <ChevronRight className="h-6 w-6 text-white/70 transition-transform group-hover:translate-x-1" />
+            </div>
           </button>
-        ))}
+        </section>
+
+        {/* Adventures / modes */}
+        <section className="mt-12">
+          <h2 className="mb-5 text-center text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {bi("Choose your adventure", "ನಿಮ್ಮ ಸಾಹಸವನ್ನು ಆರಿಸಿ")}
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {QUIZ_MODES.filter((m) => m.id !== "daily").map((m) => (
+              <button
+                key={m.id}
+                onClick={() => start(m)}
+                style={{ ["--accent" as string]: m.accent, ["--accent2" as string]: m.accent2 } as React.CSSProperties}
+                className="group relative aspect-[16/10] overflow-hidden rounded-3xl text-left ring-1 ring-border transition-all hover:-translate-y-1 hover:shadow-2xl active:scale-[0.99]"
+              >
+                <JourneyFigure wiki={m.wiki} alt={m.en} rounded="none" kenBurns className="absolute inset-0 h-full w-full" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0b0a12]/95 via-[#0b0a12]/45 to-transparent" />
+                <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_120%,rgb(var(--accent)/0.4),transparent_60%)] opacity-70 transition-opacity group-hover:opacity-100" />
+                <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                  <span className="text-3xl drop-shadow">{m.emoji}</span>
+                  <h3 className="mt-1.5 text-lg font-black text-white drop-shadow">{bi(m.en, m.kn)}</h3>
+                  <p className="mt-1 text-xs text-white/75 line-clamp-2">{bi(m.taglineEn, m.taglineKn)}</p>
+                  <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-[rgb(var(--accent))] px-3 py-1 text-[11px] font-bold text-black opacity-0 transition-opacity group-hover:opacity-100">
+                    {m.timer > 0 ? `⏱ ${m.timer}s` : bi("Play", "ಆಡಿ")} · {m.count} Q
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Categories — pick a theme */}
+        <section className="mt-14">
+          <h2 className="mb-5 text-center text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {bi("Or master a subject", "ಅಥವಾ ಒಂದು ವಿಷಯದಲ್ಲಿ ಪಾರಂಗತರಾಗಿ")}
+          </h2>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {CATEGORIES.map((c) => {
+              const s = profile.byCat[c.id];
+              const mastery = s && s.seen > 0 ? Math.round((s.correct / s.seen) * 100) : 0;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => startCategory(c)}
+                  className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-3.5 text-left transition-all hover:border-primary/40 hover:shadow-soft active:scale-[0.98]"
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-2xl">{c.emoji}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold">{bi(c.label.en, c.label.kn)}</p>
+                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-secondary">
+                      <div className="h-full rounded-full bg-primary" style={{ width: `${mastery}%` }} />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Stats footer */}
+        {profile.answered > 0 && (
+          <section className="mx-auto mt-14 grid max-w-2xl grid-cols-3 gap-3 text-center">
+            <FooterStat value={<CountUp value={profile.answered} />} label={bi("answered", "ಉತ್ತರಿಸಿದ")} />
+            <FooterStat value={<CountUp value={profile.correct} />} label={bi("correct", "ಸರಿ")} />
+            <FooterStat value={<><CountUp value={profile.achievements.length} />/{15}</>} label={bi("badges", "ಪದಕಗಳು")} />
+          </section>
+        )}
       </div>
     </div>
   );
 }
 
-function Leaderboard({
-  board,
-  t,
-}: {
-  board: LeaderEntry[];
-  t: (k: string) => string;
-}) {
+function MiniStat({ icon, value, label }: { icon: React.ReactNode; value: React.ReactNode; label: React.ReactNode }) {
   return (
-    <div className="mt-8 text-left">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-        <Trophy className="h-4 w-4 text-amber-500" /> {t("quiz.leaderboard")}
-      </h3>
-      {board.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("quiz.noScores")}</p>
-      ) : (
-        <ul className="space-y-1.5">
-          {board.map((e, i) => (
-            <li
-              key={e.at}
-              className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-sm"
-            >
-              <span className="flex items-center gap-2">
-                <span className="w-5 text-center font-mono text-muted-foreground">
-                  {i + 1}
-                </span>
-                {t("quiz.you")}
-              </span>
-              <span className="font-semibold text-primary">
-                {e.score}/{e.total}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2">
+      {icon}
+      <div className="leading-tight">
+        <div className="text-sm font-bold tabular-nums">{value}</div>
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      </div>
+    </div>
+  );
+}
+
+function FooterStat({ value, label }: { value: React.ReactNode; label: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="text-2xl font-black text-primary">{value}</div>
+      <div className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">{label}</div>
     </div>
   );
 }
