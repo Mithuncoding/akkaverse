@@ -35,6 +35,7 @@ const en: Dict = {
   "nav.tools": "Tools",
   "nav.about": "Our Story",
   "nav.memories": "Memory Wall",
+  "nav.roots": "Roots",
   "nav.more": "More",
   "nav.menu": "Menu",
   "common.getStarted": "Get started",
@@ -63,6 +64,9 @@ const en: Dict = {
   "home.footerTagline": "Built with ♥ for Karnataka.",
 
   // ---- features ----
+  "feature.roots.title": "Roots",
+  "feature.roots.desc":
+    "Every family has a story. Weave your ancestors, village and memories into the living heritage of Karnataka.",
   "feature.assistant.title": "Kannada AI Assistant",
   "feature.assistant.desc":
     "Ask anything about Karnataka's history, temples, and culture — answered with citations.",
@@ -240,6 +244,7 @@ const kn: Dict = {
   "nav.tools": "ಉಪಕರಣಗಳು",
   "nav.about": "ನಮ್ಮ ಕಥೆ",
   "nav.memories": "ನೆನಪಿನ ಗೋಡೆ",
+  "nav.roots": "ಬೇರುಗಳು",
   "nav.more": "ಇನ್ನಷ್ಟು",
   "nav.menu": "ಮೆನು",
   "common.getStarted": "ಪ್ರಾರಂಭಿಸಿ",
@@ -268,6 +273,9 @@ const kn: Dict = {
   "home.footerTagline": "ಕರ್ನಾಟಕಕ್ಕಾಗಿ ♥ ನಿಂದ ನಿರ್ಮಿಸಲಾಗಿದೆ.",
 
   // ---- features ----
+  "feature.roots.title": "ಬೇರುಗಳು",
+  "feature.roots.desc":
+    "ಪ್ರತಿ ಕುಟುಂಬಕ್ಕೂ ಒಂದು ಕಥೆ. ನಿಮ್ಮ ಪೂರ್ವಜರು, ಊರು ಮತ್ತು ನೆನಪುಗಳನ್ನು ಕರ್ನಾಟಕದ ಜೀವಂತ ಪರಂಪರೆಯೊಂದಿಗೆ ಬೆಸೆಯಿರಿ.",
   "feature.assistant.title": "ಕನ್ನಡ AI ಸಹಾಯಕ",
   "feature.assistant.desc":
     "ಕರ್ನಾಟಕದ ಇತಿಹಾಸ, ದೇವಾಲಯಗಳು ಮತ್ತು ಸಂಸ್ಕೃತಿಯ ಬಗ್ಗೆ ಏನನ್ನಾದರೂ ಕೇಳಿ — ಉಲ್ಲೇಖಗಳೊಂದಿಗೆ ಉತ್ತರ.",

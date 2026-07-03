@@ -155,7 +155,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ಲಿಪಿ",
         title: "Kannada is born in stone",
         body: "The Halmidi inscription (450 CE) is the earliest dated Kannada writing — proof of a language already used for poetry and governance. Kannada script evolved from the Brahmi-derived Kadamba script, the common ancestor it shares with Telugu.",
-        wiki: "Halmidi inscription",
       },
       {
         kind: "faith",
@@ -163,7 +162,7 @@ export const chapters: Chapter[] = [
         kickerKn: "ಧರ್ಮ",
         title: "A land of three paths",
         body: "Ashoka's edicts spread Buddhist ethics; Jain monks made Shravanabelagola a centre of learning; and early Hindu shrines rose at Banavasi. Karnataka's tradition of religious pluralism begins here.",
-        wiki: "Brahmagiri, Karnataka",
+        wiki: "Edicts of Ashoka",
       },
       {
         kind: "military",
@@ -175,9 +174,9 @@ export const chapters: Chapter[] = [
       },
     ],
     gallery: [
-      { wiki: "Banavasi", caption: "Madhukeshwara Temple, Banavasi", captionKn: "ಮಧುಕೇಶ್ವರ ದೇವಾಲಯ", tag: "Monument", tagKn: "ಸ್ಮಾರಕ" },
       { wiki: "Halmidi inscription", caption: "The Halmidi inscription — oldest Kannada", captionKn: "ಹಲ್ಮಿಡಿ ಶಾಸನ", tag: "Manuscript", tagKn: "ಶಾಸನ" },
       { wiki: "Gommateshwara statue", caption: "Shravanabelagola, a Jain beacon", captionKn: "ಶ್ರವಣಬೆಳಗೊಳ", tag: "Heritage", tagKn: "ಪರಂಪರೆ" },
+      { wiki: "Talakad", caption: "Talakad, the buried Ganga capital", captionKn: "ತಲಕಾಡು", tag: "Heritage", tagKn: "ಪರಂಪರೆ" },
     ],
     relations: [
       { kind: "rivalry", with: "Pallavas", withKn: "ಪಲ್ಲವರು", note: "Mayurasharma's revolt against Pallava overlords founded the Kadamba state." },
@@ -208,7 +207,7 @@ export const chapters: Chapter[] = [
     essenceKn: "ಬಾದಾಮಿಯ ಬಂಡೆಗಳಿಂದ ಚಾಲುಕ್ಯರು ಹೊಸ ವಾಸ್ತುಶಿಲ್ಪ ಸೃಷ್ಟಿಸಿದರು — ರಾಷ್ಟ್ರಕೂಟರು ಕನ್ನಡದ ಮೊದಲ ಗ್ರಂಥ ಬರೆದರು.",
     accent: "234 88 12",
     accent2: "194 65 12",
-    cover: "Pattadakal",
+    cover: "Badami",
     lead: "From the red sandstone of Badami, the Chalukyas built a laboratory of stone. At Aihole, Badami and Pattadakal they fused northern (Nagara) and southern (Dravida) styles into the Vesara — a Karnataka invention that would shape a thousand years of temple-building. Under Pulakeshin II, the empire stretched coast to coast; in 618 CE he halted the great northern emperor Harsha at the Narmada, an event proudly recorded in the Aihole inscription. The Rashtrakutas who followed ruled much of the subcontinent from Manyakheta, carved the monolithic Kailasa temple at Ellora, and gave the world Kavirajamarga (c. 850 CE) — the oldest surviving work of Kannada literature, sponsored by emperor Amoghavarsha I.",
     leadKn: "ಬಾದಾಮಿಯ ಮರಳುಗಲ್ಲಿನಿಂದ ಚಾಲುಕ್ಯರು ಶಿಲೆಯ ಪ್ರಯೋಗಶಾಲೆ ನಿರ್ಮಿಸಿದರು. ಐಹೊಳೆ, ಬಾದಾಮಿ, ಪಟ್ಟದಕಲ್ಲುಗಳಲ್ಲಿ ನಾಗರ ಮತ್ತು ದ್ರಾವಿಡ ಶೈಲಿಗಳನ್ನು ಬೆಸೆದು 'ವೇಸರ' ಶೈಲಿ ಹುಟ್ಟಿಸಿದರು. ಎರಡನೇ ಪುಲಕೇಶಿ ಹರ್ಷನನ್ನು ತಡೆದ. ರಾಷ್ಟ್ರಕೂಟ ಅಮೋಘವರ್ಷ 'ಕವಿರಾಜಮಾರ್ಗ'ವನ್ನು (ಸು. 850) ಪೋಷಿಸಿದ — ಕನ್ನಡದ ಅತಿ ಹಳೆಯ ಲಭ್ಯ ಕೃತಿ.",
     capital: { name: "Badami (Vatapi)", nameKn: "ಬಾದಾಮಿ", coords: [75.68, 15.92] },
@@ -225,7 +224,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ವಾಸ್ತುಶಿಲ್ಪ",
         title: "Where Indian temples grew up",
         body: "Aihole is called the 'cradle of Indian temple architecture.' At Pattadakal — a UNESCO World Heritage Site — ten temples stand side by side, a textbook in stone of how the Nagara and Dravida styles met and merged.",
-        wiki: "Pattadakal",
       },
       {
         kind: "literature",
@@ -241,7 +239,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ಯುದ್ಧ",
         title: "The emperor who stopped Harsha",
         body: "In 618 CE Pulakeshin II defeated Harshavardhana of Kannauj on the banks of the Narmada — the only major check on Harsha's power. A Persian embassy from Khosrow II even visited his court.",
-        wiki: "Pulakeshin II",
       },
       {
         kind: "trade",
@@ -254,7 +251,7 @@ export const chapters: Chapter[] = [
     ],
     gallery: [
       { wiki: "Badami cave temples", caption: "The rock-cut caves of Badami", captionKn: "ಬಾದಾಮಿ ಗುಹೆಗಳು", tag: "Monument", tagKn: "ಸ್ಮಾರಕ" },
-      { wiki: "Virupaksha Temple, Pattadakal", caption: "Virupaksha Temple, Pattadakal", captionKn: "ವಿರೂಪಾಕ್ಷ, ಪಟ್ಟದಕಲ್ಲು", tag: "UNESCO", tagKn: "ಯುನೆಸ್ಕೋ" },
+      { wiki: "Pattadakal", caption: "The temple complex at Pattadakal", captionKn: "ಪಟ್ಟದಕಲ್ಲು", tag: "UNESCO", tagKn: "ಯುನೆಸ್ಕೋ" },
       { wiki: "Aihole", caption: "Durga temple, Aihole", captionKn: "ದುರ್ಗ ದೇವಾಲಯ, ಐಹೊಳೆ", tag: "Heritage", tagKn: "ಪರಂಪರೆ" },
       { wiki: "Kailasa Temple, Ellora", caption: "Kailasa at Ellora — carved top-down from one rock", captionKn: "ಎಲ್ಲೋರಾ ಕೈಲಾಸ", tag: "Wonder", tagKn: "ಅದ್ಭುತ" },
     ],
@@ -297,7 +294,7 @@ export const chapters: Chapter[] = [
     essenceKn: "ಹೊಯ್ಸಳರು ಬಳಪದ ಕಲ್ಲನ್ನು ಕಸೂತಿಯಾಗಿಸಿದರು — ಇಂದಿಗೂ ಬೆರಗುಗೊಳಿಸುವ ದೇವಾಲಯಗಳು.",
     accent: "225 29 72",
     accent2: "190 18 60",
-    cover: "Chennakeshava Temple",
+    cover: "Chennakeshava Temple, Belur",
     lead: "From their hill capital at Dwarasamudra (Halebidu), the Hoysalas perfected an art unlike anything before. Carving in soft chloritic schist that hardens with time, their sculptors worked stone into jewellery — bracketed madanika figures, friezes of marching elephants, and the entire Ramayana wrapped around a wall. King Vishnuvardhana raised the Chennakeshava Temple at Belur in 1117; Halebidu and, in 2023, Somanathapura joined UNESCO's World Heritage list. This was also the age of the Western Chalukyas of Kalyani, whose ruler Vikramaditya VI began his own calendar era, and of the philosopher Ramanuja, who found refuge here.",
     leadKn: "ಹಳೇಬೀಡಿನ (ದ್ವಾರಸಮುದ್ರ) ಗಿರಿ ರಾಜಧಾನಿಯಿಂದ ಹೊಯ್ಸಳರು ಅಪೂರ್ವ ಕಲೆಯನ್ನು ಪರಿಪೂರ್ಣಗೊಳಿಸಿದರು. ಬಳಪದ ಕಲ್ಲನ್ನು ಆಭರಣವಾಗಿ ಕೆತ್ತಿದರು. ವಿಷ್ಣುವರ್ಧನ 1117ರಲ್ಲಿ ಬೇಲೂರಿನ ಚೆನ್ನಕೇಶವ ದೇವಾಲಯ ಕಟ್ಟಿಸಿದ. ಹಳೇಬೀಡು ಮತ್ತು ಸೋಮನಾಥಪುರ ಯುನೆಸ್ಕೋ ಪಟ್ಟಿಯಲ್ಲಿವೆ.",
     capital: { name: "Halebidu", nameKn: "ಹಳೇಬೀಡು", coords: [75.99, 13.21] },
@@ -314,7 +311,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ವಾಸ್ತುಶಿಲ್ಪ",
         title: "Stone carved like ivory",
         body: "Hoysala temples sit on star-shaped platforms and are covered in horizontal friezes — elephants for strength, lions for courage, horses for speed. Some pillars were lathe-turned to a mirror finish. Artists signed their work, a rarity in medieval India.",
-        wiki: "Hoysaleswara Temple",
       },
       {
         kind: "culture",
@@ -322,7 +318,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ನೃತ್ಯ",
         title: "Queen Shantala's grace",
         body: "The bracket figures of Belur — the celebrated madanikas — are said to echo Queen Shantala Devi, a renowned dancer. They freeze music and movement in stone forever.",
-        wiki: "Shantala Devi",
       },
       {
         kind: "faith",
@@ -334,9 +329,9 @@ export const chapters: Chapter[] = [
       },
     ],
     gallery: [
-      { wiki: "Chennakeshava Temple", caption: "Chennakeshava Temple, Belur", captionKn: "ಚೆನ್ನಕೇಶವ, ಬೇಲೂರು", tag: "UNESCO", tagKn: "ಯುನೆಸ್ಕೋ" },
       { wiki: "Hoysaleswara Temple", caption: "Hoysaleswara Temple, Halebidu", captionKn: "ಹೊಯ್ಸಳೇಶ್ವರ, ಹಳೇಬೀಡು", tag: "Monument", tagKn: "ಸ್ಮಾರಕ" },
       { wiki: "Chennakesava Temple, Somanathapura", caption: "Keshava Temple, Somanathapura", captionKn: "ಕೇಶವ, ಸೋಮನಾಥಪುರ", tag: "Heritage", tagKn: "ಪರಂಪರೆ" },
+      { wiki: "Halebidu", caption: "Halebidu, the Hoysala capital", captionKn: "ಹಳೇಬೀಡು", tag: "Heritage", tagKn: "ಪರಂಪರೆ" },
     ],
     relations: [
       { kind: "rivalry", with: "Cholas of Tanjore", withKn: "ತಂಜಾವೂರಿನ ಚೋಳರು", note: "Vishnuvardhana's victories against the Cholas earned the Hoysalas independence." },
@@ -349,7 +344,7 @@ export const chapters: Chapter[] = [
         nameKn: "ವಿಷ್ಣುವರ್ಧನ",
         role: "Hoysala king",
         roleKn: "ಹೊಯ್ಸಳ ಅರಸ",
-        wiki: "Vishnuvardhana (Hoysala)",
+        wiki: "Vishnuvardhana",
         blurb: "Warrior and builder who freed the Hoysalas from Chola rule and commissioned the Belur masterpiece.",
         fact: "He built the Chennakeshava Temple to mark his victory at Talakad — it took 103 years to complete.",
       },
@@ -377,7 +372,7 @@ export const chapters: Chapter[] = [
     essenceKn: "ಕಲ್ಯಾಣದಲ್ಲಿ ಶರಣರ ಸಭೆ 'ಕಾಯಕವೇ ಕೈಲಾಸ', ಎಲ್ಲರೂ ಸಮಾನ ಎಂದು ಸಾರಿತು — ಎಂಟು ಶತಮಾನ ಮುಂಚೆ.",
     accent: "139 92 246",
     accent2: "109 40 217",
-    cover: "Basava",
+    cover: "Basavakalyan",
     lead: "Not every revolution is fought with armies. In 12th-century Kalyana, the statesman-mystic Basavanna gathered poets, cobblers, queens and farmers into the Anubhava Mantapa — a 'hall of experience' that worked like an early democratic parliament of ideas. They rejected caste, ritual and temple hierarchy, and poured their philosophy into Vachanas: short, fierce, free-verse poems in everyday Kannada. Akka Mahadevi walked away from royalty to write some of the boldest feminist verse in any language; Allama Prabhu presided as a riddling sage. Their movement gave Kannada a literature of conscience that ordinary people could recite — and still do.",
     leadKn: "ಎಲ್ಲ ಕ್ರಾಂತಿಗಳೂ ಸೈನ್ಯದಿಂದಲ್ಲ. 12ನೇ ಶತಮಾನದ ಕಲ್ಯಾಣದಲ್ಲಿ ಬಸವಣ್ಣ ಕವಿ, ಚಮ್ಮಾರ, ರಾಣಿ, ರೈತರನ್ನು 'ಅನುಭವ ಮಂಟಪ'ದಲ್ಲಿ ಒಗ್ಗೂಡಿಸಿದ. ಜಾತಿ, ಆಚಾರವನ್ನು ತಿರಸ್ಕರಿಸಿ ಸರಳ ಕನ್ನಡದ ವಚನಗಳಲ್ಲಿ ತತ್ವ ಹೇಳಿದರು. ಅಕ್ಕಮಹಾದೇವಿ ರಾಜವೈಭವ ತೊರೆದು ದಿಟ್ಟ ಕಾವ್ಯ ಬರೆದಳು.",
     capital: { name: "Kalyana", nameKn: "ಕಲ್ಯಾಣ", coords: [76.95, 17.87] },
@@ -394,7 +389,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ಸಾಹಿತ್ಯ",
         title: "Poetry anyone could speak",
         body: "Vachanas abandoned ornate Sanskritic metre for plain spoken Kannada, each ending with the poet's signature 'mudra'. They remain among the most quoted lines in the language — 'Kayakave Kailasa' (work itself is heaven).",
-        wiki: "Vachana sahitya",
       },
       {
         kind: "faith",
@@ -402,7 +396,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ಸುಧಾರಣೆ",
         title: "A parliament of equals",
         body: "The Anubhava Mantapa welcomed people of every caste and gender to debate philosophy as equals — a radical experiment in social democracy that predates such ideas in Europe by centuries.",
-        wiki: "Anubhava Mantapa",
       },
       {
         kind: "culture",
@@ -410,13 +403,11 @@ export const chapters: Chapter[] = [
         kickerKn: "ಧ್ವನಿ",
         title: "Akka Mahadevi's defiance",
         body: "A 12th-century woman who renounced everything — clothing, court, convention — to seek the divine on her own terms, leaving verse of startling courage and intimacy.",
-        wiki: "Akka Mahadevi",
       },
     ],
     gallery: [
-      { wiki: "Basava", caption: "Basavanna, social reformer", captionKn: "ಬಸವಣ್ಣ", tag: "Saint", tagKn: "ಶರಣ" },
-      { wiki: "Basavakalyan", caption: "Basavakalyan, home of the movement", captionKn: "ಬಸವಕಲ್ಯಾಣ", tag: "Place", tagKn: "ಸ್ಥಳ" },
-      { wiki: "Akka Mahadevi", caption: "Akka Mahadevi, mystic poet", captionKn: "ಅಕ್ಕಮಹಾದೇವಿ", tag: "Poet", tagKn: "ಕವಯಿತ್ರಿ" },
+      { wiki: "Kudalasangama", caption: "Kudalasangama, Basavanna's shrine", captionKn: "ಕೂಡಲಸಂಗಮ", tag: "Place", tagKn: "ಸ್ಥಳ" },
+      { wiki: "Bidar Fort", caption: "Bidar Fort, near Kalyana", captionKn: "ಬೀದರ್ ಕೋಟೆ", tag: "Fort", tagKn: "ಕೋಟೆ" },
     ],
     relations: [
       { kind: "rivalry", with: "Orthodox order", withKn: "ಸಂಪ್ರದಾಯವಾದಿಗಳು", note: "The movement's challenge to caste drew fierce backlash in Kalyana." },
@@ -473,7 +464,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ವ್ಯಾಪಾರ",
         title: "Diamonds sold like grain",
         body: "Portuguese chronicler Domingo Paes described Hampi's markets as overflowing with rubies, pearls and diamonds. The empire imported Arabian and Persian warhorses by the thousand and exported spices, cotton and iron across the Indian Ocean.",
-        wiki: "Hampi",
       },
       {
         kind: "architecture",
@@ -481,7 +471,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ವಾಸ್ತುಶಿಲ್ಪ",
         title: "Temples that make music",
         body: "The Vittala temple's stone chariot is Karnataka's most famous monument, and its 56 'SaReGaMa' pillars produce musical notes when struck. The Virupaksha temple has been in continuous worship for over 700 years.",
-        wiki: "Vittala Temple",
       },
       {
         kind: "science",
@@ -489,7 +478,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ಎಂಜಿನಿಯರಿಂಗ್",
         title: "Water from rock",
         body: "Vijayanagara's hydraulic engineers built aqueducts, tanks and stepped wells that carried water across a granite landscape — feeding a vast city and its gardens in a near-desert.",
-        wiki: "Vijayanagara",
       },
       {
         kind: "literature",
@@ -497,14 +485,12 @@ export const chapters: Chapter[] = [
         kickerKn: "ಸಂಸ್ಕೃತಿ",
         title: "A court of eight poets",
         body: "Krishnadevaraya — himself an author — kept the 'Ashtadiggajas', eight legendary poets, at court. The era also nurtured the Haridasa devotional tradition that became the foundation of Carnatic music.",
-        wiki: "Krishnadevaraya",
       },
     ],
     gallery: [
-      { wiki: "Vittala Temple", caption: "The stone chariot of Hampi", captionKn: "ಹಂಪಿಯ ಕಲ್ಲಿನ ರಥ", tag: "Icon", tagKn: "ಸಂಕೇತ" },
+      { wiki: "Hampi", caption: "The boulder-strewn ruins of Vijayanagara", captionKn: "ಹಂಪಿ ಅವಶೇಷ", tag: "Heritage", tagKn: "ಪರಂಪರೆ" },
       { wiki: "Virupaksha Temple", caption: "Virupaksha temple gopura", captionKn: "ವಿರೂಪಾಕ್ಷ ಗೋಪುರ", tag: "UNESCO", tagKn: "ಯುನೆಸ್ಕೋ" },
       { wiki: "Lotus Mahal", caption: "Lotus Mahal, royal enclosure", captionKn: "ಕಮಲ ಮಹಲ್", tag: "Palace", tagKn: "ಅರಮನೆ" },
-      { wiki: "Hampi", caption: "Boulder-strewn ruins of Vijayanagara", captionKn: "ಹಂಪಿ ಅವಶೇಷ", tag: "Heritage", tagKn: "ಪರಂಪರೆ" },
     ],
     relations: [
       { kind: "rivalry", with: "Deccan Sultanates", withKn: "ಡೆಕ್ಕನ್ ಸುಲ್ತಾನರು", note: "A shifting cold war that ended in the catastrophic defeat at Talikota (1565)." },
@@ -562,7 +548,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ತಂತ್ರಜ್ಞಾನ",
         title: "The first iron rockets",
         body: "Mysorean rockets used iron tubes for higher thrust and range — the most advanced of their day. After capturing examples at Srirangapatna, the British developed the Congreve rocket from them, carrying the technology into European warfare.",
-        wiki: "Mysorean rockets",
       },
       {
         kind: "military",
@@ -586,12 +571,11 @@ export const chapters: Chapter[] = [
         kickerKn: "ಆರ್ಥಿಕತೆ",
         title: "Silk, sandalwood and sericulture",
         body: "Tipu Sultan introduced and promoted sericulture in Mysore — the foundation of Karnataka's silk industry, which still produces most of India's mulberry silk today.",
-        wiki: "Tipu Sultan",
       },
     ],
     gallery: [
-      { wiki: "Mysore Palace", caption: "Mysore Palace, lit for Dasara", captionKn: "ಮೈಸೂರು ಅರಮನೆ", tag: "Palace", tagKn: "ಅರಮನೆ" },
-      { wiki: "Tipu Sultan", caption: "Tipu Sultan, the Tiger of Mysore", captionKn: "ಟಿಪ್ಪು ಸುಲ್ತಾನ", tag: "Ruler", tagKn: "ಅರಸ" },
+      { wiki: "Daria Daulat Bagh", caption: "Daria Daulat Bagh, Tipu's summer palace", captionKn: "ದರಿಯಾ ದೌಲತ್ ಬಾಗ್", tag: "Palace", tagKn: "ಅರಮನೆ" },
+      { wiki: "Tipu's Tiger", caption: "Tipu's Tiger, the famed automaton", captionKn: "ಟಿಪ್ಪುವಿನ ಹುಲಿ", tag: "Artifact", tagKn: "ಕಲಾಕೃತಿ" },
       { wiki: "Srirangapatna", caption: "The island-fortress of Srirangapatna", captionKn: "ಶ್ರೀರಂಗಪಟ್ಟಣ ಕೋಟೆ", tag: "Fort", tagKn: "ಕೋಟೆ" },
     ],
     relations: [
@@ -650,7 +634,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ಎಂಜಿನಿಯರಿಂಗ್",
         title: "The engineer who tamed rivers",
         body: "Visvesvaraya invented automatic weir sluice gates, designed the KRS dam that greened the Cauvery basin, and planned cities. India celebrates his birthday, 15 September, as Engineer's Day.",
-        wiki: "M. Visvesvaraya",
       },
       {
         kind: "literature",
@@ -666,12 +649,11 @@ export const chapters: Chapter[] = [
         kickerKn: "ಕೈಗಾರಿಕೆ",
         title: "Building a modern economy",
         body: "Mysore established banks, factories and India's first university outside the British presidencies. The groundwork — IISc, HAL's future home, an educated workforce — set Bengaluru on its path.",
-        wiki: "Indian Institute of Science",
       },
     ],
     gallery: [
-      { wiki: "Krishna Raja Sagara", caption: "The KRS dam and Brindavan Gardens", captionKn: "ಕೆ.ಆರ್.ಎಸ್ ಮತ್ತು ಬೃಂದಾವನ", tag: "Engineering", tagKn: "ಎಂಜಿನಿಯರಿಂಗ್" },
-      { wiki: "M. Visvesvaraya", caption: "Sir M. Visvesvaraya, Bharat Ratna", captionKn: "ಸರ್ ಎಂ.ವಿ", tag: "Engineer", tagKn: "ಎಂಜಿನಿಯರ್" },
+      { wiki: "Brindavan Gardens", caption: "Brindavan Gardens at the KRS dam", captionKn: "ಬೃಂದಾವನ ಉದ್ಯಾನ", tag: "Engineering", tagKn: "ಎಂಜಿನಿಯರಿಂಗ್" },
+      { wiki: "University of Mysore", caption: "University of Mysore, founded 1916", captionKn: "ಮೈಸೂರು ವಿಶ್ವವಿದ್ಯಾಲಯ", tag: "Education", tagKn: "ಶಿಕ್ಷಣ" },
       { wiki: "Indian Institute of Science", caption: "IISc Bengaluru, founded 1909", captionKn: "ಐ.ಐ.ಎಸ್‌ಸಿ", tag: "Science", tagKn: "ವಿಜ್ಞಾನ" },
     ],
     relations: [
@@ -737,7 +719,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ತಂತ್ರಜ್ಞಾನ",
         title: "The Silicon Valley of India",
         body: "From Infosys and Wipro to thousands of startups and global R&D centres, Bengaluru became India's IT capital — exporting software and ideas worldwide and minting a generation of founders.",
-        wiki: "Bangalore",
       },
       {
         kind: "literature",
@@ -745,7 +726,6 @@ export const chapters: Chapter[] = [
         kickerKn: "ಸಾಹಿತ್ಯ",
         title: "Eight crowns of letters",
         body: "Kuvempu, Bendre, Karanth, Masti, Gokak, Ananthamurthy, Karnad and Bhyrappa-era greats — Kannada has won eight Jnanpith Awards, the most of any Indian language.",
-        wiki: "Kuvempu",
       },
       {
         kind: "culture",

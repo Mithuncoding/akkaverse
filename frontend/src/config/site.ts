@@ -30,6 +30,7 @@ export const siteConfig = {
     { labelKey: "nav.assistant", href: "/chat" },
     { labelKey: "nav.learn", href: "/learn" },
     { labelKey: "nav.explore", href: "/explore" },
+    { labelKey: "nav.roots", href: "/roots" },
     { labelKey: "nav.festivals", href: "/festivals" },
     { labelKey: "nav.stories", href: "/stories" },
     { labelKey: "nav.timeline", href: "/timeline" },
@@ -40,6 +41,13 @@ export const siteConfig = {
 } as const;
 
 export const features: FeatureItem[] = [
+  {
+    titleKey: "feature.roots.title",
+    descKey: "feature.roots.desc",
+    icon: "TreeDeciduous",
+    available: true,
+    href: "/roots",
+  },
   {
     titleKey: "feature.assistant.title",
     descKey: "feature.assistant.desc",

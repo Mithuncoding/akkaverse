@@ -5,6 +5,10 @@ import { ImageIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { getPageImage } from "@/lib/wiki";
+import journeyImages from "@/data/journey-images.json";
+
+/** Build-time cache: Wikipedia title → locally saved image path. */
+const LOCAL_IMAGES = journeyImages as Record<string, string | null>;
 
 type JourneyFigureProps = {
   /** Wikipedia article title to source the lead image from. */
@@ -71,6 +75,15 @@ export function JourneyFigure({
   React.useEffect(() => {
     if (!inView) return;
     let alive = true;
+
+    // 1) Prefer the build-time local image — instant and always available.
+    const local = LOCAL_IMAGES[wiki];
+    if (local) {
+      setSrc(local);
+      return;
+    }
+
+    // 2) Fall back to a live Wikipedia lookup for anything not yet cached.
     getPageImage(wiki)
       .then((url) => {
         if (!alive) return;

@@ -17,6 +17,7 @@ import {
   Heart,
   ScanText,
   Landmark,
+  TreeDeciduous,
   ArrowRight,
   type LucideIcon,
 } from "lucide-react";
@@ -53,6 +54,7 @@ const ALL: Dest[] = [
   { href: "/chat", labelKey: "nav.assistant", icon: Sparkles },
   { href: "/learn", labelKey: "nav.learn", icon: GraduationCap },
   { href: "/explore", labelKey: "nav.explore", icon: MapIcon },
+  { href: "/roots", labelKey: "nav.roots", icon: TreeDeciduous },
   { href: "/festivals", labelKey: "nav.festivals", icon: PartyPopper },
   { href: "/stories", labelKey: "nav.stories", icon: BookOpen },
   { href: "/timeline", labelKey: "nav.timeline", icon: Milestone },

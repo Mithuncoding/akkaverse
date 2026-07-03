@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Landmark,
   Heart,
+  TreeDeciduous,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,6 +36,7 @@ const ICONS: Record<string, LucideIcon> = {
   Brain,
   PartyPopper,
   Heart,
+  TreeDeciduous,
 };
 
 /**

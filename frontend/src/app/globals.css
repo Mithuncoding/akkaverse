@@ -720,6 +720,80 @@ summary {
   100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   Roots — the family heritage experience
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Warm sunrise sky behind the hero. */
+.roots-sky {
+  background:
+    radial-gradient(120% 90% at 50% 120%, hsl(28 95% 56% / 0.30), transparent 60%),
+    radial-gradient(90% 70% at 82% 4%, hsl(38 95% 60% / 0.20), transparent 55%),
+    radial-gradient(90% 70% at 14% 8%, hsl(14 90% 55% / 0.16), transparent 55%);
+}
+
+/* Rising heritage dust particles. */
+@keyframes roots-rise {
+  0% { transform: translateY(24px) translateX(0); opacity: 0; }
+  15% { opacity: 0.85; }
+  100% { transform: translateY(-140px) translateX(var(--drift, 8px)); opacity: 0; }
+}
+.roots-particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, hsl(38 95% 72% / 0.95), transparent 70%);
+  animation: roots-rise var(--dur, 9s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+/* Growing tree — strokes draw themselves in. */
+@keyframes roots-grow {
+  from { stroke-dashoffset: var(--len, 400); }
+  to { stroke-dashoffset: 0; }
+}
+.roots-branch {
+  stroke-dasharray: var(--len, 400);
+  stroke-dashoffset: var(--len, 400);
+  animation: roots-grow 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Canopy sway on the hero silhouette. */
+@keyframes roots-sway {
+  0%, 100% { transform: rotate(-0.6deg); }
+  50% { transform: rotate(0.6deg); }
+}
+.roots-sway {
+  transform-origin: 50% 100%;
+  animation: roots-sway 9s ease-in-out infinite;
+}
+
+/* Connector lines between family cards. */
+.roots-link {
+  stroke: hsl(var(--primary) / 0.5);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+}
+
+/* Aged-paper letter for "If They Could Speak". */
+.roots-paper {
+  background-color: hsl(38 42% 92%);
+  background-image:
+    radial-gradient(hsl(30 30% 55% / 0.10) 1px, transparent 1px),
+    linear-gradient(160deg, hsl(40 46% 90%), hsl(34 38% 84%));
+  background-size: 15px 15px, 100% 100%;
+  color: hsl(24 33% 20%);
+  box-shadow:
+    inset 0 0 70px hsl(28 40% 38% / 0.20),
+    0 30px 60px -25px hsl(24 40% 18% / 0.55);
+}
+.dark .roots-paper {
+  background-color: hsl(36 26% 82%);
+}
+
 /* Respect users who prefer less motion — turn off the showy stuff. */
 @media (prefers-reduced-motion: reduce) {
   .animate-ken-burns,
@@ -732,6 +806,9 @@ summary {
   .dasara-grain,
   .dasara-bulbs,
   .dasara-capsule-in,
+  .roots-particle,
+  .roots-branch,
+  .roots-sway,
   .quiz-confetti {
     animation: none !important;
   }
