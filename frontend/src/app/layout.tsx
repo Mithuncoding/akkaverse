@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans_Kannada, Noto_Serif_Kannada } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -16,6 +16,23 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
+});
+
+// Premium Kannada type. Latin fonts have no Kannada glyphs, so placing these
+// *after* the Latin font in the Tailwind stack makes every Kannada character
+// render in a beautiful, purpose-designed face automatically — app-wide.
+const knSans = Noto_Sans_Kannada({
+  subsets: ["kannada"],
+  variable: "--font-kn-sans",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const knSerif = Noto_Serif_Kannada({
+  subsets: ["kannada"],
+  variable: "--font-kn-serif",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -78,7 +95,7 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning is required by next-themes (it sets `class` on <html>)
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans`}>
+      <body className={`${inter.variable} ${knSans.variable} ${knSerif.variable} font-sans`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

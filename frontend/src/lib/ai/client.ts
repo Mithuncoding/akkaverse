@@ -12,7 +12,9 @@
  *  • streamAkka() → real token streaming over SSE (chat & historian feel live).
  */
 
-export type AkkaResult = { text: string } | null;
+export type ReplyLang = "auto" | "en" | "kn" | "both";
+export type WebSource = { title: string; url: string };
+export type AkkaResult = { text: string; sources?: WebSource[] } | null;
 
 /**
  * Ask Akka a question, optionally grounded with local context. Returns null on
@@ -21,18 +23,25 @@ export type AkkaResult = { text: string } | null;
 export async function askAkka(
   question: string,
   context?: string,
-  opts: { signal?: AbortSignal } = {},
+  opts: { signal?: AbortSignal; replyLang?: ReplyLang } = {},
 ): Promise<AkkaResult> {
   try {
     const res = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       signal: opts.signal,
-      body: JSON.stringify({ question, context: context ?? "" }),
+      body: JSON.stringify({
+        question,
+        context: context ?? "",
+        replyLang: opts.replyLang ?? "auto",
+      }),
     });
     if (!res.ok) return null;
-    const data = (await res.json()) as { text?: string | null };
-    return data?.text ? { text: data.text } : null;
+    const data = (await res.json()) as {
+      text?: string | null;
+      sources?: WebSource[];
+    };
+    return data?.text ? { text: data.text, sources: data.sources } : null;
   } catch {
     return null;
   }
@@ -46,7 +55,12 @@ export async function askAkka(
 export async function streamAkka(
   question: string,
   context: string,
-  handlers: { onToken: (t: string) => void; signal?: AbortSignal } = {
+  handlers: {
+    onToken: (t: string) => void;
+    onSources?: (s: WebSource[]) => void;
+    signal?: AbortSignal;
+    replyLang?: ReplyLang;
+  } = {
     onToken: () => {},
   },
 ): Promise<string | null> {
@@ -55,7 +69,12 @@ export async function streamAkka(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       signal: handlers.signal,
-      body: JSON.stringify({ question, context, stream: true }),
+      body: JSON.stringify({
+        question,
+        context,
+        stream: true,
+        replyLang: handlers.replyLang ?? "auto",
+      }),
     });
     if (!res.ok || !res.body) return null;
 
@@ -77,7 +96,9 @@ export async function streamAkka(
           const evt = JSON.parse(trimmed.slice(5).trim()) as {
             token?: string;
             done?: boolean;
+            sources?: WebSource[];
           };
+          if (evt.sources && handlers.onSources) handlers.onSources(evt.sources);
           if (evt.token) {
             full += evt.token;
             handlers.onToken(evt.token);

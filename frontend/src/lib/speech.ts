@@ -203,6 +203,40 @@ export function speak(text: string, lang: "kn-IN" | "en-IN" = "kn-IN") {
   playSpeech(`speak:${text}`, text, lang);
 }
 
+/* -------------------------------------------------------------------------- */
+/*         Cloud Kannada voice (free /api/tts proxy) — for the letter         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Fetch a real Kannada (or English) voice clip from our keyless /api/tts proxy
+ * and return an object URL the caller can play with an <audio> element. Returns
+ * null on any failure so callers can fall back to the browser voice.
+ *
+ * `lang` uses short codes ("kn" | "en") matching the Google TTS proxy.
+ */
+export async function fetchTtsUrl(
+  text: string,
+  lang: "kn" | "en" = "kn",
+  signal?: AbortSignal,
+): Promise<string | null> {
+  const clean = text.trim();
+  if (!clean) return null;
+  try {
+    const res = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal,
+      body: JSON.stringify({ text: clean, lang }),
+    });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    if (!blob || blob.size === 0) return null;
+    return URL.createObjectURL(blob);
+  } catch {
+    return null;
+  }
+}
+
 
 /* -------------------------------------------------------------------------- */
 /*                          Speech-to-Text (input)                            */

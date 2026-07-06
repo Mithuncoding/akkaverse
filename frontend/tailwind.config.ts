@@ -63,7 +63,18 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        sans: [
+          "var(--font-sans)",
+          "var(--font-kn-sans)",
+          "system-ui",
+          "sans-serif",
+        ],
+        serif: [
+          "Georgia",
+          "Cambria",
+          "var(--font-kn-serif)",
+          "serif",
+        ],
       },
       keyframes: {
         "fade-up": {

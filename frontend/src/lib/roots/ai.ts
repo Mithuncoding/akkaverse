@@ -56,6 +56,82 @@ export function streamAncestorLetter(
   return streamAkka(question, HISTORIAN, { onToken, signal });
 }
 
+/* -------------------------------------------------------------------------- */
+/*        Curated bilingual ancestor letter — the demo-safe centrepiece       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A hand-authored, deeply personal letter that is ALWAYS available — instant,
+ * bilingual, offline, and (crucially) never hallucinated. The AI path adds
+ * variety, but this guarantees the signature "Voice of the Ancestor" moment
+ * works every single time, even with no network and no API key.
+ */
+export type AncestorLetter = {
+  en: string;
+  kn: string;
+  blessingEn: string;
+  blessingKn: string;
+  from: string;
+  village: string;
+};
+
+const BLESSING_KN = "ನಿನ್ನ ಬೇರುಗಳನ್ನು ಎಂದಿಗೂ ಮರೆಯದಿರು, ಕಂದಾ.";
+const BLESSING_EN = "Never forget your roots, my child.";
+
+export function curatedAncestorLetter(opts: {
+  from?: string;
+  to?: string;
+  village?: string;
+  district?: string;
+}): AncestorLetter {
+  const from = opts.from?.trim() || "your ancestor";
+  const to = opts.to?.trim() || "my dear child";
+  const village = opts.village?.trim() || "our village";
+  const district = opts.district?.trim();
+  const place = [village, district].filter(Boolean).join(", ");
+
+  const en = [
+    `My dear ${to},`,
+    "",
+    `I write to you from ${place}, where the red earth first held our name. ` +
+      "I never saw your face, yet I have loved you across every harvest and " +
+      "every prayer. Remember this: we were farmers of ragi and keepers of " +
+      "small kindnesses. We spoke Kannada softly at dawn and loudly at " +
+      "festivals, and it carried us through droughts no rain could break.",
+    "",
+    "Wherever you stand now — however far the sea has taken you — do not let " +
+      "our words grow quiet in your mouth. A language is a house; keep a lamp " +
+      "burning in it. When you say 'ajji', say it in Kannada, and I will hear you.",
+    "",
+    "You are the harvest we prayed for.",
+  ].join("\n");
+
+  const kn = [
+    `ನನ್ನ ಪ್ರೀತಿಯ ${to},`,
+    "",
+    `ನಾನು ನಿನಗೆ ${place} ಇಂದ ಬರೆಯುತ್ತಿದ್ದೇನೆ — ಇದೇ ಕೆಂಪು ಮಣ್ಣು ಮೊದಲು ನಮ್ಮ ` +
+      "ಹೆಸರನ್ನು ಹಿಡಿದಿಟ್ಟದ್ದು. ನಾನು ನಿನ್ನ ಮುಖವನ್ನು ಕಂಡಿಲ್ಲ, ಆದರೂ ಪ್ರತಿ ಸುಗ್ಗಿಯಲ್ಲೂ " +
+      "ಪ್ರತಿ ಪ್ರಾರ್ಥನೆಯಲ್ಲೂ ನಿನ್ನನ್ನು ಪ್ರೀತಿಸಿದ್ದೇನೆ. ಇದನ್ನು ನೆನಪಿಡು: ನಾವು ರಾಗಿ " +
+      "ಬೆಳೆದ ರೈತರು, ಸಣ್ಣ ಕರುಣೆಗಳ ಕಾವಲುಗಾರರು. ಬೆಳಗಿನ ಜಾವ ಮೆಲ್ಲನೆ, ಹಬ್ಬಗಳಲ್ಲಿ " +
+      "ಗಟ್ಟಿಯಾಗಿ ಕನ್ನಡ ಮಾತಾಡಿದೆವು; ಅದೇ ನಮ್ಮನ್ನು ಬರಗಾಲಗಳಲ್ಲೂ ಹಿಡಿದಿಟ್ಟಿತು.",
+    "",
+    "ಈಗ ನೀನು ಎಲ್ಲೇ ಇರಲಿ — ಕಡಲು ನಿನ್ನನ್ನು ಎಷ್ಟೇ ದೂರ ಕೊಂಡೊಯ್ದಿರಲಿ — ನಮ್ಮ ನುಡಿ " +
+      "ನಿನ್ನ ಬಾಯಲ್ಲಿ ಮೌನವಾಗದಿರಲಿ. ಭಾಷೆ ಒಂದು ಮನೆ; ಅದರಲ್ಲಿ ದೀಪ ಆರದಂತೆ ನೋಡಿಕೋ. " +
+      "'ಅಜ್ಜಿ' ಎಂದು ಕನ್ನಡದಲ್ಲಿ ಕರೆ, ನಾನು ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತೇನೆ.",
+    "",
+    "ನೀನೇ ನಾವು ಪ್ರಾರ್ಥಿಸಿದ ಸುಗ್ಗಿ.",
+  ].join("\n");
+
+  return {
+    en,
+    kn,
+    blessingEn: BLESSING_EN,
+    blessingKn: BLESSING_KN,
+    from,
+    village: place,
+  };
+}
+
 /** A one-line personalised welcome after onboarding. */
 export async function generateWelcome(person: {
   name: string;

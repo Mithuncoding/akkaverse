@@ -40,6 +40,27 @@ export const siteConfig = {
   ] as NavItem[],
 } as const;
 
+/**
+ * Desktop primary navigation — deliberately focused. Fewer, stronger
+ * destinations read as a confident product, not a pile of features. The rest
+ * live under a "More" menu; the AI Assistant is reachable via the header CTA.
+ */
+export const primaryNav: NavItem[] = [
+  { labelKey: "nav.roots", href: "/roots" },
+  { labelKey: "nav.explore", href: "/explore" },
+  { labelKey: "nav.stories", href: "/stories" },
+  { labelKey: "nav.timeline", href: "/timeline" },
+  { labelKey: "nav.learn", href: "/learn" },
+  { labelKey: "nav.quiz", href: "/quiz" },
+];
+
+/** Secondary destinations, tucked into the header "More" menu. */
+export const moreNav: NavItem[] = [
+  { labelKey: "nav.festivals", href: "/festivals" },
+  { labelKey: "nav.memories", href: "/memories" },
+  { labelKey: "nav.about", href: "/about" },
+];
+
 export const features: FeatureItem[] = [
   {
     titleKey: "feature.roots.title",
@@ -96,13 +117,6 @@ export const features: FeatureItem[] = [
     icon: "BookOpen",
     available: true,
     href: "/stories",
-  },
-  {
-    titleKey: "feature.tools.title",
-    descKey: "feature.tools.desc",
-    icon: "ScanText",
-    available: true,
-    href: "/tools",
   },
   {
     titleKey: "feature.memories.title",

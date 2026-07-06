@@ -7,13 +7,14 @@ import {
   Geography,
   ZoomableGroup,
 } from "react-simple-maps";
-import { ExternalLink, MapPin, Loader2 } from "lucide-react";
+import { ExternalLink, MapPin, Loader2, TreeDeciduous } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
 import { districtById, type District } from "@/data/districts";
 import { getDistrictInfo, type WikiInfo } from "@/lib/wiki";
 import { festivals } from "@/data/festivals";
+import { AskAkka } from "@/components/ui/ask-akka";
 
 const GEO_URL = "/karnataka.geojson";
 
@@ -286,6 +287,23 @@ function DistrictPanel({
           </div>
         );
       })()}
+
+      {/* Connect outward — this district becomes part of your story. */}
+      <div className="mt-5 flex flex-wrap gap-2 border-t border-border pt-4">
+        <AskAkka
+          guide="historian"
+          q={`Tell me about ${selected.nameEn}, Karnataka`}
+          labelEn={`Ask about ${selected.nameEn}`}
+          labelKn={`${selected.nameKn} ಬಗ್ಗೆ ಕೇಳಿ`}
+        />
+        <a
+          href="/roots"
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3.5 py-1.5 text-sm font-medium transition-colors hover:bg-secondary"
+        >
+          <TreeDeciduous className="h-3.5 w-3.5 text-primary" />
+          {bi("Roots here? Add your family", "ಇಲ್ಲಿ ಬೇರುಗಳಿವೆಯೇ? ಸೇರಿಸಿ")}
+        </a>
+      </div>
     </div>
   );
 }

@@ -22,15 +22,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildMessages } from "@/lib/ai/prompts";
+import { buildMessages, type ReplyLang } from "@/lib/ai/prompts";
 import { seededAnswer, normalizeQuestion } from "@/lib/ai/grounding";
+import { retrieveContext, type WebSource } from "@/lib/ai/retrieval";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /* --- configuration (server-only) ------------------------------------ */
 const KEY = process.env.NVIDIA_API_KEY || "";
-const MODEL = process.env.NIM_MODEL || "meta/llama-3.1-8b-instruct";
+const MODEL = process.env.NIM_MODEL || "meta/llama-3.3-70b-instruct";
 const BASE_URL = process.env.NIM_BASE_URL || "https://integrate.api.nvidia.com/v1";
 const ENDPOINT = `${BASE_URL.replace(/\/$/, "")}/chat/completions`;
 
@@ -100,13 +101,22 @@ function clientIp(req: NextRequest): string {
   );
 }
 
+/** Coerce the requested reply language to a known value. */
+function normalizeReplyLang(v: unknown): ReplyLang {
+  return v === "en" || v === "kn" || v === "both" ? v : "auto";
+}
+
 /** Health/feature flag for the UI — never leaks the key itself. */
 export async function GET() {
   return NextResponse.json({ enabled: KEY.trim().length > 0, model: MODEL });
 }
 
 /* --- the NIM call (non-streaming) ----------------------------------- */
-async function callNim(question: string, context: string): Promise<string | null> {
+async function callNim(
+  question: string,
+  context: string,
+  replyLang: ReplyLang,
+): Promise<string | null> {
   const ctrl = new AbortController();
   const timeout = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
@@ -119,7 +129,7 @@ async function callNim(question: string, context: string): Promise<string | null
       signal: ctrl.signal,
       body: JSON.stringify({
         model: MODEL,
-        messages: buildMessages(question, context),
+        messages: buildMessages(question, context, replyLang),
         temperature: TEMPERATURE,
         top_p: 0.95,
         max_tokens: MAX_TOKENS,
@@ -139,7 +149,12 @@ async function callNim(question: string, context: string): Promise<string | null
 }
 
 export async function POST(req: NextRequest) {
-  let body: { question?: unknown; context?: unknown; stream?: unknown };
+  let body: {
+    question?: unknown;
+    context?: unknown;
+    stream?: unknown;
+    replyLang?: unknown;
+  };
   try {
     body = await req.json();
   } catch {
@@ -147,19 +162,45 @@ export async function POST(req: NextRequest) {
   }
 
   const question = String(body.question ?? "").trim().slice(0, 2000);
-  const context = String(body.context ?? "").slice(0, 6000);
+  const baseContext = String(body.context ?? "").slice(0, 6000);
+  const replyLang = normalizeReplyLang(body.replyLang);
   const wantsStream = body.stream === true;
   if (!question) return NextResponse.json({ text: null }, { status: 400 });
 
   // 1) Seeded answers: instant, free, always available (even without a key).
   const seeded = seededAnswer(question);
-  const key = cacheKey(question, context);
+  const key = cacheKey(question, `${baseContext}\u0001${replyLang}`);
 
   // 2) Cache hit.
   const cached = seeded ?? readCache(key);
 
+  // Charge the rate limiter at most once per request (only when we'd hit the
+  // model), then use web grounding to answer factual questions accurately.
+  let limited = false;
+  let context = baseContext;
+  let sources: WebSource[] = [];
+  if (!cached && KEY) {
+    limited = rateLimited(clientIp(req));
+    if (!limited) {
+      const g = await retrieveContext(question);
+      if (g.context) {
+        context = [baseContext, g.context].filter(Boolean).join("\n\n");
+        sources = g.sources;
+      }
+    }
+  }
+
   if (wantsStream) {
-    return streamResponse({ question, context, key, precomputed: cached, req });
+    return streamResponse({
+      question,
+      context,
+      key,
+      precomputed: cached,
+      sources,
+      replyLang,
+      blocked: limited,
+      req,
+    });
   }
 
   if (cached) {
@@ -168,20 +209,20 @@ export async function POST(req: NextRequest) {
   }
 
   if (!KEY) return NextResponse.json({ text: null });
-  if (rateLimited(clientIp(req))) {
-    return NextResponse.json({ text: null }, { status: 429 });
-  }
+  if (limited) return NextResponse.json({ text: null }, { status: 429 });
 
   // 3) De-duplicate concurrent identical calls.
   let promise = inflight.get(key);
   if (!promise) {
-    promise = callNim(question, context).finally(() => inflight.delete(key));
+    promise = callNim(question, context, replyLang).finally(() =>
+      inflight.delete(key),
+    );
     inflight.set(key, promise);
   }
   const text = await promise;
   if (!text) return NextResponse.json({ text: null });
   writeCache(key, text);
-  return NextResponse.json({ text });
+  return NextResponse.json({ text, sources });
 }
 
 /* --- streaming (Server-Sent Events) --------------------------------- */
@@ -194,13 +235,18 @@ function streamResponse(opts: {
   context: string;
   key: string;
   precomputed: string | null;
+  sources: WebSource[];
+  replyLang: ReplyLang;
+  blocked: boolean;
   req: NextRequest;
 }): Response {
-  const { question, context, key, precomputed, req } = opts;
+  const { question, context, key, precomputed, sources, replyLang, blocked } =
+    opts;
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const finish = (full: string) => {
+        if (sources.length) controller.enqueue(sse({ sources }));
         controller.enqueue(sse({ done: true }));
         controller.close();
         if (full && full !== precomputed) writeCache(key, full);
@@ -215,7 +261,7 @@ function streamResponse(opts: {
         return;
       }
 
-      if (!KEY || rateLimited(clientIp(req))) {
+      if (!KEY || blocked) {
         finish("");
         return;
       }
@@ -233,7 +279,7 @@ function streamResponse(opts: {
           signal: ctrl.signal,
           body: JSON.stringify({
             model: MODEL,
-            messages: buildMessages(question, context),
+            messages: buildMessages(question, context, replyLang),
             temperature: TEMPERATURE,
             top_p: 0.95,
             max_tokens: MAX_TOKENS,
