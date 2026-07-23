@@ -794,6 +794,59 @@ summary {
   background-color: hsl(36 26% 82%);
 }
 
+/* Home photo marquee — an infinite, edge-masked scroll of Karnataka imagery. */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee-x var(--marquee-duration, 60s) linear infinite;
+  will-change: transform;
+}
+.marquee-track.is-reverse {
+  animation-direction: reverse;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+.marquee-pause:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Hero rotating word — a single word fades/lifts in on each swap. */
+@keyframes rotate-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.rotating-word {
+  animation: rotate-word-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Respect users who prefer less motion — turn off the showy stuff. */
 @media (prefers-reduced-motion: reduce) {
   .animate-ken-burns,

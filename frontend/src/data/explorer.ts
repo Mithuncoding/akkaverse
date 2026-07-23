@@ -33,6 +33,10 @@ export type ExploreItem = {
   descKn: string;
   factsEn: string[];
   factsKn: string[];
+  /** Wikipedia article title used to cache a lead photo (scripts/cache-places.mjs). */
+  wiki: string;
+  /** District id (matches data/districts.ts) for cross-linking, if place-bound. */
+  district?: string;
 };
 
 export const exploreItems: ExploreItem[] = [
@@ -40,6 +44,8 @@ export const exploreItems: ExploreItem[] = [
     id: "hampi",
     category: "Heritage",
     emoji: "🏛️",
+    wiki: "Hampi",
+    district: "Ballari",
     nameEn: "Hampi",
     nameKn: "ಹಂಪಿ",
     locationEn: "Vijayanagara district",
@@ -63,6 +69,8 @@ export const exploreItems: ExploreItem[] = [
     id: "mysore-palace",
     category: "Heritage",
     emoji: "🏰",
+    wiki: "Mysore Palace",
+    district: "Mysuru",
     nameEn: "Mysore Palace",
     nameKn: "ಮೈಸೂರು ಅರಮನೆ",
     locationEn: "Mysuru",
@@ -86,6 +94,8 @@ export const exploreItems: ExploreItem[] = [
     id: "belur-halebidu",
     category: "Temple",
     emoji: "🛕",
+    wiki: "Chennakeshava Temple, Belur",
+    district: "Hassan",
     nameEn: "Belur & Halebidu",
     nameKn: "ಬೇಲೂರು ಮತ್ತು ಹಳೇಬೀಡು",
     locationEn: "Hassan district",
@@ -109,6 +119,8 @@ export const exploreItems: ExploreItem[] = [
     id: "gomateshwara",
     category: "Temple",
     emoji: "🧘",
+    wiki: "Gommateshwara statue",
+    district: "Hassan",
     nameEn: "Gomateshwara, Shravanabelagola",
     nameKn: "ಗೊಮ್ಮಟೇಶ್ವರ, ಶ್ರವಣಬೆಳಗೊಳ",
     locationEn: "Hassan district",
@@ -132,6 +144,8 @@ export const exploreItems: ExploreItem[] = [
     id: "bengaluru",
     category: "City",
     emoji: "🌆",
+    wiki: "Bangalore",
+    district: "Bengaluru Urban",
     nameEn: "Bengaluru",
     nameKn: "ಬೆಂಗಳೂರು",
     locationEn: "State capital",
@@ -155,6 +169,8 @@ export const exploreItems: ExploreItem[] = [
     id: "jog-falls",
     category: "Nature",
     emoji: "🌊",
+    wiki: "Jog Falls",
+    district: "Shivamogga",
     nameEn: "Jog Falls",
     nameKn: "ಜೋಗ ಜಲಪಾತ",
     locationEn: "Shivamogga district",
@@ -178,6 +194,8 @@ export const exploreItems: ExploreItem[] = [
     id: "coorg",
     category: "Nature",
     emoji: "⛰️",
+    wiki: "Madikeri",
+    district: "Kodagu",
     nameEn: "Coorg (Kodagu)",
     nameKn: "ಕೊಡಗು",
     locationEn: "Western Ghats",
@@ -201,6 +219,7 @@ export const exploreItems: ExploreItem[] = [
     id: "mysore-masala-dosa",
     category: "Food",
     emoji: "🥘",
+    wiki: "Masala dosa",
     nameEn: "Mysore Masala Dosa",
     nameKn: "ಮೈಸೂರು ಮಸಾಲ ದೋಸೆ",
     locationEn: "Statewide favourite",
@@ -224,6 +243,7 @@ export const exploreItems: ExploreItem[] = [
     id: "bisi-bele-bath",
     category: "Food",
     emoji: "🍲",
+    wiki: "Bisi bele bath",
     nameEn: "Bisi Bele Bath",
     nameKn: "ಬಿಸಿ ಬೇಳೆ ಬಾತ್",
     locationEn: "Classic Karnataka dish",
@@ -247,6 +267,8 @@ export const exploreItems: ExploreItem[] = [
     id: "badami-caves",
     category: "Heritage",
     emoji: "🪨",
+    wiki: "Badami cave temples",
+    district: "Bagalkote",
     nameEn: "Badami Cave Temples",
     nameKn: "ಬಾದಾಮಿ ಗುಹಾ ದೇವಾಲಯಗಳು",
     locationEn: "Bagalkot district",
@@ -270,6 +292,8 @@ export const exploreItems: ExploreItem[] = [
     id: "gokarna",
     category: "Nature",
     emoji: "🏖️",
+    wiki: "Gokarna, Karnataka",
+    district: "Uttara Kannada",
     nameEn: "Gokarna",
     nameKn: "ಗೋಕರ್ಣ",
     locationEn: "Uttara Kannada coast",

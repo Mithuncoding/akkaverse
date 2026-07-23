@@ -19,6 +19,7 @@ import {
 import { features } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { DailyHeritage } from "@/components/home/daily-heritage";
+import { PhotoMarquee } from "@/components/home/photo-marquee";
 import { Reveal } from "@/components/ui/reveal";
 import { CountUp } from "@/components/ui/count-up";
 import { RotatingText } from "@/components/ui/rotating-text";
@@ -236,6 +237,23 @@ export function HomeView() {
             })}
           </div>
         </div>
+      </section>
+
+      {/* ---------------------- A LIVING LAND (photos) ---------------------- */}
+      <section className="py-14 sm:py-20">
+        <Reveal className="container mb-8 max-w-2xl text-center sm:mb-10">
+          <Kicker en="A living land" kn="ಜೀವಂತ ನೆಲ" align="center" />
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
+            {bi("A land of a thousand stories", "ಸಾವಿರ ಕಥೆಗಳ ನಾಡು")}
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            {bi(
+              "Temples, palaces, waterfalls and the thirty districts that hold them.",
+              "ದೇವಾಲಯಗಳು, ಅರಮನೆಗಳು, ಜಲಪಾತಗಳು ಮತ್ತು ಅವನ್ನು ಒಳಗೊಂಡ ಮೂವತ್ತು ಜಿಲ್ಲೆಗಳು.",
+            )}
+          </p>
+        </Reveal>
+        <PhotoMarquee />
       </section>
 
       {/* ------------------------- THE JOURNEY ------------------------- */}

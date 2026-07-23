@@ -1,15 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { Download, Loader2, Share2 } from "lucide-react";
+import { Check, Download, Link2, Loader2, Share2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
+import { BlessingCard } from "@/components/roots/blessing-card";
+import { buildBlessingUrl } from "@/lib/roots/share";
 
 /**
  * HeritageCard — a downloadable, shareable "blessing card" carrying an
  * ancestor's Kannada blessing. The signature take-away artifact of Roots:
- * something a diaspora family screenshots and forwards to their children.
+ * something a diaspora family screenshots, forwards, or sends as a link to
+ * their children.
  *
  * The visual card is a fixed-size DOM node captured to a crisp PNG with
  * html-to-image (no server round-trip). Everything degrades gracefully.
@@ -28,6 +31,15 @@ export function HeritageCard({
   const { bi } = useTranslation();
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [busy, setBusy] = React.useState(false);
+  const [linkCopied, setLinkCopied] = React.useState(false);
+  const copyTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(
+    () => () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+    },
+    [],
+  );
 
   const render = React.useCallback(async (): Promise<string | null> => {
     const node = cardRef.current;
@@ -90,64 +102,83 @@ export function HeritageCard({
     }
   }, [busy, render, blessingEn]);
 
+  /**
+   * Send this blessing as a *link* — the whole blessing is encoded into the
+   * URL, so the receiver opens a public /blessing page and sees the card with
+   * no account, database, or app install. Uses the Web Share sheet on mobile,
+   * falls back to copying the link on desktop.
+   */
+  const sendLink = React.useCallback(async () => {
+    const url = buildBlessingUrl({
+      from,
+      village,
+      kn: blessingKn,
+      en: blessingEn,
+    });
+    const nav = navigator as Navigator & {
+      share?: (d: { title?: string; text?: string; url?: string }) => Promise<void>;
+    };
+    const message = bi(
+      `A blessing from ${from} — passed on through Akkaverse.`,
+      `${from} ಅವರಿಂದ ಒಂದು ಆಶೀರ್ವಾದ — Akkaverse ಮೂಲಕ.`,
+    );
+    if (nav.share) {
+      try {
+        await nav.share({
+          title: "Akkaverse — A blessing for you",
+          text: message,
+          url,
+        });
+        return;
+      } catch {
+        /* user cancelled — fall through to copy */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => setLinkCopied(false), 2200);
+    } catch {
+      /* clipboard blocked — nothing more we can do gracefully */
+    }
+  }, [from, village, blessingKn, blessingEn, bi]);
+
   return (
     <div className="flex flex-col items-center gap-5">
       {/* The captured card */}
-      <div
+      <BlessingCard
         ref={cardRef}
-        className="relative w-[340px] overflow-hidden rounded-[1.5rem] border border-amber-900/30 px-8 py-10 text-center shadow-xl sm:w-[380px]"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 50% 0%, #fbf3df 0%, #f4e6c8 55%, #eddab0 100%)",
-        }}
-      >
-        {/* corner flourishes */}
-        <span className="pointer-events-none absolute left-4 top-4 text-2xl text-amber-800/40">
-          ❧
-        </span>
-        <span className="pointer-events-none absolute right-4 top-4 scale-x-[-1] text-2xl text-amber-800/40">
-          ❧
-        </span>
-
-        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-amber-800/80">
-          ಆಶೀರ್ವಾದ · A BLESSING
-        </p>
-
-        <div className="mx-auto mt-5 h-px w-16 bg-amber-800/30" />
-
-        <p
-          className="mt-6 text-2xl leading-relaxed text-amber-950 sm:text-[1.7rem]"
-          style={{ fontFamily: "var(--font-kn-serif), Georgia, serif" }}
-        >
-          {blessingKn}
-        </p>
-
-        <p className="mt-4 font-serif text-sm italic leading-relaxed text-amber-900/85">
-          “{blessingEn}”
-        </p>
-
-        <div className="mx-auto mt-7 h-px w-16 bg-amber-800/30" />
-
-        <p className="mt-5 font-serif text-base text-amber-950">— {from}</p>
-        {village && (
-          <p className="mt-0.5 text-xs uppercase tracking-[0.2em] text-amber-800/70">
-            {village}
-          </p>
-        )}
-
-        <p className="mt-8 text-[0.6rem] uppercase tracking-[0.3em] text-amber-800/60">
-          Akkaverse · ನಮ್ಮ ಬೇರುಗಳು · Roots
-        </p>
-      </div>
+        from={from}
+        village={village}
+        blessingKn={blessingKn}
+        blessingEn={blessingEn}
+      />
 
       {/* actions */}
       <div className="flex flex-wrap items-center justify-center gap-3">
         <button
+          onClick={sendLink}
+          className={cn(
+            "inline-flex h-11 items-center gap-2 rounded-full bg-amber-900 px-6 text-sm font-medium text-amber-50",
+            "transition-transform hover:bg-amber-950 active:scale-95",
+          )}
+        >
+          {linkCopied ? (
+            <Check className="h-4 w-4" />
+          ) : (
+            <Link2 className="h-4 w-4" />
+          )}
+          {linkCopied
+            ? bi("Link copied!", "ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!")
+            : bi("Send this blessing", "ಈ ಆಶೀರ್ವಾದ ಕಳುಹಿಸಿ")}
+        </button>
+        <button
           onClick={share}
           disabled={busy}
           className={cn(
-            "inline-flex h-11 items-center gap-2 rounded-full bg-amber-900 px-6 text-sm font-medium text-amber-50",
-            "transition-transform hover:bg-amber-950 active:scale-95 disabled:opacity-60",
+            "inline-flex h-11 items-center gap-2 rounded-full border border-amber-900/30 px-5 text-sm font-medium text-amber-900",
+            "transition-colors hover:bg-amber-900/10 active:scale-95 disabled:opacity-60",
           )}
         >
           {busy ? (
@@ -155,7 +186,7 @@ export function HeritageCard({
           ) : (
             <Share2 className="h-4 w-4" />
           )}
-          {bi("Share this blessing", "ಈ ಆಶೀರ್ವಾದ ಹಂಚಿ")}
+          {bi("Share image", "ಚಿತ್ರ ಹಂಚಿ")}
         </button>
         <button
           onClick={download}

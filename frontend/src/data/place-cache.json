@@ -1,0 +1,46 @@
+{
+  "hampi": {
+    "imageUrl": "/places/hampi.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Wide_angle_of_Galigopuram_of_Virupaksha_Temple%2C_Hampi_%2804%29_%28cropped%29.jpg/330px-Wide_angle_of_Galigopuram_of_Virupaksha_Temple%2C_Hampi_%2804%29_%28cropped%29.jpg"
+  },
+  "mysore-palace": {
+    "imageUrl": "/places/mysore-palace.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mysore_Palace_Morning.jpg/1280px-Mysore_Palace_Morning.jpg"
+  },
+  "belur-halebidu": {
+    "imageUrl": "/places/belur-halebidu.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Courtyard_of_Chennakesava_Temple_-_Belur.jpg/1280px-The_Courtyard_of_Chennakesava_Temple_-_Belur.jpg"
+  },
+  "gomateshwara": {
+    "imageUrl": "/places/gomateshwara.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gommateshwara%2C_Shravanabelagola.jpg/330px-Gommateshwara%2C_Shravanabelagola.jpg"
+  },
+  "bengaluru": {
+    "imageUrl": "/places/bengaluru.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/View_from_Visvesvaraya_Industrial_and_Technological_Museum_%282025%29_02.jpg/330px-View_from_Visvesvaraya_Industrial_and_Technological_Museum_%282025%29_02.jpg"
+  },
+  "jog-falls": {
+    "imageUrl": "/places/jog-falls.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Jog_Falls_05092016.jpg/330px-Jog_Falls_05092016.jpg"
+  },
+  "coorg": {
+    "imageUrl": "/places/coorg.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Raja%27s_Seat_View_Point.jpg/330px-Raja%27s_Seat_View_Point.jpg"
+  },
+  "mysore-masala-dosa": {
+    "imageUrl": "/places/mysore-masala-dosa.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Rameshwaram_Cafe_Dosa.jpg/330px-Rameshwaram_Cafe_Dosa.jpg"
+  },
+  "bisi-bele-bath": {
+    "imageUrl": "/places/bisi-bele-bath.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Bisi_Bele_Bath_%28Bisibelebath%29.JPG/1280px-Bisi_Bele_Bath_%28Bisibelebath%29.JPG"
+  },
+  "badami-caves": {
+    "imageUrl": "/places/badami-caves.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Vishnu_image_inside_cave_number_3_in_Badami.jpg/1280px-Vishnu_image_inside_cave_number_3_in_Badami.jpg"
+  },
+  "gokarna": {
+    "imageUrl": "/places/gokarna.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Delight_india.jpg"
+  }
+}
