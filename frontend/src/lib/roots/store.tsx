@@ -3,6 +3,8 @@
 import * as React from "react";
 
 import { seedFamily } from "@/lib/roots/seed";
+import { useAuth } from "@/components/auth/auth-provider";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 /**
  * Roots — data layer for the family-heritage experience.
@@ -62,12 +64,45 @@ export type LegacyItem = {
   createdAt: number;
 };
 
+export type VoiceLegacyKind =
+  | "blessing"
+  | "proverb"
+  | "story"
+  | "song"
+  | "recipe"
+  | "advice";
+
+export type VoiceCapsuleVisibility = "private" | "family" | "community";
+
+export type VoiceCapsule = {
+  id: string;
+  personId: string;
+  personName: string;
+  kind: VoiceLegacyKind;
+  title: string;
+  kannada: string;
+  english: string;
+  village?: string;
+  district?: string;
+  /** IndexedDB key for an original recording; omitted for AI narration. */
+  audioId?: string;
+  /** Private Supabase Storage path for authenticated cross-device playback. */
+  cloudAudioPath?: string;
+  visibility: VoiceCapsuleVisibility;
+  consentConfirmed: boolean;
+  createdAt: number;
+};
+
 export type RootsData = {
   version: 1;
   people: Person[];
   legacy: LegacyItem[];
+  voiceCapsules: VoiceCapsule[];
   createdAt: number;
+  updatedAt: number;
 };
+
+export type RootsSyncStatus = "local" | "syncing" | "synced" | "error";
 
 const STORAGE_KEY = "akkaverse.roots.v1";
 /** Marks that the default family has been seeded once, so "Start over"
@@ -79,30 +114,55 @@ const empty = (): RootsData => ({
   version: 1,
   people: [],
   legacy: [],
+  voiceCapsules: [],
   createdAt: Date.now(),
+  updatedAt: Date.now(),
 });
 
 export const uid = () =>
   `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
-function read(): RootsData {
+function storageKeyFor(userId?: string): string {
+  return userId ? `${STORAGE_KEY}:${userId}` : STORAGE_KEY;
+}
+
+function normalizeRoots(value: unknown): RootsData | null {
+  if (!value || typeof value !== "object") return null;
+  const parsed = value as Partial<RootsData>;
+  if (parsed.version !== 1 || !Array.isArray(parsed.people)) return null;
+  return {
+    ...empty(),
+    ...parsed,
+    people: parsed.people,
+    legacy: Array.isArray(parsed.legacy) ? parsed.legacy : [],
+    voiceCapsules: Array.isArray(parsed.voiceCapsules)
+      ? parsed.voiceCapsules
+      : [],
+    createdAt:
+      typeof parsed.createdAt === "number" ? parsed.createdAt : Date.now(),
+    updatedAt:
+      typeof parsed.updatedAt === "number"
+        ? parsed.updatedAt
+        : typeof parsed.createdAt === "number"
+          ? parsed.createdAt
+          : Date.now(),
+  };
+}
+
+function read(key = STORAGE_KEY): RootsData {
   if (typeof window === "undefined") return empty();
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(key);
     if (!raw) return empty();
-    const parsed = JSON.parse(raw) as RootsData;
-    if (!parsed || parsed.version !== 1 || !Array.isArray(parsed.people)) {
-      return empty();
-    }
-    return { ...empty(), ...parsed };
+    return normalizeRoots(JSON.parse(raw)) ?? empty();
   } catch {
     return empty();
   }
 }
 
-function write(data: RootsData) {
+function write(data: RootsData, key = STORAGE_KEY) {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    window.localStorage.setItem(key, JSON.stringify(data));
   } catch {
     /* quota / private mode — fail silently, app still works in-session */
   }
@@ -128,6 +188,10 @@ type RootsContextValue = {
   ready: boolean;
   people: Person[];
   legacy: LegacyItem[];
+  voiceCapsules: VoiceCapsule[];
+  isDemoFamily: boolean;
+  syncStatus: RootsSyncStatus;
+  cloudEnabled: boolean;
   self: Person | null;
   districts: string[];
   addPerson: (input: NewPerson) => Person;
@@ -135,6 +199,11 @@ type RootsContextValue = {
   removePerson: (id: string) => void;
   addLegacy: (input: Omit<LegacyItem, "id" | "createdAt">) => LegacyItem;
   removeLegacy: (id: string) => void;
+  addVoiceCapsule: (
+    input: Omit<VoiceCapsule, "id" | "createdAt">,
+  ) => VoiceCapsule;
+  updateVoiceCapsule: (id: string, patch: Partial<VoiceCapsule>) => void;
+  removeVoiceCapsule: (id: string) => void;
   reset: () => void;
 };
 
@@ -142,40 +211,162 @@ const RootsContext = React.createContext<RootsContextValue | null>(null);
 
 /** Provider — holds the single source of truth for the whole Roots page. */
 export function RootsProvider({ children }: { children: React.ReactNode }) {
+  const auth = useAuth();
+  const userId = auth.user?.id;
   const [data, setData] = React.useState<RootsData>(empty);
   const [ready, setReady] = React.useState(false);
+  const [syncStatus, setSyncStatus] =
+    React.useState<RootsSyncStatus>("local");
+  const [cloudReadyFor, setCloudReadyFor] = React.useState<string | null>(null);
+  const activeStorageKey = React.useRef(STORAGE_KEY);
+  const dataRef = React.useRef<RootsData>(data);
 
   React.useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+
+  React.useEffect(() => {
+    if (auth.status === "loading") return;
     // Seed the maker's family on first ever visit OR when the stored tree is
     // empty and was never seeded (e.g. a stale key from an earlier version).
     // An intentionally emptied tree ("Start over") is respected via SEED_KEY.
     let initial: RootsData;
+    const nextStorageKey = storageKeyFor(userId);
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      const seededVer = window.localStorage.getItem(SEED_KEY);
-      const parsed = raw ? read() : null;
-      // Respect data that belongs to the CURRENT seed version (including an
-      // intentionally-emptied "Start over" tree). Anything older / missing is
-      // (re)seeded so relationship fixes reach existing visitors.
-      if (parsed && seededVer === SEED_VERSION) {
-        initial = parsed;
+      const raw = window.localStorage.getItem(nextStorageKey);
+      if (userId) {
+        if (raw) {
+          initial = read(nextStorageKey);
+        } else {
+          const current = dataRef.current;
+          const canMigrateAnonymous =
+            activeStorageKey.current === STORAGE_KEY &&
+            current.people.length > 0 &&
+            !current.people.some((person) => person.id === "mithun");
+          initial = canMigrateAnonymous
+            ? { ...current, updatedAt: Date.now() }
+            : { ...empty(), updatedAt: 0 };
+          write(initial, nextStorageKey);
+        }
       } else {
-        initial = seedFamily();
-        write(initial);
+        const seededVer = window.localStorage.getItem(SEED_KEY);
+        const parsed = raw ? read(nextStorageKey) : null;
+        if (parsed && seededVer === SEED_VERSION) {
+          initial = parsed;
+        } else {
+          initial = seedFamily();
+          write(initial, nextStorageKey);
+        }
+        window.localStorage.setItem(SEED_KEY, SEED_VERSION);
       }
-      window.localStorage.setItem(SEED_KEY, SEED_VERSION);
     } catch {
-      initial = seedFamily();
+      initial = userId ? empty() : seedFamily();
     }
+    activeStorageKey.current = nextStorageKey;
+    dataRef.current = initial;
+    setCloudReadyFor(null);
+    setSyncStatus(userId ? "syncing" : "local");
     setData(initial);
     setReady(true);
-  }, []);
+  }, [auth.status, userId]);
+
+  React.useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    if (!ready || !userId || !supabase) {
+      setCloudReadyFor(null);
+      if (!userId) setSyncStatus("local");
+      return;
+    }
+
+    let cancelled = false;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const applyRemote = (value: unknown) => {
+      const remote = normalizeRoots(value);
+      if (!remote || remote.updatedAt <= dataRef.current.updatedAt) return;
+      dataRef.current = remote;
+      write(remote, activeStorageKey.current);
+      setData(remote);
+      setSyncStatus("synced");
+    };
+
+    void (async () => {
+      setSyncStatus("syncing");
+      const { data: row, error } = await supabase
+        .from("family_archives")
+        .select("data, updated_at")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (cancelled) return;
+      if (error) {
+        setSyncStatus("error");
+        return;
+      }
+
+      const remote = normalizeRoots(row?.data);
+      const local = dataRef.current;
+      if (remote && remote.updatedAt > local.updatedAt) {
+        applyRemote(remote);
+      } else {
+        const { error: uploadError } = await supabase
+          .from("family_archives")
+          .upsert({
+            user_id: userId,
+            data: local,
+            updated_at: new Date(local.updatedAt).toISOString(),
+          });
+        if (uploadError) {
+          setSyncStatus("error");
+          return;
+        }
+      }
+
+      if (cancelled) return;
+      setCloudReadyFor(userId);
+      setSyncStatus("synced");
+      channel = supabase
+        .channel(`family-archive-${userId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "family_archives",
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => applyRemote((payload.new as { data?: unknown }).data),
+        )
+        .subscribe();
+    })();
+
+    return () => {
+      cancelled = true;
+      if (channel) void supabase.removeChannel(channel);
+    };
+  }, [ready, userId]);
+
+  React.useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    if (!userId || cloudReadyFor !== userId || !supabase) return;
+    setSyncStatus("syncing");
+    const timer = window.setTimeout(async () => {
+      const { error } = await supabase.from("family_archives").upsert({
+        user_id: userId,
+        data,
+        updated_at: new Date(data.updatedAt).toISOString(),
+      });
+      setSyncStatus(error ? "error" : "synced");
+    }, 650);
+    return () => window.clearTimeout(timer);
+  }, [cloudReadyFor, data, userId]);
 
   const commit = React.useCallback(
     (fn: (prev: RootsData) => RootsData) => {
       setData((prev) => {
-        const next = fn(prev);
-        write(next);
+        const next = { ...fn(prev), updatedAt: Date.now() };
+        dataRef.current = next;
+        write(next, activeStorageKey.current);
         return next;
       });
     },
@@ -245,6 +436,44 @@ export function RootsProvider({ children }: { children: React.ReactNode }) {
     [commit],
   );
 
+  const addVoiceCapsule = React.useCallback(
+    (input: Omit<VoiceCapsule, "id" | "createdAt">): VoiceCapsule => {
+      const capsule: VoiceCapsule = {
+        ...input,
+        id: uid(),
+        createdAt: Date.now(),
+      };
+      commit((prev) => ({
+        ...prev,
+        voiceCapsules: [capsule, ...prev.voiceCapsules],
+      }));
+      return capsule;
+    },
+    [commit],
+  );
+
+  const updateVoiceCapsule = React.useCallback(
+    (id: string, patch: Partial<VoiceCapsule>) =>
+      commit((prev) => ({
+        ...prev,
+        voiceCapsules: prev.voiceCapsules.map((capsule) =>
+          capsule.id === id ? { ...capsule, ...patch, id } : capsule,
+        ),
+      })),
+    [commit],
+  );
+
+  const removeVoiceCapsule = React.useCallback(
+    (id: string) =>
+      commit((prev) => ({
+        ...prev,
+        voiceCapsules: prev.voiceCapsules.filter(
+          (capsule) => capsule.id !== id,
+        ),
+      })),
+    [commit],
+  );
+
   const reset = React.useCallback(() => commit(() => empty()), [commit]);
 
   const value = React.useMemo<RootsContextValue>(() => {
@@ -255,6 +484,10 @@ export function RootsProvider({ children }: { children: React.ReactNode }) {
       ready,
       people: data.people,
       legacy: data.legacy,
+      voiceCapsules: data.voiceCapsules,
+      isDemoFamily: data.people.some((person) => person.id === "mithun"),
+      syncStatus,
+      cloudEnabled: Boolean(userId && getSupabaseBrowserClient()),
       self,
       districts: [...set],
       addPerson,
@@ -262,16 +495,24 @@ export function RootsProvider({ children }: { children: React.ReactNode }) {
       removePerson,
       addLegacy,
       removeLegacy,
+      addVoiceCapsule,
+      updateVoiceCapsule,
+      removeVoiceCapsule,
       reset,
     };
   }, [
     data,
     ready,
+    syncStatus,
+    userId,
     addPerson,
     updatePerson,
     removePerson,
     addLegacy,
     removeLegacy,
+    addVoiceCapsule,
+    updateVoiceCapsule,
+    removeVoiceCapsule,
     reset,
   ]);
 

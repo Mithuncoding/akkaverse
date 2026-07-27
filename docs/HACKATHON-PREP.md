@@ -2,7 +2,7 @@
 
 > **Event:** AKKA World Kannada Conference 2026 · Silver Jubilee
 > **Track:** Cultural Continuity & Identity
-> **One line:** *An AI-powered, bilingual home for Karnataka's heritage — built so a Kannada-American child can fall back in love with where they came from.*
+> **One line:** *Akkaverse preserves an elder's Kannada words and turns them into a bilingual family heirloom and lesson for the next generation.*
 
 ---
 
@@ -14,7 +14,7 @@ A grandmother in a village near Chikkaballapura speaks Kannada at dawn and at fe
 
 **Akkaverse is the bridge.**
 
-It begins with *your* family. You plant your roots — the elders who made you — and Akkaverse writes a letter from your grandmother, in her own tongue, and **speaks it aloud in Kannada**. From that one intimate moment, the whole culture opens outward: the villages they walked (the map), the legends that shaped them (Story Theater), the festivals they celebrated (the Living Dasara Archive), the words they whispered (Kannada learning) — and a warm AI guide, *Akka*, who answers anything, grounded in real sources, in the language you choose.
+It begins with *your* family. You plant your roots, preserve an elder's blessing, story, song, or recipe, and attach their original recording when the family is ready. Until then, Akkaverse uses a clearly labeled synthesized Kannada narrator. The words become a private bilingual capsule and a small lesson a grandchild can open from a family link. From that intimate moment, the whole culture opens outward: the villages they walked, the legends that shaped them, the festivals they celebrated, and a grounded AI guide named *Akka*.
 
 It's not a set of pages. **It's one story — and it's yours.**
 
@@ -25,7 +25,7 @@ It's not a set of pages. **It's one story — and it's yours.**
 
 ## 2. The 30-second elevator pitch
 
-> "Akkaverse is a bilingual, AI-powered platform that preserves Karnataka's heritage — built for the Kannada diaspora. You start with your own family tree, hear a letter from your ancestor spoken in Kannada, and from there explore the districts, stories, festivals, and language they came from. Our AI guide, Akka, answers any question — grounded in live sources so it doesn't make things up — in English or Kannada, your choice. It runs free, offline-capable, on any phone."
+> "Akkaverse helps diaspora families preserve an elder's Kannada words and pass them to a child as a bilingual voice capsule and lesson. A family can use synthesized narration now, attach the elder's consented original recording later, and share only the capsule through a private link. From there they explore the places, stories, festivals, and language behind it with Akka, our source-grounded AI guide."
 
 ---
 
@@ -33,9 +33,9 @@ It's not a set of pages. **It's one story — and it's yours.**
 
 **Problem (35s).** The Kannada diaspora is one generation from silence. AKKA families watch their kids grow up unable to read ಕನ್ನಡ. Existing tools are boring or passive, and nothing connects a child abroad to a grandparent's village.
 
-**Solution (40s).** Akkaverse — an immersive, fully bilingual heritage platform. Ten experiences: **Roots** (family heritage), cinematic **Story Theater**, a **Dasara Living Archive**, a **district Explorer**, **Kannada learning**, a **quiz game**, and **Akka**, a grounded AI guide — all in English and ಕನ್ನಡ, side by side, so a parent and child use it *together*.
+**Solution (40s).** Akkaverse begins with **Voice Legacy**: preserve an elder's words, attach an original recording with consent, and send a private bilingual capsule that teaches a child one Kannada phrase. Roots, Story Theater, the Dasara Archive, district Explorer, learning game, and grounded AI then open outward from that family story.
 
-**Impact (30s).** Built for AKKA first: diaspora families, weekend Kannada classes, cultural chapters. Free, offline-capable (PWA), no login barrier — grandparents and kids can both use it today.
+**Impact (30s).** Built for AKKA families and weekend Kannada schools. Browsing needs no login; verified accounts sync private family archives and original voices across devices, while consented community memories appear in real time. Show real pilot counts rather than projected numbers.
 
 **AI (20s).** Akka is grounded in **live Wikipedia retrieval** and a curated knowledge base — so it teaches facts, marks uncertainty, and cites its sources instead of hallucinating. It even writes a letter from your ancestor and reads it aloud in Kannada.
 
@@ -56,13 +56,15 @@ It's not a set of pages. **It's one story — and it's yours.**
 
 **0:20 — Home page.** One breath of the hero. "Ten experiences live here. I'll show you three." Point to the **ನಮ್ಮ ಪಯಣ / The Journey** section: "Akkaverse isn't pages — it's one story."
 
-**0:50 — ROOTS (the emotional peak).** Click **Begin with your Roots**. Open the seeded family. Scroll to **"If They Could Speak"** → **Open the letter** → **Hear [grandmother] in Kannada**. **Stay silent while it speaks.** Then **Save card** — "This is what a diaspora kid keeps forever." Point out **Continue their story** → their district, festivals, era.
+**0:50 — ROOTS + VOICE LEGACY (the emotional peak).** Click **Begin with your Roots**. Open the letter and play its clearly labeled Kannada narration. Create a Voice Capsule for a parent with **Fill demo blessing**, confirm family permission, and save. Explain: "The narration is temporary; the original recording replaces it here when the family is ready."
 
-**2:30 — STORY THEATER.** Open one story, switch **Cinema → Storybook**. "Same heritage, lived three ways." 20 seconds, move on.
+**2:00 — PASS IT ON.** Open **Child lesson**, answer the meaning question, then choose **Pass it on**. Scan/open the private family link on a second phone. Point to the privacy notice: the link exposes neither the family tree nor local original audio.
 
-**3:30 — AKKA (the AI).** Go to Chat. Pick the **Historian** guide. Ask a pre-tested question (e.g., *"What are the most visited places in Karnataka?"*). Point at the **🌐 Wikipedia source chips**: "It answers from live sources and cites them — it doesn't make things up." Switch reply language to **ಕನ್ನಡ**, ask again, tap **Play voice** — Akka speaks Kannada.
+**2:45 — STORY THEATER.** Open one story, switch **Cinema → Storybook**. "Same heritage, lived three ways." Move on quickly.
 
-**4:10 — The offline flourish.** Turn off Wi-Fi. Reload. "Still works — it's a PWA, so a family with weak signal, or a kid on a plane, never loses access."
+**3:30 — AKKA (the AI).** Go to Chat. Ask a pre-tested but non-seeded question. Point at the Wikipedia source chips, repeat the question to demonstrate cached speed with citations intact, then switch the reply language to ಕನ್ನಡ.
+
+**4:10 — The offline flourish.** On the production build, first reload once so the service worker controls the page and visit Roots while online. Then turn off Wi-Fi and reload that same visited page. Say: "Visited family experiences remain available through weak connectivity." Do not claim every unvisited route or cloud narration works offline.
 
 **4:40 — Close on emotion.** Back to the final slide (giant ಕ glyph):
 > "A language doesn't die when the last speaker forgets. It dies when we stop passing it on. **ನಮ್ಮ ಕಥೆ ಮುಂದುವರಿಯಲಿ.**"
@@ -111,15 +113,18 @@ No — it uses Wikipedia's public APIs (opensearch + full-text + extracts), keyl
 **Q: What if the AI is down or there's no key?**
 It still works. Common demo questions are **seeded** (instant, free), and there's a curated knowledge base fallback. The app never blocks on the network.
 
-**Q: How does the Kannada voice work?**
-Most devices have no Kannada TTS voice, so we proxy a free text-to-speech service server-side (`/api/tts`), chunk the text, and stream back MP3 — a real Kannada voice, no API key. It falls back to the browser voice if unavailable.
+**Q: Is that really the elder's voice?**
+Not unless the family attaches an original recording. The default is explicitly labeled synthesized Kannada narration. Original audio is recorded or uploaded with consent, saved locally first, and privately synced for authenticated users. We never present synthetic audio as a relative's voice.
+
+**Q: What happens when the original recording is attached?**
+The existing capsule upgrades in place. Signed-in users sync it to a private Supabase Storage folder and other devices receive a short-lived signed URL. Public family links still carry only text and synthesized narration.
 
 **Q: Can I ask it anything, or just Karnataka?**
 It specialises in Karnataka and Kannada but also handles state comparisons, family/genealogy, travel, and general questions a curious visitor might ask.
 
 ### Data, privacy & security
 **Q: Where does my family data live?**
-Entirely in your browser (`localStorage`). Nothing is uploaded. That's a privacy feature — and honest: it's a private family archive, not a server database (yet).
+Signed-out work stays local. Signed-in family archives live in an RLS-protected row keyed to the authenticated user; original recordings use a private Storage folder. A family link contains only selected text and metadata. Community memories are public by explicit action.
 
 **Q: Is the API key safe?**
 Yes — it's read only from the server environment (`NVIDIA_API_KEY`, no `NEXT_PUBLIC_` prefix), so it's never bundled into the client. The browser talks only to our own `/api/ask`.
@@ -148,7 +153,7 @@ Free and open for the community; institutional licensing (schools, tourism depar
 [Answer honestly — solo/team, timeframe.] Emphasise the breadth *and* polish shipped.
 
 ### Trap questions (stay calm, concede small, reframe)
-- **"Isn't Memory Wall just localStorage?"** → "Yes, today it's a private family scrapbook. Turning it into a real, moderated community archive is our #1 roadmap item."
+- **"Isn't Memory Wall just localStorage?"** → "It has two explicit modes: private account-scoped browser notes, and a realtime Supabase community wall. Verified users publish; RLS restricts deletion to the author."
 - **"Isn't the content just Wikipedia?"** → "Imagery and live facts are sourced and *cited* from Wikipedia; the curated datasets, the bilingual authoring, and the experience are ours. The value is the emotional, bilingual design — not raw facts."
 - **"Ask your AI a question I make up."** → Let them. It's grounded and honest; if unsure it says so. That's a feature, demo it confidently.
 
@@ -160,15 +165,15 @@ Free and open for the community; institutional licensing (schools, tourism depar
 - "The AI key **never** reaches the browser — it's server-only in a Next.js route handler."
 - "Answers are **grounded and cited** — live Wikipedia retrieval, not the model's memory."
 - "**Reply language is a choice** — Auto, English, ಕನ್ನಡ, or both."
-- "**Offline-first** PWA — first visit fast, second nearly instant, works with no signal."
+- "**Resilient PWA** — visited core pages and static heritage assets are cached; live AI and cloud narration still need a network."
 - "**Graceful degradation** — seeded answers + curated KB mean it never fails on stage."
 
 ---
 
 ## 8. Known limitations (own them before judges raise them)
 
-- Family data is local-only (privacy plus: no accounts yet).
-- "Community" features are single-player today — real community + moderation is roadmap.
+- Cloud sync requires a verified account; signed-out data remains device-local.
+- Community publication is real and rate-limited; moderator approval remains the next production step.
 - Hyper-current single facts (today's CM) are answered honestly, not guessed.
 - Some imagery is sourced from Wikipedia (cited); commissioned media is a funding item.
 

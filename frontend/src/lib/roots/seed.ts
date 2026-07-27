@@ -303,6 +303,8 @@ export function seedFamily(): RootsData {
         createdAt: Date.now() - 1,
       },
     ],
+    voiceCapsules: [],
     createdAt: Date.now(),
+    updatedAt: Date.now(),
   };
 }

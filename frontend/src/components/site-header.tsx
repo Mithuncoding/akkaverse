@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu } from "lucide-react";
+import { ChevronDown, Loader2, Menu, UserRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { primaryNav, moreNav } from "@/config/site";
@@ -12,6 +12,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { translations } from "@/i18n/translations";
 import { useTranslation } from "@/i18n/language-provider";
+import { useAuth } from "@/components/auth/auth-provider";
 
 /** Bilingual nav label, stacked in "both" mode to stay compact. */
 function NavText({ labelKey }: { labelKey: string }) {
@@ -35,7 +36,8 @@ function NavText({ labelKey }: { labelKey: string }) {
  * bilingual nav labels. Desktop shows a focused primary nav + a "More" menu.
  */
 export function SiteHeader() {
-  const { t } = useTranslation();
+  const { t, bi } = useTranslation();
+  const auth = useAuth();
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = React.useState(false);
   const moreRef = React.useRef<HTMLDivElement>(null);
@@ -142,6 +144,27 @@ export function SiteHeader() {
           <ModeToggle />
           <Button size="sm" className="hidden shadow-glow lg:inline-flex" asChild>
             <Link href="/chat">{t("common.getStarted")}</Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 gap-1.5 rounded-xl px-2 sm:px-3"
+            asChild
+          >
+            <Link
+              href={auth.status === "authenticated" ? "/account" : "/login"}
+              aria-label={bi("Account", "ಖಾತೆ")}
+              title={auth.status === "authenticated" ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
+            >
+              {auth.status === "loading" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <UserRound className="h-4 w-4" />
+              )}
+              <span className="hidden xl:inline">
+                {auth.status === "authenticated" ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
+              </span>
+            </Link>
           </Button>
           {/* Mobile hamburger — opens the full navigation sheet */}
           <button

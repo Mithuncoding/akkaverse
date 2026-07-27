@@ -8,19 +8,46 @@
  *   - Wikipedia REST/API lookups (used to resolve heritage photos): SWR so the
  *     app feels instant while still refreshing in the background.
  *   - Next.js static build assets: stale-while-revalidate.
- *   - Everything else (HTML navigations, etc.): untouched -> always fresh.
+ *   - HTML navigations: network-first, with the last successful visit as the
+ *     offline fallback. Core routes are warmed during service-worker install.
  */
 
-const VERSION = "akkaverse-v1";
+const VERSION = "akkaverse-v3";
 const IMAGE_CACHE = `${VERSION}-images`;
 const DATA_CACHE = `${VERSION}-data`;
 const STATIC_CACHE = `${VERSION}-static`;
+const PAGE_CACHE = `${VERSION}-pages`;
+
+const CORE_ROUTES = [
+  "/",
+  "/roots",
+  "/stories",
+  "/learn",
+  "/quiz",
+  "/explore",
+  "/festivals",
+  "/memories",
+];
 
 const MAX_IMAGE_ENTRIES = 300;
 
 self.addEventListener("install", (event) => {
-  // Activate immediately so caching kicks in on the very first load.
-  self.skipWaiting();
+  event.waitUntil(
+    (async () => {
+      await self.skipWaiting();
+      const cache = await caches.open(PAGE_CACHE);
+      await Promise.all(
+        CORE_ROUTES.map(async (route) => {
+          try {
+            const response = await fetch(route, { cache: "reload" });
+            if (response.ok) await cache.put(route, response);
+          } catch {
+            // One unavailable route must not prevent the worker from installing.
+          }
+        }),
+      );
+    })(),
+  );
 });
 
 self.addEventListener("activate", (event) => {
@@ -82,7 +109,7 @@ async function cacheFirst(request, cacheName, { trim } = {}) {
       if (trim) trimCache(cacheName, trim);
     }
     return response;
-  } catch (err) {
+  } catch {
     return cached || Response.error();
   }
 }
@@ -101,6 +128,22 @@ async function staleWhileRevalidate(request, cacheName) {
   return cached || network;
 }
 
+async function networkFirstPage(request) {
+  const cache = await caches.open(PAGE_CACHE);
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) await cache.put(request, response.clone());
+    return response;
+  } catch {
+    const cached = (await cache.match(request)) || (await cache.match("/"));
+    if (cached) return cached;
+    return new Response(
+      "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width'><title>Akkaverse offline</title></head><body><main><h1>Akkaverse is offline</h1><p>Reconnect once to prepare this page for offline use.</p></main></body></html>",
+      { headers: { "Content-Type": "text/html; charset=utf-8" } },
+    );
+  }
+}
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
@@ -114,6 +157,11 @@ self.addEventListener("fetch", (event) => {
 
   // Skip dev/HMR & websocket noise.
   if (url.pathname.includes("/_next/webpack-hmr")) return;
+
+  if (request.mode === "navigate") {
+    event.respondWith(networkFirstPage(request));
+    return;
+  }
 
   if (isImageRequest(request, url)) {
     event.respondWith(
@@ -132,5 +180,5 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Everything else: let the browser handle it normally (fresh HTML, etc.).
+  // Everything else: let the browser handle it normally.
 });

@@ -108,7 +108,7 @@ export function AncestorLetter({ people }: { people: Person[] }) {
   const [aiLoading, setAiLoading] = React.useState(false);
   const aiAbort = React.useRef<AbortController | null>(null);
 
-  /* ----- Kannada voice (cloud, with browser fallback) ----- */
+  /* ----- Kannada narration (cloud, with browser fallback) ----- */
   const [voice, setVoice] = React.useState<VoiceState>("idle");
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const urlRef = React.useRef<string | null>(null);
@@ -222,7 +222,7 @@ export function AncestorLetter({ people }: { people: Person[] }) {
 
           {opened && (
             <article className="mt-8 animate-fade-up">
-              {/* Hear-in-Kannada CTA — the signature moment */}
+              {/* Kannada narration CTA — explicitly synthetic until family audio exists. */}
               <div className="mb-7 flex flex-col items-center">
                 <button
                   onClick={hearVoice}
@@ -243,10 +243,16 @@ export function AncestorLetter({ people }: { people: Person[] }) {
                   {voice === "playing"
                     ? bi("Pause", "ವಿರಾಮ")
                     : bi(
-                        `Hear ${letter.from} in Kannada`,
-                        `${letter.from} ಅವರ ಧ್ವನಿ ಕೇಳಿ`,
+                        `Narrate ${letter.from}'s letter in Kannada`,
+                        `${letter.from} ಅವರ ಪತ್ರವನ್ನು ಕನ್ನಡದಲ್ಲಿ ಕೇಳಿ`,
                       )}
                 </button>
+                <p className="mt-2 text-center text-[11px] text-amber-800/65">
+                  {bi(
+                    "Temporary synthesized narration — not the elder's original voice",
+                    "ತಾತ್ಕಾಲಿಕ ಸಂಶ್ಲೇಷಿತ ನಿರೂಪಣೆ — ಹಿರಿಯರ ಮೂಲ ಧ್ವನಿಯಲ್ಲ",
+                  )}
+                </p>
                 {voice !== "idle" && voice !== "loading" && (
                   <button
                     onClick={stopVoice}

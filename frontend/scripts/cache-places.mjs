@@ -62,7 +62,12 @@ async function fetchPageImage(title) {
       `https://en.wikipedia.org/w/api.php?action=query&format=json` +
       `&prop=pageimages&piprop=original|thumbnail&pithumbsize=1000` +
       `&redirects=1&titles=${encodeURIComponent(title)}`;
-    const res = await fetchR(url);
+    const res = await fetchR(url, {
+      headers: {
+        "User-Agent": "AkkaverseCacheBot/1.0 (Kannada heritage project)",
+        "Api-User-Agent": "AkkaverseCacheBot/1.0 (Kannada heritage project)",
+      },
+    });
     if (!res.ok) return null;
     const data = await res.json();
     const pages = data?.query?.pages ?? {};
@@ -80,7 +85,13 @@ async function fetchSummaryImage(title) {
   try {
     const res = await fetchR(
       `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
-      { headers: { Accept: "application/json" } },
+      {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "AkkaverseCacheBot/1.0 (Kannada heritage project)",
+          "Api-User-Agent": "AkkaverseCacheBot/1.0 (Kannada heritage project)",
+        },
+      },
     );
     if (!res.ok) return null;
     const s = await res.json();

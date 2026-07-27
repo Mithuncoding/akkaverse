@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 
-import { MemoryWallView } from "@/components/memories/memory-wall-view";
+import { CommunityMemoryWall } from "@/components/memories/community-memory-wall";
 
 export const metadata: Metadata = {
   title: "Memory Wall",
   description:
-    "A community heritage scrapbook — add a Kannada proverb, folk song, " +
-    "story, or a memory from your elders. Saved on your device, free and " +
-    "open, to keep Kannada heritage alive.",
+    "Keep private family notes or publish consented Kannada proverbs, songs, " +
+    "stories, and elder memories to a realtime community wall.",
 };
 
 export default function MemoriesPage() {
-  return <MemoryWallView />;
+  return <CommunityMemoryWall />;
 }

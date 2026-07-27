@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -47,11 +48,14 @@ function TileCard({ tile }: { tile: Tile }) {
       className="group relative block h-40 w-60 shrink-0 overflow-hidden rounded-2xl border border-border shadow-soft sm:h-48 sm:w-72"
       aria-label={tile.en}
     >
-      <img
+      <Image
         src={tile.src}
         alt={tile.en}
+        fill
+        unoptimized
+        sizes="(max-width: 640px) 240px, 288px"
         loading="lazy"
-        className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
+        className="h-full w-full object-cover transition-transform [transition-duration:1200ms] group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
       <figcaption className="absolute inset-x-0 bottom-0 p-3.5">

@@ -40,7 +40,7 @@ const TEMPERATURE = 0.6;
 const TIMEOUT_MS = 25000;
 
 /* --- tiny in-memory cache (per server instance) --------------------- */
-type Cached = { text: string; at: number };
+type Cached = { text: string; sources: WebSource[]; at: number };
 const cache = new Map<string, Cached>();
 const TTL_MS = 1000 * 60 * 60; // 1 hour
 const MAX_ENTRIES = 300;
@@ -49,7 +49,7 @@ function cacheKey(q: string, c: string) {
   return `${normalizeQuestion(q)}\u0000${c.trim()}`.slice(0, 4000);
 }
 
-function readCache(key: string): string | null {
+function readCache(key: string): Cached | null {
   const hit = cache.get(key);
   if (!hit) return null;
   if (Date.now() - hit.at > TTL_MS) {
@@ -58,11 +58,11 @@ function readCache(key: string): string | null {
   }
   cache.delete(key); // refresh recency (LRU)
   cache.set(key, hit);
-  return hit.text;
+  return hit;
 }
 
-function writeCache(key: string, text: string) {
-  cache.set(key, { text, at: Date.now() });
+function writeCache(key: string, text: string, sources: WebSource[] = []) {
+  cache.set(key, { text, sources, at: Date.now() });
   if (cache.size > MAX_ENTRIES) {
     const oldest = cache.keys().next().value;
     if (oldest) cache.delete(oldest);
@@ -172,13 +172,14 @@ export async function POST(req: NextRequest) {
   const key = cacheKey(question, `${baseContext}\u0001${replyLang}`);
 
   // 2) Cache hit.
-  const cached = seeded ?? readCache(key);
+  const cacheHit = readCache(key);
+  const cached = seeded ?? cacheHit?.text ?? null;
 
   // Charge the rate limiter at most once per request (only when we'd hit the
   // model), then use web grounding to answer factual questions accurately.
   let limited = false;
   let context = baseContext;
-  let sources: WebSource[] = [];
+  let sources: WebSource[] = cacheHit?.sources ?? [];
   if (!cached && KEY) {
     limited = rateLimited(clientIp(req));
     if (!limited) {
@@ -204,8 +205,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (cached) {
-    if (!seeded) writeCache(key, cached);
-    return NextResponse.json({ text: cached, cached: true });
+    return NextResponse.json({ text: cached, sources, cached: true });
   }
 
   if (!KEY) return NextResponse.json({ text: null });
@@ -221,7 +221,7 @@ export async function POST(req: NextRequest) {
   }
   const text = await promise;
   if (!text) return NextResponse.json({ text: null });
-  writeCache(key, text);
+  writeCache(key, text, sources);
   return NextResponse.json({ text, sources });
 }
 
@@ -249,7 +249,7 @@ function streamResponse(opts: {
         if (sources.length) controller.enqueue(sse({ sources }));
         controller.enqueue(sse({ done: true }));
         controller.close();
-        if (full && full !== precomputed) writeCache(key, full);
+        if (full && full !== precomputed) writeCache(key, full, sources);
       };
 
       // Instant path: replay a seeded/cached answer as a smooth stream.

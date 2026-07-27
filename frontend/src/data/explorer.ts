@@ -313,4 +313,204 @@ export const exploreItems: ExploreItem[] = [
       "ಯಾತ್ರೆ ಮತ್ತು ಕಡಲ ಶಾಂತಿಯ ಮಿಶ್ರಣ",
     ],
   },
+  {
+    id: "pattadakal",
+    category: "Heritage",
+    emoji: "🏛️",
+    wiki: "Group of Monuments at Pattadakal",
+    district: "Bagalkote",
+    nameEn: "Pattadakal",
+    nameKn: "ಪಟ್ಟದಕಲ್ಲು",
+    locationEn: "Bagalkote district",
+    locationKn: "ಬಾಗಲಕೋಟೆ ಜಿಲ್ಲೆ",
+    descEn:
+      "A ceremonial Chalukyan capital where northern and southern temple styles meet beside the Malaprabha river — now a UNESCO World Heritage Site.",
+    descKn:
+      "ಮಲಪ್ರಭಾ ನದಿಯ ತೀರದಲ್ಲಿ ಉತ್ತರ ಮತ್ತು ದಕ್ಷಿಣ ಭಾರತದ ದೇವಾಲಯ ಶೈಲಿಗಳು ಒಂದಾಗುವ ಚಾಲುಕ್ಯರ ಪಟ್ಟಾಭಿಷೇಕ ರಾಜಧಾನಿ — ಇಂದು ಯುನೆಸ್ಕೋ ವಿಶ್ವ ಪರಂಪರೆ ತಾಣ.",
+    factsEn: [
+      "UNESCO World Heritage Site since 1987",
+      "Ten major temples from the 7th–8th centuries",
+      "Virupaksha Temple commemorates a royal victory",
+    ],
+    factsKn: [
+      "1987 ರಿಂದ ಯುನೆಸ್ಕೋ ವಿಶ್ವ ಪರಂಪರೆ ತಾಣ",
+      "7–8ನೇ ಶತಮಾನದ ಹತ್ತು ಪ್ರಮುಖ ದೇವಾಲಯಗಳು",
+      "ವಿರೂಪಾಕ್ಷ ದೇವಾಲಯವು ರಾಜ ವಿಜಯದ ಸ್ಮಾರಕ",
+    ],
+  },
+  {
+    id: "aihole",
+    category: "Heritage",
+    emoji: "🪷",
+    wiki: "Durga temple, Aihole",
+    district: "Bagalkote",
+    nameEn: "Aihole",
+    nameKn: "ಐಹೊಳೆ",
+    locationEn: "Bagalkote district",
+    locationKn: "ಬಾಗಲಕೋಟೆ ಜಿಲ್ಲೆ",
+    descEn:
+      "Often called a laboratory of Indian temple architecture, Aihole holds more than a hundred shrines where Chalukyan builders tested bold new forms.",
+    descKn:
+      "ಭಾರತೀಯ ದೇವಾಲಯ ವಾಸ್ತುಶಿಲ್ಪದ ಪ್ರಯೋಗಶಾಲೆ ಎಂದು ಕರೆಯಲ್ಪಡುವ ಐಹೊಳೆಯಲ್ಲಿ ಚಾಲುಕ್ಯ ಶಿಲ್ಪಿಗಳು ಹೊಸ ರೂಪಗಳನ್ನು ಪ್ರಯೋಗಿಸಿದ ನೂರಕ್ಕೂ ಹೆಚ್ಚು ದೇವಾಲಯಗಳಿವೆ.",
+    factsEn: [
+      "More than 120 stone and cave temples",
+      "Durga Temple is famed for its apsidal plan",
+      "The Meguti inscription records Chalukyan history",
+    ],
+    factsKn: [
+      "120ಕ್ಕೂ ಹೆಚ್ಚು ಕಲ್ಲು ಮತ್ತು ಗುಹಾ ದೇವಾಲಯಗಳು",
+      "ದುರ್ಗಾ ದೇವಾಲಯವು ಅರ್ಧವೃತ್ತಾಕಾರದ ವಿನ್ಯಾಸಕ್ಕೆ ಪ್ರಸಿದ್ಧ",
+      "ಮೇಗುತಿ ಶಾಸನವು ಚಾಲುಕ್ಯ ಇತಿಹಾಸ ದಾಖಲಿಸುತ್ತದೆ",
+    ],
+  },
+  {
+    id: "chitradurga-fort",
+    category: "Heritage",
+    emoji: "🏯",
+    wiki: "Chitradurga",
+    district: "Chitradurga",
+    nameEn: "Chitradurga Fort",
+    nameKn: "ಚಿತ್ರದುರ್ಗ ಕೋಟೆ",
+    locationEn: "Chitradurga district",
+    locationKn: "ಚಿತ್ರದುರ್ಗ ಜಿಲ್ಲೆ",
+    descEn:
+      "Seven rings of stone walls climb a boulder-strewn hill, carrying the remembered courage of Onake Obavva and centuries of Nayaka strategy.",
+    descKn:
+      "ಬಂಡೆಗಳಿಂದ ಕೂಡಿದ ಬೆಟ್ಟದ ಮೇಲೆ ಏಳು ಸುತ್ತಿನ ಕಲ್ಲಿನ ಗೋಡೆಗಳು ಏರುತ್ತವೆ; ಒನಕೆ ಓಬವ್ವನ ಧೈರ್ಯ ಮತ್ತು ನಾಯಕ ಅರಸರ ಯುದ್ಧತಂತ್ರವನ್ನು ಸ್ಮರಿಸುತ್ತವೆ.",
+    factsEn: [
+      "Known as Yelu Suttina Kote — the fort of seven circles",
+      "Onake Obavva defended a secret passage",
+      "Built and expanded between the 10th and 18th centuries",
+    ],
+    factsKn: [
+      "ಏಳು ಸುತ್ತಿನ ಕೋಟೆ ಎಂದು ಪ್ರಸಿದ್ಧ",
+      "ಒನಕೆ ಓಬವ್ವ ರಹಸ್ಯ ಕಿಂಡಿಯನ್ನು ರಕ್ಷಿಸಿದರು",
+      "10ರಿಂದ 18ನೇ ಶತಮಾನದವರೆಗೆ ನಿರ್ಮಿಸಿ ವಿಸ್ತರಿಸಲಾಗಿದೆ",
+    ],
+  },
+  {
+    id: "udupi-krishna",
+    category: "Temple",
+    emoji: "🛕",
+    wiki: "Udupi",
+    district: "Udupi",
+    nameEn: "Udupi Sri Krishna Matha",
+    nameKn: "ಉಡುಪಿ ಶ್ರೀಕೃಷ್ಣ ಮಠ",
+    locationEn: "Udupi",
+    locationKn: "ಉಡುಪಿ",
+    descEn:
+      "A living centre of Dvaita philosophy founded by Madhvacharya, where Krishna is viewed through the nine-holed Kanakana Kindi and eight mathas share worship.",
+    descKn:
+      "ಮಧ್ವಾಚಾರ್ಯರು ಸ್ಥಾಪಿಸಿದ ದ್ವೈತ ತತ್ತ್ವದ ಜೀವಂತ ಕೇಂದ್ರ; ಕನಕನ ಕಿಂಡಿಯ ಒಂಬತ್ತು ರಂಧ್ರಗಳ ಮೂಲಕ ಕೃಷ್ಣನ ದರ್ಶನ ಮತ್ತು ಅಷ್ಟಮಠಗಳ ಪರ್ಯಾಯ ಪೂಜೆ ಇಲ್ಲಿನ ವೈಶಿಷ್ಟ್ಯ.",
+    factsEn: [
+      "Founded by Madhvacharya in the 13th century",
+      "Paryaya transfers worship every two years",
+      "Kanakana Kindi remembers the poet-saint Kanaka Dasa",
+    ],
+    factsKn: [
+      "13ನೇ ಶತಮಾನದಲ್ಲಿ ಮಧ್ವಾಚಾರ್ಯರಿಂದ ಸ್ಥಾಪನೆ",
+      "ಪ್ರತಿ ಎರಡು ವರ್ಷಕ್ಕೊಮ್ಮೆ ಪರ್ಯಾಯ ಪೂಜೆ ಬದಲಾಗುತ್ತದೆ",
+      "ಕನಕನ ಕಿಂಡಿ ಸಂತಕವಿ ಕನಕದಾಸರನ್ನು ಸ್ಮರಿಸುತ್ತದೆ",
+    ],
+  },
+  {
+    id: "murudeshwar",
+    category: "Temple",
+    emoji: "🔱",
+    wiki: "Murdeshwar",
+    district: "Uttara Kannada",
+    nameEn: "Murudeshwar",
+    nameKn: "ಮುರುಡೇಶ್ವರ",
+    locationEn: "Uttara Kannada coast",
+    locationKn: "ಉತ್ತರ ಕನ್ನಡ ಕರಾವಳಿ",
+    descEn:
+      "A towering Shiva statue faces the Arabian Sea from Kanduka Hill, joining a sacred Atmalinga legend with dramatic coastal scenery.",
+    descKn:
+      "ಕಂದುಕ ಬೆಟ್ಟದಿಂದ ಅರಬ್ಬಿ ಸಮುದ್ರದತ್ತ ಮುಖಮಾಡಿರುವ ಬೃಹತ್ ಶಿವನ ಪ್ರತಿಮೆ, ಪವಿತ್ರ ಆತ್ಮಲಿಂಗದ ಪುರಾಣವನ್ನು ಅದ್ಭುತ ಕರಾವಳಿ ದೃಶ್ಯದೊಂದಿಗೆ ಜೋಡಿಸುತ್ತದೆ.",
+    factsEn: [
+      "The Shiva statue rises about 37 metres",
+      "A 20-storey gopura overlooks the coast",
+      "Nearby Netrani Island is known for diving",
+    ],
+    factsKn: [
+      "ಶಿವನ ಪ್ರತಿಮೆ ಸುಮಾರು 37 ಮೀಟರ್ ಎತ್ತರ",
+      "20 ಮಹಡಿಗಳ ಗೋಪುರದಿಂದ ಕರಾವಳಿ ನೋಟ",
+      "ಸಮೀಪದ ನೇತ್ರಾಣಿ ದ್ವೀಪ ಡೈವಿಂಗ್‌ಗೆ ಪ್ರಸಿದ್ಧ",
+    ],
+  },
+  {
+    id: "bandipur",
+    category: "Nature",
+    emoji: "🐘",
+    wiki: "Bandipur National Park",
+    district: "Chamarajanagar",
+    nameEn: "Bandipur National Park",
+    nameKn: "ಬಂಡೀಪುರ ರಾಷ್ಟ್ರೀಯ ಉದ್ಯಾನ",
+    locationEn: "Chamarajanagar district",
+    locationKn: "ಚಾಮರಾಜನಗರ ಜಿಲ್ಲೆ",
+    descEn:
+      "Dry deciduous forest in the Nilgiri Biosphere Reserve, protecting elephants, tigers, gaur, and a vital wildlife corridor across southern India.",
+    descKn:
+      "ನೀಲಗಿರಿ ಜೀವಗೋಳ ಮೀಸಲು ಪ್ರದೇಶದ ಒಣ ಎಲೆಉದುರುವ ಕಾಡು; ಆನೆ, ಹುಲಿ, ಕಾಡೆಮ್ಮೆ ಮತ್ತು ದಕ್ಷಿಣ ಭಾರತದ ಪ್ರಮುಖ ವನ್ಯಜೀವಿ ಮಾರ್ಗವನ್ನು ರಕ್ಷಿಸುತ್ತದೆ.",
+    factsEn: [
+      "Part of the Nilgiri Biosphere Reserve",
+      "A major Project Tiger reserve",
+      "Connects habitats across Karnataka, Kerala, and Tamil Nadu",
+    ],
+    factsKn: [
+      "ನೀಲಗಿರಿ ಜೀವಗೋಳ ಮೀಸಲು ಪ್ರದೇಶದ ಭಾಗ",
+      "ಪ್ರಮುಖ ಪ್ರಾಜೆಕ್ಟ್ ಟೈಗರ್ ಅಭಯಾರಣ್ಯ",
+      "ಕರ್ನಾಟಕ, ಕೇರಳ ಮತ್ತು ತಮಿಳುನಾಡಿನ ಆವಾಸಗಳನ್ನು ಜೋಡಿಸುತ್ತದೆ",
+    ],
+  },
+  {
+    id: "bidar-fort",
+    category: "Heritage",
+    emoji: "🏰",
+    wiki: "Bidar Fort",
+    district: "Bidar",
+    nameEn: "Bidar Fort",
+    nameKn: "ಬೀದರ್ ಕೋಟೆ",
+    locationEn: "Bidar",
+    locationKn: "ಬೀದರ್",
+    descEn:
+      "The red-laterite citadel of the Bahmani sultans, filled with Persianate palaces, ingenious water channels, and the layered culture of the Deccan.",
+    descKn:
+      "ಬಹಮನಿ ಸುಲ್ತಾನರ ಕೆಂಪು ಜಂಬಿಟ್ಟಿಗೆ ಕೋಟೆ; ಪರ್ಷಿಯನ್ ಶೈಲಿಯ ಅರಮನೆಗಳು, ಚತುರ ನೀರಿನ ಕಾಲುವೆಗಳು ಮತ್ತು ದಖ್ಖನ್‌ನ ಬಹುಪದರ ಸಂಸ್ಕೃತಿಯನ್ನು ಹೊತ್ತಿದೆ.",
+    factsEn: [
+      "Rebuilt as the Bahmani capital in 1427",
+      "Its walls contain more than thirty monuments",
+      "The nearby madrasa of Mahmud Gawan is a Deccan landmark",
+    ],
+    factsKn: [
+      "1427ರಲ್ಲಿ ಬಹಮನಿ ರಾಜಧಾನಿಯಾಗಿ ಮರುನಿರ್ಮಾಣ",
+      "ಗೋಡೆಗಳೊಳಗೆ ಮೂವತ್ತಕ್ಕೂ ಹೆಚ್ಚು ಸ್ಮಾರಕಗಳು",
+      "ಸಮೀಪದ ಮಹಮೂದ್ ಗವಾನ್ ಮದರಸಾ ದಖ್ಖನ್‌ನ ಹೆಗ್ಗುರುತು",
+    ],
+  },
+  {
+    id: "dandeli",
+    category: "Nature",
+    emoji: "🛶",
+    wiki: "Dandeli",
+    district: "Uttara Kannada",
+    nameEn: "Dandeli",
+    nameKn: "ದಾಂಡೇಲಿ",
+    locationEn: "Uttara Kannada district",
+    locationKn: "ಉತ್ತರ ಕನ್ನಡ ಜಿಲ್ಲೆ",
+    descEn:
+      "Dense Western Ghats forest around the Kali river, known for hornbills, rafting, limestone caves, and community life shaped by the woods.",
+    descKn:
+      "ಕಾಳಿ ನದಿಯ ಸುತ್ತಲಿನ ದಟ್ಟ ಪಶ್ಚಿಮ ಘಟ್ಟದ ಕಾಡು; ಹಾರ್ನ್‌ಬಿಲ್ ಹಕ್ಕಿಗಳು, ರಾಫ್ಟಿಂಗ್, ಸುಣ್ಣದ ಕಲ್ಲಿನ ಗುಹೆಗಳು ಮತ್ತು ಅರಣ್ಯಾಧಾರಿತ ಸಮುದಾಯ ಜೀವನಕ್ಕೆ ಪ್ರಸಿದ್ಧ.",
+    factsEn: [
+      "White-water rafting runs on the Kali river",
+      "An important habitat for great hornbills",
+      "Syntheri Rocks reveal dramatic limestone formations",
+    ],
+    factsKn: [
+      "ಕಾಳಿ ನದಿಯಲ್ಲಿ ವೈಟ್-ವಾಟರ್ ರಾಫ್ಟಿಂಗ್",
+      "ದೊಡ್ಡ ಹಾರ್ನ್‌ಬಿಲ್ ಹಕ್ಕಿಗಳ ಪ್ರಮುಖ ಆವಾಸ",
+      "ಸಿಂಥೇರಿ ಬಂಡೆಗಳು ಅದ್ಭುತ ಸುಣ್ಣದಕಲ್ಲಿನ ರಚನೆ ತೋರಿಸುತ್ತವೆ",
+    ],
+  },
 ];

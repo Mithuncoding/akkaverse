@@ -42,5 +42,37 @@
   "gokarna": {
     "imageUrl": "/places/gokarna.jpg",
     "source": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Delight_india.jpg"
+  },
+  "pattadakal": {
+    "imageUrl": "/places/pattadakal.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Pattadakal_000.JPG/1280px-Pattadakal_000.JPG"
+  },
+  "aihole": {
+    "imageUrl": "/places/aihole.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Durga_Temple_-_General_View.jpg"
+  },
+  "chitradurga-fort": {
+    "imageUrl": "/places/chitradurga-fort.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/GALIMANTAPA.jpg/330px-GALIMANTAPA.jpg"
+  },
+  "udupi-krishna": {
+    "imageUrl": "/places/udupi-krishna.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Udupi_Krishna_Temple.jpg/330px-Udupi_Krishna_Temple.jpg"
+  },
+  "murudeshwar": {
+    "imageUrl": "/places/murudeshwar.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Shiva_Statue_Murdeshwara_Temple.jpg"
+  },
+  "bandipur": {
+    "imageUrl": "/places/bandipur.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Prince_in_the_Jungle_crop.jpg/1280px-Prince_in_the_Jungle_crop.jpg"
+  },
+  "bidar-fort": {
+    "imageUrl": "/places/bidar-fort.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Gumbaz_Darwaza_of_the_Bidar_fort_%28cropped%29.jpg/330px-Gumbaz_Darwaza_of_the_Bidar_fort_%28cropped%29.jpg"
+  },
+  "dandeli": {
+    "imageUrl": "/places/dandeli.jpg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Dandeli_1.jpg/330px-Dandeli_1.jpg"
   }
 }

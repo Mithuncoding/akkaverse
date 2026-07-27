@@ -9,6 +9,7 @@ import { MobileNav } from "@/components/mobile-nav";
 import { SpeechBar } from "@/components/ui/speech-bar";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { ServiceWorker } from "@/components/service-worker";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import "./globals.css";
 
 // `variable` exposes the font as the `--font-sans` CSS var used by Tailwind.
@@ -103,16 +104,18 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <ScrollProgress />
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
-              <main className="flex-1 pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:pb-0">
-                {children}
-              </main>
-            </div>
-            <MobileNav />
-            <SpeechBar />
-            <ServiceWorker />
+            <AuthProvider>
+              <ScrollProgress />
+              <div className="relative flex min-h-screen flex-col">
+                <SiteHeader />
+                <main className="flex-1 pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:pb-0">
+                  {children}
+                </main>
+              </div>
+              <MobileNav />
+              <SpeechBar />
+              <ServiceWorker />
+            </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

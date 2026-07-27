@@ -3,11 +3,11 @@
 import * as React from "react";
 
 /**
- * Registers the image/asset caching service worker.
+ * Registers the page/asset caching service worker.
  *
  * Only runs in production (dev would fight Next.js HMR). The worker makes the
- * second visit feel near-instant by serving heritage photos & static assets
- * from cache — critical for reliable live demos.
+ * second visit feel near-instant and lets previously visited core routes reload
+ * through weak connectivity — critical for reliable live demos.
  */
 export function ServiceWorker() {
   React.useEffect(() => {

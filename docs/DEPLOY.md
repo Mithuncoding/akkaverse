@@ -2,7 +2,7 @@
 
 A complete, copy-paste guide to get Akkaverse live — including the **NVIDIA API key setup** that powers the Akka AI.
 
-> **Good news:** the app works *without* any key (seeded answers + curated knowledge base + Wikipedia grounding). The key just unlocks richer, streamed AI answers. Web grounding and the Kannada voice are **keyless**.
+> **Good news:** the app works *without* any key through seeded answers and curated fallbacks. The key unlocks live streamed, Wikipedia-grounded AI answers. Wikipedia media and synthesized Kannada narration are keyless.
 
 ---
 
@@ -56,7 +56,9 @@ In the Vercel import screen (or later under **Project → Settings → Environme
 - **Security note:** because there is no `NEXT_PUBLIC_` prefix, the key stays on the server and is never bundled into the browser.
 - After adding or changing env vars, **redeploy** (Vercel → Deployments → ⋯ → Redeploy) so they take effect.
 
-That's it — no other variables are required. Wikipedia grounding and Kannada TTS need no keys.
+For accounts and realtime data, also add `NEXT_PUBLIC_SUPABASE_URL` and
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` after completing
+[SUPABASE-SETUP.md](SUPABASE-SETUP.md). Wikipedia media and Kannada TTS need no keys.
 
 ---
 
@@ -68,8 +70,9 @@ Once deployed, open your Vercel URL and check:
    - Expected: `{"enabled":true,"model":"meta/llama-3.3-70b-instruct"}`
    - If `"enabled":false` → the key isn't set correctly; re-check `NVIDIA_API_KEY` and redeploy.
 2. **Chat:** open `/chat`, pick a guide, ask *"What are the most visited places in Karnataka?"* — you should see a streamed answer with **🌐 Wikipedia source chips**.
-3. **Kannada voice:** open `/roots` → *If They Could Speak* → **Open the letter** → **Hear in Kannada**. You should hear audio.
-4. **Offline:** load the site, then go offline and reload — it should still open (PWA).
+3. **Kannada narration:** open `/roots` → *If They Could Speak* → **Open the letter** → **Narrate the letter in Kannada**. You should hear synthesized audio with an explicit disclosure.
+4. **Voice Legacy:** create a demo capsule, open its child lesson, choose **Pass it on**, and verify the `/voice-legacy?d=…` link on another device.
+5. **Offline:** reload once so the production service worker controls the page, visit `/roots` online, then go offline and reload `/roots`. Previously visited core pages work; live AI and cloud narration do not.
 
 ---
 
@@ -143,6 +146,7 @@ npm run lint        # eslint
 | AI answers are empty / never stream | Key invalid or model too slow. Try `NIM_MODEL=meta/llama-3.1-8b-instruct` and redeploy. |
 | Locally: AI/Wikipedia calls fail with cert error | Start dev with `NODE_OPTIONS='--use-system-ca'` (see above). |
 | Kannada voice silent | The keyless TTS proxy may be blocked on that network; it falls back to the browser voice automatically. |
+| Original family recording does not appear on another device | Sign in on both devices, wait for **Cloud synced**, and verify the private `voice-legacies` bucket policies from [SUPABASE-SETUP.md](SUPABASE-SETUP.md). |
 | Fonts/Kannada look wrong on first build locally | `next/font` downloads Google fonts at build; on corporate TLS start with `--use-system-ca`. |
 
 ---
@@ -154,5 +158,7 @@ npm run lint        # eslint
 | `NVIDIA_API_KEY` | No (app works without it) | — | Enables live Akka AI. Server-only. |
 | `NIM_MODEL` | No | `meta/llama-3.3-70b-instruct` | Which NIM model to use. |
 | `NIM_BASE_URL` | No | `https://integrate.api.nvidia.com/v1` | Override the NIM endpoint. |
+| `NEXT_PUBLIC_SUPABASE_URL` | For accounts | — | Public Supabase project URL. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | For accounts | — | Public browser key; RLS enforces access. |
 
 **Never** create a `NEXT_PUBLIC_NVIDIA_API_KEY` — that would leak the key to the browser.

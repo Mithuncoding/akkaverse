@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 
 const GEO_URL = "/karnataka.geojson";

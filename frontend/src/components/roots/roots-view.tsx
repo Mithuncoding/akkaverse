@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { TreeDeciduous, RotateCcw } from "lucide-react";
+import {
+  Cloud,
+  CloudOff,
+  Info,
+  Loader2,
+  RotateCcw,
+  TreeDeciduous,
+} from "lucide-react";
 
 import { useTranslation } from "@/i18n/language-provider";
 import { useRoots, type Person } from "@/lib/roots/store";
@@ -12,6 +19,7 @@ import { FamilyTree } from "@/components/roots/family-tree";
 import { MemberPanel } from "@/components/roots/member-panel";
 import { HeritageEngine } from "@/components/roots/heritage-engine";
 import { AncestorLetter } from "@/components/roots/ancestor-letter";
+import { VoiceLegacy } from "@/components/roots/voice-legacy";
 import { LegacyVault } from "@/components/roots/legacy-vault";
 import { FamilyTimeline } from "@/components/roots/family-timeline";
 
@@ -48,7 +56,16 @@ function SectionHead({
 
 export function RootsView() {
   const { bi } = useTranslation();
-  const { ready, self, people, districts, reset } = useRoots();
+  const {
+    ready,
+    self,
+    people,
+    districts,
+    isDemoFamily,
+    syncStatus,
+    cloudEnabled,
+    reset,
+  } = useRoots();
   const [onboardOpen, setOnboardOpen] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
 
@@ -106,29 +123,78 @@ export function RootsView() {
             </p>
           )}
         </div>
-        <button
-          onClick={() => {
-            if (
-              window.confirm(
-                bi(
-                  "Clear your entire family tree? This cannot be undone.",
-                  "ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಕುಟುಂಬ ಮರವನ್ನು ಅಳಿಸುವುದೇ? ಇದನ್ನು ಹಿಂಪಡೆಯಲಾಗದು.",
-                ),
-              )
-            ) {
-              reset();
-              setSelectedId(null);
-            }
-          }}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-destructive/40 hover:text-destructive"
-        >
-          <RotateCcw className="h-3.5 w-3.5" />
-          {bi("Start over", "ಹೊಸದಾಗಿ")}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground">
+            {syncStatus === "syncing" ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+            ) : cloudEnabled && syncStatus === "synced" ? (
+              <Cloud className="h-3.5 w-3.5 text-emerald-600" />
+            ) : (
+              <CloudOff className="h-3.5 w-3.5" />
+            )}
+            {syncStatus === "syncing"
+              ? bi("Syncing…", "ಸಿಂಕ್ ಆಗುತ್ತಿದೆ…")
+              : cloudEnabled && syncStatus === "synced"
+                ? bi("Cloud synced", "ಕ್ಲೌಡ್ ಸಿಂಕ್ ಆಗಿದೆ")
+                : syncStatus === "error"
+                  ? bi("Cloud sync needs attention", "ಕ್ಲೌಡ್ ಸಿಂಕ್ ಪರಿಶೀಲಿಸಿ")
+                  : bi("Saved on this device", "ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ")}
+          </span>
+          <button
+            onClick={() => {
+              if (
+                window.confirm(
+                  bi(
+                    "Clear your entire family tree? This cannot be undone.",
+                    "ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಕುಟುಂಬ ಮರವನ್ನು ಅಳಿಸುವುದೇ? ಇದನ್ನು ಹಿಂಪಡೆಯಲಾಗದು.",
+                  ),
+                )
+              ) {
+                reset();
+                setSelectedId(null);
+              }
+            }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-destructive/40 hover:text-destructive"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            {bi("Start over", "ಹೊಸದಾಗಿ")}
+          </button>
+        </div>
       </header>
 
+      {isDemoFamily && (
+        <div className="container mt-6">
+          <div className="flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary/[0.05] px-4 py-3 text-sm text-muted-foreground">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <p>
+              {bi(
+                "You are viewing Mithun's demo family. Choose Start over to build a private tree for your own family; nothing is uploaded.",
+                "ನೀವು ಮಿಥುನ್ ಅವರ ಮಾದರಿ ಕುಟುಂಬವನ್ನು ನೋಡುತ್ತಿದ್ದೀರಿ. ನಿಮ್ಮ ಕುಟುಂಬದ ಖಾಸಗಿ ಮರವನ್ನು ರಚಿಸಲು ಹೊಸದಾಗಿ ಆಯ್ಕೆಮಾಡಿ; ಯಾವುದನ್ನೂ ಅಪ್‌ಲೋಡ್ ಮಾಡುವುದಿಲ್ಲ.",
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Emotional opening — the signature moment belongs before the tools. */}
+      <section className="container mt-10">
+        <SectionHead
+          kicker={bi("Begin with a voice", "ಧ್ವನಿಯಿಂದ ಆರಂಭಿಸಿ")}
+          title={bi("If they could speak", "ಅವರು ಮಾತಾಡಬಲ್ಲರಾದರೆ")}
+          desc={bi(
+            "Open a letter from the generation before you, then preserve the words your own family should never lose.",
+            "ಹಿಂದಿನ ಪೀಳಿಗೆಯ ಪತ್ರವನ್ನು ತೆರೆಯಿರಿ; ನಂತರ ನಿಮ್ಮ ಕುಟುಂಬ ಕಳೆದುಕೊಳ್ಳಬಾರದ ಪದಗಳನ್ನು ಉಳಿಸಿ.",
+          )}
+        />
+        <AncestorLetter people={people} />
+      </section>
+
+      <section className="container mt-10">
+        <VoiceLegacy people={people} />
+      </section>
+
       {/* family tree */}
-      <section className="container mt-8">
+      <section className="container mt-16">
         <SectionHead
           kicker={bi("Your living tree", "ನಿಮ್ಮ ಜೀವಂತ ಮರ")}
           title={bi("Every branch, a life remembered", "ಪ್ರತಿ ಕೊಂಬೆಯೂ ಒಂದು ನೆನಪಿನ ಬದುಕು")}
@@ -172,14 +238,7 @@ export function RootsView() {
         <LegacyVault />
       </section>
 
-      {/* ancestor letter — emotional highlight */}
-      <section className="container mb-24 mt-16">
-        <SectionHead
-          kicker={bi("The emotional heart", "ಭಾವನಾತ್ಮಕ ಹೃದಯ")}
-          title={bi("If they could speak", "ಅವರು ಮಾತಾಡಬಲ್ಲರಾದರೆ")}
-        />
-        <AncestorLetter people={people} />
-      </section>
+      <div className="h-24" />
 
       {selected && (
         <MemberPanel person={selected} onClose={() => setSelectedId(null)} />

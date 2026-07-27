@@ -3,21 +3,27 @@
 > A bilingual (English + ಕನ್ನಡ) platform to **preserve, teach, and celebrate**
 > Kannada language, history, culture, and heritage.
 
-Akkaverse is a fully client-side **Next.js** app. It runs entirely in the
-browser with **no backend, no database, and no API keys** — which makes it
-free to run and a one-click deploy on **Vercel**.
+Akkaverse is a local-first **Next.js + Supabase** app. Authenticated families
+sync a private archive and original recordings across devices, while the
+community Memory Wall updates in real time. Row Level Security keeps each
+family archive private. The core cultural content still works without an
+account or AI key.
 
 ---
 
 ## ✨ What's inside
 
 - **Assistant** — ask about Karnataka's history, temples, festivals and food.
+- **Voice Legacy** — preserve an elder's words, add their original recording
+   when available, and pass a private bilingual lesson to the next generation.
+- **Accounts & realtime** — verified email authentication, private family sync,
+   private audio storage, password recovery, and a live community wall.
 - **Learn** — structured Kannada lessons with read-aloud.
 - **Explore** — interactive Karnataka district map with cached Wikipedia info & photos.
 - **Festivals, Stories & Timeline** — curated heritage content.
 - **Quiz** — test your Karnataka knowledge.
 - **Tools** — in-browser Kannada OCR (private, nothing is uploaded).
-- **Memory Wall** — a community scrapbook of proverbs, folk songs and memories (saved locally).
+- **Memory Wall** — private family notes plus a realtime community archive.
 - **Our Story** — a personal note from the maker.
 
 Everything is bilingual and works in English, ಕನ್ನಡ, or both at once.
@@ -30,13 +36,19 @@ Everything is bilingual and works in English, ಕನ್ನಡ, or both at once.
 |----------|------------|
 | Framework | Next.js (App Router), React, TypeScript |
 | Styling   | Tailwind CSS, shadcn/ui |
-| Voice     | Web Speech API (browser TTS) |
+| AI        | NVIDIA NIM through a server-only Next.js route, plus Wikipedia grounding |
+| Voice     | Keyless synthesized Kannada TTS; optional original recordings |
 | OCR       | Tesseract.js (runs in the browser) |
 | Data      | Curated local datasets + cached Wikipedia (REST + PageImages) |
-| Storage   | `localStorage` (Memory Wall) |
+| Storage   | `localStorage` (family/capsules) + IndexedDB (original audio) |
+| Identity & DB | Supabase Auth, Postgres, Realtime, Storage, and RLS |
+| Server    | Next.js route handlers for AI and narration |
 | Deploy    | Vercel |
 
-No server, database, or third-party API keys are required.
+An account is optional for browsing; it is required for cloud sync and public
+contributions. `NVIDIA_API_KEY` remains optional and server-only. Follow
+[docs/SUPABASE-SETUP.md](docs/SUPABASE-SETUP.md) once, then see
+[docs/DEPLOY.md](docs/DEPLOY.md) for deployment.
 
 ---
 
@@ -95,7 +107,8 @@ node --use-system-ca frontend/scripts/cache-districts.mjs
 2. In Vercel, **Import** the repository.
 3. Set the **Root Directory** to `frontend`.
 4. Framework preset auto-detects **Next.js** — keep the defaults
-   (`npm run build`). No environment variables are needed.
+   (`npm run build`). Add `NVIDIA_API_KEY` to enable live Akka answers; without
+   it, seeded and curated fallback experiences still work.
 5. Deploy. 🎉
 
 ---
