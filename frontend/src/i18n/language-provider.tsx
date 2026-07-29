@@ -38,7 +38,7 @@ function joinBilingual(en: string, kn: string): string {
  * persisted-preference model as the app's light/dark theme control.
  */
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = React.useState<Locale>("both");
+  const [locale, setLocaleState] = React.useState<Locale>("en");
 
   // Hydrate the saved preference on mount (client-only, avoids SSR mismatch).
   React.useEffect(() => {
