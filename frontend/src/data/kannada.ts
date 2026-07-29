@@ -87,27 +87,44 @@ export const NUMBERS: NumberItem[] = [
   { glyph: "೧೦", value: 10, word: "ಹತ್ತು", translit: "hattu" },
 ];
 
+export type WordCategory = "greetings" | "essentials" | "people" | "world";
+
 export type Flashcard = {
   kn: string;
   translit: string;
   en: string;
   emoji: string;
+  category: WordCategory;
+  exampleKn: string;
+  exampleEn: string;
 };
 
-/** Everyday words for flip-card practice. */
+/** Everyday words grouped into a practical beginner curriculum. */
 export const FLASHCARDS: Flashcard[] = [
-  { kn: "ನಮಸ್ಕಾರ", translit: "namaskara", en: "Hello / Greetings", emoji: "🙏" },
-  { kn: "ಧನ್ಯವಾದ", translit: "dhanyavaada", en: "Thank you", emoji: "😊" },
-  { kn: "ನೀರು", translit: "neeru", en: "Water", emoji: "💧" },
-  { kn: "ಊಟ", translit: "oota", en: "Meal / Food", emoji: "🍛" },
-  { kn: "ಮನೆ", translit: "mane", en: "House / Home", emoji: "🏠" },
-  { kn: "ಪುಸ್ತಕ", translit: "pustaka", en: "Book", emoji: "📖" },
-  { kn: "ಗೆಳೆಯ", translit: "geleya", en: "Friend", emoji: "🤝" },
-  { kn: "ಹೂವು", translit: "hoovu", en: "Flower", emoji: "🌸" },
-  { kn: "ಸೂರ್ಯ", translit: "soorya", en: "Sun", emoji: "☀️" },
-  { kn: "ಚಂದ್ರ", translit: "chandra", en: "Moon", emoji: "🌙" },
-  { kn: "ಪ್ರೀತಿ", translit: "preeti", en: "Love", emoji: "❤️" },
-  { kn: "ನಾಡು", translit: "naadu", en: "Land / Country", emoji: "🌍" },
+  { kn: "ನಮಸ್ಕಾರ", translit: "namaskara", en: "Hello / Greetings", emoji: "🙏", category: "greetings", exampleKn: "ನಮಸ್ಕಾರ! ನೀವು ಹೇಗಿದ್ದೀರಿ?", exampleEn: "Hello! How are you?" },
+  { kn: "ಧನ್ಯವಾದ", translit: "dhanyavaada", en: "Thank you", emoji: "😊", category: "greetings", exampleKn: "ತುಂಬಾ ಧನ್ಯವಾದ", exampleEn: "Thank you very much" },
+  { kn: "ದಯವಿಟ್ಟು", translit: "dayavittu", en: "Please", emoji: "🤲", category: "greetings", exampleKn: "ದಯವಿಟ್ಟು ಕುಳಿತುಕೊಳ್ಳಿ", exampleEn: "Please sit down" },
+  { kn: "ಕ್ಷಮಿಸಿ", translit: "kshamisi", en: "Sorry / Excuse me", emoji: "🙇", category: "greetings", exampleKn: "ಕ್ಷಮಿಸಿ, ನನಗೆ ಅರ್ಥವಾಗಲಿಲ್ಲ", exampleEn: "Sorry, I did not understand" },
+  { kn: "ನೀರು", translit: "neeru", en: "Water", emoji: "💧", category: "essentials", exampleKn: "ನನಗೆ ನೀರು ಬೇಕು", exampleEn: "I need water" },
+  { kn: "ಊಟ", translit: "oota", en: "Meal / Food", emoji: "🍛", category: "essentials", exampleKn: "ಊಟ ರುಚಿಯಾಗಿದೆ", exampleEn: "The meal is delicious" },
+  { kn: "ಹೌದು", translit: "haudu", en: "Yes", emoji: "✓", category: "essentials", exampleKn: "ಹೌದು, ನನಗೆ ಕನ್ನಡ ಇಷ್ಟ", exampleEn: "Yes, I like Kannada" },
+  { kn: "ಇಲ್ಲ", translit: "illa", en: "No / Not there", emoji: "×", category: "essentials", exampleKn: "ಇಲ್ಲ, ಧನ್ಯವಾದ", exampleEn: "No, thank you" },
+  { kn: "ಸಮಯ", translit: "samaya", en: "Time", emoji: "⏱", category: "essentials", exampleKn: "ಈಗ ಸಮಯ ಎಷ್ಟು?", exampleEn: "What time is it now?" },
+  { kn: "ಗೆಳೆಯ", translit: "geleya", en: "Friend", emoji: "🤝", category: "people", exampleKn: "ಅವನು ನನ್ನ ಗೆಳೆಯ", exampleEn: "He is my friend" },
+  { kn: "ಪ್ರೀತಿ", translit: "preeti", en: "Love", emoji: "♥", category: "people", exampleKn: "ಪ್ರೀತಿ ಅಮೂಲ್ಯ", exampleEn: "Love is precious" },
+  { kn: "ಅಮ್ಮ", translit: "amma", en: "Mother", emoji: "👩", category: "people", exampleKn: "ಇವರು ನನ್ನ ಅಮ್ಮ", exampleEn: "This is my mother" },
+  { kn: "ಅಪ್ಪ", translit: "appa", en: "Father", emoji: "👨", category: "people", exampleKn: "ಇವರು ನನ್ನ ಅಪ್ಪ", exampleEn: "This is my father" },
+  { kn: "ಮಗು", translit: "magu", en: "Child", emoji: "🧒", category: "people", exampleKn: "ಮಗು ಆಡುತ್ತಿದೆ", exampleEn: "The child is playing" },
+  { kn: "ಮನೆ", translit: "mane", en: "House / Home", emoji: "⌂", category: "world", exampleKn: "ಇದು ನನ್ನ ಮನೆ", exampleEn: "This is my home" },
+  { kn: "ಪುಸ್ತಕ", translit: "pustaka", en: "Book", emoji: "📖", category: "world", exampleKn: "ಇದು ಕನ್ನಡ ಪುಸ್ತಕ", exampleEn: "This is a Kannada book" },
+  { kn: "ಹೂವು", translit: "hoovu", en: "Flower", emoji: "✿", category: "world", exampleKn: "ಇದು ಸುಂದರವಾದ ಹೂವು", exampleEn: "This is a beautiful flower" },
+  { kn: "ಸೂರ್ಯ", translit: "soorya", en: "Sun", emoji: "☀", category: "world", exampleKn: "ಸೂರ್ಯ ಉದಯಿಸುತ್ತಾನೆ", exampleEn: "The sun rises" },
+  { kn: "ಚಂದ್ರ", translit: "chandra", en: "Moon", emoji: "☾", category: "world", exampleKn: "ಚಂದ್ರ ಬೆಳಗುತ್ತಾನೆ", exampleEn: "The moon shines" },
+  { kn: "ನಾಡು", translit: "naadu", en: "Land / Country", emoji: "◉", category: "world", exampleKn: "ಕರ್ನಾಟಕ ನಮ್ಮ ನಾಡು", exampleEn: "Karnataka is our land" },
+  { kn: "ಶಾಲೆ", translit: "shaale", en: "School", emoji: "🏫", category: "world", exampleKn: "ನಾನು ಶಾಲೆಗೆ ಹೋಗುತ್ತೇನೆ", exampleEn: "I go to school" },
+  { kn: "ರಸ್ತೆ", translit: "raste", en: "Road", emoji: "↟", category: "world", exampleKn: "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತದೆ?", exampleEn: "Where does this road go?" },
+  { kn: "ಮರ", translit: "mara", en: "Tree", emoji: "♣", category: "world", exampleKn: "ಇದು ದೊಡ್ಡ ಮರ", exampleEn: "This is a big tree" },
+  { kn: "ಮಳೆ", translit: "male", en: "Rain", emoji: "☂", category: "world", exampleKn: "ಮಳೆ ಬರುತ್ತಿದೆ", exampleEn: "It is raining" },
 ];
 
 export type QuizQuestion = {

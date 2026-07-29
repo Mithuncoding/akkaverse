@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Noto_Sans_Kannada, Noto_Serif_Kannada } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
@@ -11,6 +12,25 @@ import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { ServiceWorker } from "@/components/service-worker";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import "./globals.css";
+
+const themeBootstrap = `
+(function () {
+  var root = document.documentElement;
+  try {
+    var theme = localStorage.getItem("theme") || "dark";
+    if (theme === "system") {
+      theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    }
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+    root.style.colorScheme = theme;
+  } catch (_) {
+    root.classList.add("dark");
+    root.style.colorScheme = "dark";
+  }
+})();`;
 
 // `variable` exposes the font as the `--font-sans` CSS var used by Tailwind.
 const inter = Inter({
@@ -94,11 +114,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // suppressHydrationWarning is required by next-themes (it sets `class` on <html>)
+    // The pre-hydration theme bootstrap sets `class` on <html> before React loads.
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script id="theme-bootstrap" strategy="beforeInteractive">
+          {themeBootstrap}
+        </Script>
+      </head>
       <body className={`${inter.variable} ${knSans.variable} ${knSerif.variable} font-sans`}>
         <ThemeProvider
-          attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange

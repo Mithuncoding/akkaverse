@@ -84,7 +84,7 @@ export function JourneyChapter({
           "--accent2": chapter.accent2,
         } as React.CSSProperties
       }
-      className="scroll-mt-20"
+      className="scroll-mt-36"
     >
       {/* ----------------------------- COVER ----------------------------- */}
       <div

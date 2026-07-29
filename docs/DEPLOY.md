@@ -19,12 +19,12 @@ A complete, copy-paste guide to get Akkaverse live — including the **NVIDIA AP
 The AI (“Akka”) uses NVIDIA NIM — an OpenAI-compatible inference endpoint that is **free** via NVIDIA Build credits.
 
 1. Go to **<https://build.nvidia.com>** and sign in (create a free account if needed).
-2. Pick a model — search for **`meta/llama-3.3-70b-instruct`** (recommended). Any NIM chat model works.
+2. Open the model catalog. Akkaverse defaults to **Llama 3.1 8B Instruct**, which is broadly available and responsive on NVIDIA Build's free tier, with **Nemotron Super 49B v1** as fallback.
 3. On the model page, click **“Get API Key”** (or **Build** → **API Keys**).
 4. Click **Generate Key**. Copy the key — it looks like `nvapi-xxxxxxxxxxxxxxxx`.
 5. **Keep it secret.** Never commit it, never paste it in the browser code, never share it in a screenshot.
 
-> You do **not** need a credit card for the free tier. If a model is slow to respond on a weak network, switch to `meta/llama-3.1-8b-instruct` (faster).
+> You do **not** need a credit card for the free tier. Catalog access varies by account and region, so keep the verified defaults unless `/v1/models` confirms another model is available to your key.
 
 ---
 
@@ -50,7 +50,9 @@ In the Vercel import screen (or later under **Project → Settings → Environme
 | Name | Value | Notes |
 |------|-------|-------|
 | `NVIDIA_API_KEY` | `nvapi-…` (your key) | **Server-only.** Do NOT prefix with `NEXT_PUBLIC_`. |
-| `NIM_MODEL` | `meta/llama-3.3-70b-instruct` | Optional. Best quality on Vercel. Use `meta/llama-3.1-8b-instruct` if you want faster/cheaper. |
+| `NIM_MODEL` | `meta/llama-3.1-8b-instruct` | Optional general model override. Verified responsive on the free tier. |
+| `NIM_KANNADA_MODEL` | `meta/llama-3.1-8b-instruct` | Optional Kannada/bilingual override. |
+| `NIM_FALLBACK_MODEL` | `nvidia/llama-3.3-nemotron-super-49b-v1` | Optional quality fallback when available. |
 
 - Apply to **Production** (and Preview/Development if you like).
 - **Security note:** because there is no `NEXT_PUBLIC_` prefix, the key stays on the server and is never bundled into the browser.
@@ -67,7 +69,7 @@ For accounts and realtime data, also add `NEXT_PUBLIC_SUPABASE_URL` and
 Once deployed, open your Vercel URL and check:
 
 1. **AI feature flag:** visit `https://YOUR-APP.vercel.app/api/ask` in the browser.
-   - Expected: `{"enabled":true,"model":"meta/llama-3.3-70b-instruct"}`
+   - Expected: `{"enabled":true,"model":"meta/llama-3.1-8b-instruct","kannadaModel":"meta/llama-3.1-8b-instruct","fallbackModel":"nvidia/llama-3.3-nemotron-super-49b-v1"}`
    - If `"enabled":false` → the key isn't set correctly; re-check `NVIDIA_API_KEY` and redeploy.
 2. **Chat:** open `/chat`, pick a guide, ask *"What are the most visited places in Karnataka?"* — you should see a streamed answer with **🌐 Wikipedia source chips**.
 3. **Kannada narration:** open `/roots` → *If They Could Speak* → **Open the letter** → **Narrate the letter in Kannada**. You should hear synthesized audio with an explicit disclosure.
@@ -143,7 +145,7 @@ npm run lint        # eslint
 |--------|-----|
 | Build fails: "No Next.js version detected" | Root Directory isn't set to `frontend`. Fix in Project → Settings → General → Root Directory. |
 | `/api/ask` returns `"enabled":false` | `NVIDIA_API_KEY` missing/misspelled, or you didn't redeploy after adding it. |
-| AI answers are empty / never stream | Key invalid or model too slow. Try `NIM_MODEL=meta/llama-3.1-8b-instruct` and redeploy. |
+| AI answers are empty / never stream | Key invalid or an explicit model override is unavailable. Remove the `NIM_*MODEL` overrides to restore the tested defaults, then redeploy. |
 | Locally: AI/Wikipedia calls fail with cert error | Start dev with `NODE_OPTIONS='--use-system-ca'` (see above). |
 | Kannada voice silent | The keyless TTS proxy may be blocked on that network; it falls back to the browser voice automatically. |
 | Original family recording does not appear on another device | Sign in on both devices, wait for **Cloud synced**, and verify the private `voice-legacies` bucket policies from [SUPABASE-SETUP.md](SUPABASE-SETUP.md). |
@@ -156,7 +158,9 @@ npm run lint        # eslint
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `NVIDIA_API_KEY` | No (app works without it) | — | Enables live Akka AI. Server-only. |
-| `NIM_MODEL` | No | `meta/llama-3.3-70b-instruct` | Which NIM model to use. |
+| `NIM_MODEL` | No | `meta/llama-3.1-8b-instruct` | General reasoning and instruction-following model. |
+| `NIM_KANNADA_MODEL` | No | `meta/llama-3.1-8b-instruct` | Kannada and bilingual model. |
+| `NIM_FALLBACK_MODEL` | No | `nvidia/llama-3.3-nemotron-super-49b-v1` | Quality fallback model. |
 | `NIM_BASE_URL` | No | `https://integrate.api.nvidia.com/v1` | Override the NIM endpoint. |
 | `NEXT_PUBLIC_SUPABASE_URL` | For accounts | — | Public Supabase project URL. |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | For accounts | — | Public browser key; RLS enforces access. |

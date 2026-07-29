@@ -34,8 +34,8 @@ function joinBilingual(en: string, kn: string): string {
 
 /**
  * LanguageProvider keeps the active locale in React state, persists it to
- * localStorage, and exposes a memoised `t()` translator. Mirrors how
- * `next-themes` handles light/dark — same mental model for the user.
+ * localStorage, and exposes a memoised `t()` translator. It follows the same
+ * persisted-preference model as the app's light/dark theme control.
  */
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = React.useState<Locale>("both");

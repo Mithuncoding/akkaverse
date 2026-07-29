@@ -118,15 +118,15 @@ export async function streamAkka(
  * Whether the server has an NVIDIA key configured. Cached after the first check
  * so the UI badge resolves once and stays put. Never leaks the key.
  */
-let cachedEnabled: boolean | null = null;
+let cachedEnabled = false;
 export async function getAiEnabled(): Promise<boolean> {
-  if (cachedEnabled !== null) return cachedEnabled;
+  if (cachedEnabled) return true;
   try {
-    const res = await fetch("/api/ask", { method: "GET" });
+    const res = await fetch("/api/ask", { method: "GET", cache: "no-store" });
     const data = (await res.json()) as { enabled?: boolean };
     cachedEnabled = Boolean(data?.enabled);
   } catch {
-    cachedEnabled = false;
+    return false;
   }
   return cachedEnabled;
 }

@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { LearnView } from "@/components/learn/learn-view";
 
 export const metadata: Metadata = {
-  title: "Learn Kannada",
+  title: "Kannada Academy",
   description:
-    "Learn the Kannada alphabet, practise everyday words with flashcards, and " +
-    "test yourself with an interactive quiz — with audio pronunciation.",
+    "Follow a guided Kannada learning path with script and pronunciation labs, " +
+    "contextual vocabulary, daily missions, mastery tracking, and recall challenges.",
 };
 
 export default function LearnPage() {

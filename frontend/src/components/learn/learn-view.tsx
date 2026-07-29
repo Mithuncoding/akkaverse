@@ -1,336 +1,242 @@
 "use client";
 
 import * as React from "react";
-import { Volume2, RotateCcw, ChevronLeft, ChevronRight, Check, X } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpenCheck,
+  Flame,
+  GraduationCap,
+  Languages,
+  Layers3,
+  Target,
+  Trophy,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { ChallengeStudio } from "@/components/learn/challenge-studio";
+import { LearningPath, type LearnArea } from "@/components/learn/learning-path";
+import { ScriptLab } from "@/components/learn/script-lab";
+import { WordStudio } from "@/components/learn/word-studio";
 import { useTranslation } from "@/i18n/language-provider";
-import { canSpeak, speak } from "@/lib/speech";
 import {
-  VOWELS,
-  CONSONANTS,
-  NUMBERS,
-  FLASHCARDS,
-  QUIZ,
-  type Letter,
-} from "@/data/kannada";
+  masteredWordCount,
+  rankForLearner,
+  todayProgress,
+  useLearnProfile,
+} from "@/lib/learn/profile";
 
-type Tab = "alphabet" | "flashcards" | "quiz";
+type LearnTab = "path" | LearnArea;
 
 /** Learn Kannada — interactive, bilingual learning surface. */
 export function LearnView() {
-  const { t } = useTranslation();
-  const [tab, setTab] = React.useState<Tab>("alphabet");
+  const { bi } = useTranslation();
+  const [tab, setTab] = React.useState<LearnTab>("path");
+  const [quickStart, setQuickStart] = React.useState(false);
+  const profile = useLearnProfile();
+  const daily = todayProgress(profile);
+  const learner = rankForLearner(profile.xp);
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "alphabet", label: t("learn.tab.alphabet") },
-    { id: "flashcards", label: t("learn.tab.flashcards") },
-    { id: "quiz", label: t("learn.tab.quiz") },
+  const tabs: {
+    id: LearnTab;
+    icon: React.ElementType;
+    en: string;
+    kn: string;
+  }[] = [
+    { id: "path", icon: BookOpenCheck, en: "My path", kn: "ನನ್ನ ಪಥ" },
+    { id: "script", icon: Languages, en: "Script Lab", kn: "ಲಿಪಿ ಅಭ್ಯಾಸ" },
+    { id: "words", icon: Layers3, en: "Word Studio", kn: "ಪದ ಅಭ್ಯಾಸ" },
+    { id: "challenge", icon: Target, en: "Challenge", kn: "ಸವಾಲು" },
   ];
 
+  const openArea = (area: LearnArea) => {
+    setQuickStart(false);
+    setTab(area);
+    window.requestAnimationFrame(() => {
+      document.getElementById("learn-workspace")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
+  const startDaily = () => {
+    setQuickStart(true);
+    setTab("challenge");
+    window.requestAnimationFrame(() => {
+      document.getElementById("learn-workspace")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
+  const consumeQuickStart = React.useCallback(() => setQuickStart(false), []);
+
   return (
-    <div className="container py-12 md:py-24">
-      <header className="mx-auto mb-8 max-w-2xl text-center md:mb-10">
-        <span className="rounded-full border border-border bg-secondary/60 px-4 py-1.5 text-sm text-muted-foreground">
-          🎓 {t("learn.badge")}
-        </span>
-        <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-          {t("learn.title")}
-        </h1>
-        <p className="mt-4 text-pretty text-base text-muted-foreground sm:text-lg">
-          {t("learn.subtitle")}
-        </p>
+    <div className="min-h-screen">
+      <header className="relative overflow-hidden border-b border-foreground/10 bg-foreground text-background">
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgb(255_255_255/0.05)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/0.05)_1px,transparent_1px)] [background-size:32px_32px]"
+        />
+        <div className="container relative grid gap-8 py-10 md:grid-cols-[minmax(0,1.15fr)_minmax(21rem,0.85fr)] md:items-center md:py-12">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase text-amber-400">
+              <GraduationCap className="h-4 w-4" />
+              {bi("Akkaverse Kannada Academy", "ಅಕ್ಕಾವರ್ಸ್ ಕನ್ನಡ ಅಕಾಡೆಮಿ")}
+            </div>
+            <h1 className="mt-4 max-w-3xl text-balance text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
+              {bi("Kannada for real life", "ಜೀವನಕ್ಕಾಗಿ ಕನ್ನಡ")}
+            </h1>
+            <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-background/65 sm:text-lg">
+              {bi(
+                "Learn through sound, context, and a little progress every day.",
+                "ಧ್ವನಿ, ಸಂದರ್ಭ ಮತ್ತು ಪ್ರತಿದಿನದ ಸಣ್ಣ ಪ್ರಗತಿಯ ಮೂಲಕ ಕಲಿಯಿರಿ.",
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={startDaily}
+              className="mt-7 inline-flex h-11 items-center gap-2 rounded-md bg-amber-400 px-5 text-sm font-black text-stone-950 transition-colors hover:bg-amber-300"
+            >
+              {daily.complete
+                ? bi("Keep the streak alive", "ಸರಣಿಯನ್ನು ಮುಂದುವರಿಸಿ")
+                : bi("Start today’s mission", "ಇಂದಿನ ಅಭ್ಯಾಸ ಆರಂಭಿಸಿ")}
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="overflow-hidden rounded-lg border border-background/15 bg-background/5 backdrop-blur-sm">
+            <div className="flex items-center gap-4 border-b border-background/15 p-5 sm:p-6">
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-md bg-amber-400 text-xl font-black text-stone-950">
+                {learner.rank.glyph}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase text-background/45">
+                      {bi("Current rank", "ಪ್ರಸ್ತುತ ಹಂತ")}
+                    </div>
+                    <div className="mt-1 font-black">
+                      {bi(learner.rank.en, learner.rank.kn)}
+                    </div>
+                  </div>
+                  <span className="shrink-0 text-sm font-black text-amber-400">
+                    {profile.xp} XP
+                  </span>
+                </div>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-background/15">
+                  <div
+                    className="h-full rounded-full bg-amber-400 transition-[width] duration-500"
+                    style={{ width: `${learner.progress * 100}%` }}
+                  />
+                </div>
+                <div className="mt-1.5 text-[10px] text-background/45">
+                  {learner.next
+                    ? bi(
+                        `${learner.next.min - profile.xp} XP to ${learner.next.en}`,
+                        `${learner.next.kn} ಹಂತಕ್ಕೆ ${learner.next.min - profile.xp} XP`,
+                      )
+                    : bi("Highest rank reached", "ಅತ್ಯುನ್ನತ ಹಂತ ತಲುಪಿದೆ")}
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 divide-x divide-background/15">
+              <ProgressStat
+                icon={Target}
+                value={`${daily.xp}/${daily.goal}`}
+                label={bi("Daily XP", "ದೈನಂದಿನ XP")}
+                tone="text-amber-400"
+              />
+              <ProgressStat
+                icon={Flame}
+                value={String(profile.dayStreak)}
+                label={bi("Day streak", "ದಿನಗಳ ಸರಣಿ")}
+                tone="text-orange-400"
+              />
+              <ProgressStat
+                icon={Trophy}
+                value={String(
+                  profile.masteredLetters.length + masteredWordCount(profile),
+                )}
+                label={bi("Mastered", "ಕಲಿತದ್ದು")}
+                tone="text-emerald-400"
+              />
+            </div>
+          </div>
+        </div>
       </header>
 
-      {/* Tab switcher */}
-      <div className="mx-auto mb-8 flex w-fit gap-1 rounded-full border border-border bg-secondary/40 p-1 md:mb-12">
-        {tabs.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setTab(item.id)}
-            className={cn(
-              "rounded-full px-4 py-2 text-sm font-medium transition-colors sm:px-5",
-              tab === item.id
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-            aria-pressed={tab === item.id}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {tab === "alphabet" && <AlphabetSection />}
-      {tab === "flashcards" && <FlashcardsSection />}
-      {tab === "quiz" && <QuizSection />}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Alphabet                                                            */
-/* ------------------------------------------------------------------ */
-
-function AlphabetSection() {
-  const { t } = useTranslation();
-  return (
-    <div className="space-y-12">
-      <LetterGrid title={t("learn.vowels")} letters={VOWELS} />
-      <LetterGrid title={t("learn.consonants")} letters={CONSONANTS} />
-      <NumberGrid title={t("learn.numbers")} />
-    </div>
-  );
-}
-
-function LetterGrid({ title, letters }: { title: string; letters: Letter[] }) {
-  const speakable = canSpeak();
-  return (
-    <section>
-      <h2 className="mb-5 text-xl font-semibold tracking-tight">{title}</h2>
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-        {letters.map((l) => (
-          <button
-            key={l.char + l.translit}
-            onClick={() => speak(l.char)}
-            disabled={!speakable}
-            className="group flex flex-col items-center rounded-xl border border-border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-            title={l.hint}
-          >
-            <span className="text-3xl font-semibold">{l.char}</span>
-            <span className="mt-1 text-xs font-medium text-primary">
-              {l.translit}
-            </span>
-            <span className="mt-0.5 text-[10px] text-muted-foreground">
-              {l.hint}
-            </span>
-            {speakable && (
-              <Volume2 className="mt-2 h-3.5 w-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-            )}
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function NumberGrid({ title }: { title: string }) {
-  const speakable = canSpeak();
-  return (
-    <section>
-      <h2 className="mb-5 text-xl font-semibold tracking-tight">{title}</h2>
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-        {NUMBERS.map((n) => (
-          <button
-            key={n.value}
-            onClick={() => speak(n.word)}
-            disabled={!speakable}
-            className="group flex flex-col items-center rounded-xl border border-border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-          >
-            <span className="text-3xl font-semibold">{n.glyph}</span>
-            <span className="mt-1 text-xs font-medium text-primary">
-              {n.value} · {n.translit}
-            </span>
-            <span className="mt-0.5 text-sm">{n.word}</span>
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Flashcards                                                          */
-/* ------------------------------------------------------------------ */
-
-function FlashcardsSection() {
-  const { t } = useTranslation();
-  const [index, setIndex] = React.useState(0);
-  const [flipped, setFlipped] = React.useState(false);
-  const card = FLASHCARDS[index];
-  const speakable = canSpeak();
-
-  const go = (dir: 1 | -1) => {
-    setFlipped(false);
-    setIndex((i) => (i + dir + FLASHCARDS.length) % FLASHCARDS.length);
-  };
-
-  return (
-    <div className="mx-auto max-w-md">
-      <p className="mb-3 text-center text-sm text-muted-foreground">
-        {t("learn.flash.progress")} {index + 1} / {FLASHCARDS.length}
-      </p>
-
-      <button
-        onClick={() => setFlipped((f) => !f)}
-        className="relative h-64 w-full [perspective:1200px]"
-        aria-label="Flip card"
+      <nav
+        className="sticky top-14 z-40 border-b border-border bg-background/90 backdrop-blur-xl md:top-16"
+        aria-label={bi("Learn sections", "ಕಲಿಕೆಯ ವಿಭಾಗಗಳು")}
       >
-        <div
-          className={cn(
-            "relative h-full w-full rounded-2xl border border-border shadow-sm transition-transform duration-500 [transform-style:preserve-3d]",
-            flipped && "[transform:rotateY(180deg)]",
-          )}
-        >
-          {/* Front — Kannada */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-2xl bg-card [backface-visibility:hidden]">
-            <span className="text-5xl">{card.emoji}</span>
-            <span className="text-4xl font-semibold">{card.kn}</span>
-            <span className="text-sm text-primary">{card.translit}</span>
-          </div>
-          {/* Back — English */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-2xl bg-primary text-primary-foreground [backface-visibility:hidden] [transform:rotateY(180deg)]">
-            <span className="text-3xl font-semibold">{card.en}</span>
-          </div>
+        <div className="container flex h-16 items-stretch gap-1 overflow-x-auto">
+          {tabs.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => {
+                  setQuickStart(false);
+                  setTab(item.id);
+                }}
+                aria-current={tab === item.id ? "page" : undefined}
+                className={cn(
+                  "relative inline-flex min-w-max items-center gap-2 px-3 text-xs font-bold transition-colors sm:px-5 sm:text-sm",
+                  tab === item.id
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {bi(item.en, item.kn)}
+                {tab === item.id && (
+                  <span className="absolute inset-x-2 bottom-0 h-0.5 bg-primary" />
+                )}
+              </button>
+            );
+          })}
         </div>
-      </button>
+      </nav>
 
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        {t("learn.flash.hint")}
-      </p>
-
-      <div className="mt-6 flex items-center justify-between gap-3">
-        <Button variant="outline" size="sm" onClick={() => go(-1)}>
-          <ChevronLeft /> {t("learn.flash.prev")}
-        </Button>
-        {speakable && (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => speak(card.kn)}
-          >
-            <Volume2 /> {t("chat.speak")}
-          </Button>
-        )}
-        <Button variant="outline" size="sm" onClick={() => go(1)}>
-          {t("learn.flash.next")} <ChevronRight />
-        </Button>
-      </div>
+      <main id="learn-workspace" className="scroll-mt-36">
+        <div className="container py-10 md:py-14">
+          {tab === "path" && (
+            <LearningPath onOpen={openArea} onStartDaily={startDaily} />
+          )}
+          {tab === "script" && <ScriptLab />}
+          {tab === "words" && <WordStudio />}
+          {tab === "challenge" && (
+            <ChallengeStudio
+              autoStart={quickStart}
+              onAutoStartConsumed={consumeQuickStart}
+            />
+          )}
+        </div>
+      </main>
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* Quiz                                                                */
-/* ------------------------------------------------------------------ */
-
-function QuizSection() {
-  const { t } = useTranslation();
-  const [index, setIndex] = React.useState(0);
-  const [score, setScore] = React.useState(0);
-  const [picked, setPicked] = React.useState<string | null>(null);
-  const [done, setDone] = React.useState(false);
-
-  const q = QUIZ[index];
-
-  const choose = (option: string) => {
-    if (picked) return;
-    setPicked(option);
-    if (option === q.answer) setScore((s) => s + 1);
-  };
-
-  const next = () => {
-    if (index + 1 >= QUIZ.length) {
-      setDone(true);
-      return;
-    }
-    setIndex((i) => i + 1);
-    setPicked(null);
-  };
-
-  const restart = () => {
-    setIndex(0);
-    setScore(0);
-    setPicked(null);
-    setDone(false);
-  };
-
-  if (done) {
-    return (
-      <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-10 text-center">
-        <p className="text-2xl font-semibold">{t("learn.quiz.done")}</p>
-        <p className="mt-3 text-4xl font-bold text-primary">
-          {score} / {QUIZ.length}
-        </p>
-        <Button className="mt-6" onClick={restart}>
-          <RotateCcw /> {t("learn.quiz.restart")}
-        </Button>
-      </div>
-    );
-  }
-
+function ProgressStat({
+  icon: Icon,
+  value,
+  label,
+  tone,
+}: {
+  icon: React.ElementType;
+  value: string;
+  label: string;
+  tone: string;
+}) {
   return (
-    <div className="mx-auto max-w-md">
-      <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
-        <span>
-          {index + 1} / {QUIZ.length}
-        </span>
-        <span>
-          {t("learn.quiz.score")}: {score}
-        </span>
+    <div className="flex min-h-24 flex-col items-center justify-center px-2 text-center">
+      <Icon className={cn("h-4 w-4", tone)} />
+      <div className="mt-2 text-xl font-black tabular-nums">{value}</div>
+      <div className="mt-0.5 text-[9px] font-semibold uppercase text-background/45 sm:text-[10px]">
+        {label}
       </div>
-
-      <div className="rounded-2xl border border-border bg-card p-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          {t("learn.quiz.question")}
-        </p>
-        <p className="mt-4 text-6xl font-semibold">{q.prompt}</p>
-        {q.hint && (
-          <p className="mt-2 text-sm text-primary">{q.hint}</p>
-        )}
-      </div>
-
-      <div className="mt-5 grid grid-cols-2 gap-3">
-        {q.options.map((option) => {
-          const isAnswer = option === q.answer;
-          const isPicked = option === picked;
-          const reveal = picked !== null;
-          return (
-            <button
-              key={option}
-              onClick={() => choose(option)}
-              disabled={reveal}
-              className={cn(
-                "flex items-center justify-between rounded-xl border px-4 py-3 text-left text-sm font-medium transition-colors",
-                !reveal && "border-border bg-card hover:border-primary/50",
-                reveal && isAnswer && "border-emerald-500/60 bg-emerald-500/10",
-                reveal &&
-                  isPicked &&
-                  !isAnswer &&
-                  "border-red-500/60 bg-red-500/10",
-                reveal && !isAnswer && !isPicked && "border-border opacity-60",
-              )}
-            >
-              <span>{option}</span>
-              {reveal && isAnswer && (
-                <Check className="h-4 w-4 text-emerald-600" />
-              )}
-              {reveal && isPicked && !isAnswer && (
-                <X className="h-4 w-4 text-red-600" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {picked !== null && (
-        <div className="mt-5 text-center">
-          <p
-            className={cn(
-              "text-sm font-medium",
-              picked === q.answer ? "text-emerald-600" : "text-red-600",
-            )}
-          >
-            {picked === q.answer
-              ? t("learn.quiz.correct")
-              : t("learn.quiz.wrong")}
-          </p>
-          <Button className="mt-3" onClick={next}>
-            {t("learn.quiz.next")} <ChevronRight />
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

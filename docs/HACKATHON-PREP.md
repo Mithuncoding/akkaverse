@@ -105,7 +105,7 @@ No. Three things make it different: (1) **live web grounding** — before answer
 Grounding + honesty. We inject retrieved Wikipedia text as the source of truth, and the system prompt forbids inventing names, dates, or statistics. We *deliberately rejected* a structured-data shortcut for "current CM" because it returned the Deputy CM — a confident wrong answer is worse than an honest "I'm not certain."
 
 **Q: What model, and what does it cost?**
-NVIDIA NIM, default `meta/llama-3.3-70b-instruct` — swappable with one env var. It's free via NVIDIA Build credits for the demo. The model is swappable; the cultural design and grounding are the real product.
+NVIDIA NIM with a configurable model pool. The free-tier defaults are Llama 3.1 8B Instruct for responsive answers and Nemotron Super 49B v1 as a quality fallback. Availability varies by NVIDIA account and region; the cultural design and grounding are the real product.
 
 **Q: Does the web search need an API key?**
 No — it uses Wikipedia's public APIs (opensearch + full-text + extracts), keyless. Zero cost, no vendor lock-in.

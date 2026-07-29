@@ -7,7 +7,8 @@
  *
  * NVIDIA NIM exposes an OpenAI-compatible endpoint
  * (https://integrate.api.nvidia.com/v1/chat/completions), so a single small
- * fetch drives any NIM model — swap models with one env var, no code change.
+ * fetch drives a configurable model pool. The defaults are verified against
+ * NVIDIA Build's free-tier catalog, with a second model for failover.
  *
  * Production-grade by design:
  *  • Key read from the server environment only (NVIDIA_API_KEY, never NEXT_PUBLIC).
@@ -31,13 +32,75 @@ export const dynamic = "force-dynamic";
 
 /* --- configuration (server-only) ------------------------------------ */
 const KEY = process.env.NVIDIA_API_KEY || "";
-const MODEL = process.env.NIM_MODEL || "meta/llama-3.3-70b-instruct";
+const GENERAL_MODEL =
+  process.env.NIM_MODEL || "meta/llama-3.1-8b-instruct";
+const KANNADA_MODEL = process.env.NIM_KANNADA_MODEL || GENERAL_MODEL;
+const FALLBACK_MODEL =
+  process.env.NIM_FALLBACK_MODEL ||
+  "nvidia/llama-3.3-nemotron-super-49b-v1";
 const BASE_URL = process.env.NIM_BASE_URL || "https://integrate.api.nvidia.com/v1";
 const ENDPOINT = `${BASE_URL.replace(/\/$/, "")}/chat/completions`;
 
-const MAX_TOKENS = 420;
-const TEMPERATURE = 0.6;
+const MAX_TOKENS = 640;
 const TIMEOUT_MS = 25000;
+const KANNADA_SCRIPT = /[\u0C80-\u0CFF]/;
+
+type ModelConfig = {
+  model: string;
+  temperature: number;
+  topP: number;
+  disableThinking: boolean;
+};
+
+function modelConfig(model: string): ModelConfig {
+  if (model.startsWith("sarvamai/")) {
+    return { model, temperature: 0.2, topP: 0.9, disableThinking: true };
+  }
+  if (model.startsWith("qwen/")) {
+    return { model, temperature: 0.7, topP: 0.8, disableThinking: true };
+  }
+  if (model.startsWith("meta/llama")) {
+    return { model, temperature: 0.4, topP: 0.9, disableThinking: false };
+  }
+  return { model, temperature: 0.6, topP: 0.95, disableThinking: false };
+}
+
+function modelCandidates(question: string, replyLang: ReplyLang): ModelConfig[] {
+  const prefersKannada =
+    replyLang === "kn" || replyLang === "both" || KANNADA_SCRIPT.test(question);
+  const names = prefersKannada
+    ? [KANNADA_MODEL, GENERAL_MODEL, FALLBACK_MODEL]
+    : [GENERAL_MODEL, FALLBACK_MODEL];
+  return [...new Set(names.filter(Boolean))].map(modelConfig);
+}
+
+function completionBody(
+  config: ModelConfig,
+  question: string,
+  context: string,
+  replyLang: ReplyLang,
+  stream: boolean,
+) {
+  return {
+    model: config.model,
+    messages: buildMessages(question, context, replyLang),
+    temperature: config.temperature,
+    top_p: config.topP,
+    max_tokens: MAX_TOKENS,
+    stream,
+    ...(config.disableThinking
+      ? { chat_template_kwargs: { enable_thinking: false } }
+      : {}),
+  };
+}
+
+async function logNimFailure(model: string, response: Response) {
+  if (process.env.NODE_ENV === "production") return;
+  const detail = (await response.text().catch(() => "")).slice(0, 500);
+  console.warn(
+    `[Akka AI] ${model} returned ${response.status}${detail ? `: ${detail}` : ""}`,
+  );
+}
 
 /* --- tiny in-memory cache (per server instance) --------------------- */
 type Cached = { text: string; sources: WebSource[]; at: number };
@@ -108,7 +171,12 @@ function normalizeReplyLang(v: unknown): ReplyLang {
 
 /** Health/feature flag for the UI — never leaks the key itself. */
 export async function GET() {
-  return NextResponse.json({ enabled: KEY.trim().length > 0, model: MODEL });
+  return NextResponse.json({
+    enabled: KEY.trim().length > 0,
+    model: GENERAL_MODEL,
+    kannadaModel: KANNADA_MODEL,
+    fallbackModel: FALLBACK_MODEL,
+  });
 }
 
 /* --- the NIM call (non-streaming) ----------------------------------- */
@@ -117,35 +185,43 @@ async function callNim(
   context: string,
   replyLang: ReplyLang,
 ): Promise<string | null> {
-  const ctrl = new AbortController();
-  const timeout = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-  try {
-    const res = await fetch(ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${KEY}`,
-      },
-      signal: ctrl.signal,
-      body: JSON.stringify({
-        model: MODEL,
-        messages: buildMessages(question, context, replyLang),
-        temperature: TEMPERATURE,
-        top_p: 0.95,
-        max_tokens: MAX_TOKENS,
-        stream: false,
-      }),
-    }).finally(() => clearTimeout(timeout));
+  for (const config of modelCandidates(question, replyLang)) {
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${KEY}`,
+        },
+        signal: ctrl.signal,
+        body: JSON.stringify(
+          completionBody(config, question, context, replyLang, false),
+        ),
+      });
 
-    if (!res.ok) return null;
-    const data = (await res.json()) as {
-      choices?: { message?: { content?: string } }[];
-    };
-    const text = data.choices?.[0]?.message?.content?.trim();
-    return text || null;
-  } catch {
-    return null;
+      if (res.status === 401 || res.status === 403) return null;
+      if (!res.ok) {
+        await logNimFailure(config.model, res);
+        continue;
+      }
+      const data = (await res.json()) as {
+        choices?: { message?: { content?: string } }[];
+      };
+      const text = data.choices?.[0]?.message?.content?.trim();
+      if (text) return text;
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn(`[Akka AI] ${config.model} request failed: ${message}`);
+      }
+      continue;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
+  return null;
 }
 
 export async function POST(req: NextRequest) {
@@ -266,66 +342,73 @@ function streamResponse(opts: {
         return;
       }
 
-      const ctrl = new AbortController();
-      const timeout = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
       let acc = "";
-      try {
-        const res = await fetch(ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${KEY}`,
-          },
-          signal: ctrl.signal,
-          body: JSON.stringify({
-            model: MODEL,
-            messages: buildMessages(question, context, replyLang),
-            temperature: TEMPERATURE,
-            top_p: 0.95,
-            max_tokens: MAX_TOKENS,
-            stream: true,
-          }),
-        });
+      for (const config of modelCandidates(question, replyLang)) {
+        const ctrl = new AbortController();
+        const timeout = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+        try {
+          const res = await fetch(ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${KEY}`,
+            },
+            signal: ctrl.signal,
+            body: JSON.stringify(
+              completionBody(config, question, context, replyLang, true),
+            ),
+          });
 
-        if (!res.ok || !res.body) {
-          finish("");
-          return;
-        }
+          if (res.status === 401 || res.status === 403) {
+            finish("");
+            return;
+          }
+          if (!res.ok || !res.body) continue;
 
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buf = "";
-        for (;;) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buf += decoder.decode(value, { stream: true });
-          const lines = buf.split("\n");
-          buf = lines.pop() ?? "";
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed.startsWith("data:")) continue;
-            const payload = trimmed.slice(5).trim();
-            if (payload === "[DONE]") continue;
-            try {
-              const json = JSON.parse(payload) as {
-                choices?: { delta?: { content?: string } }[];
-              };
-              const tok = json.choices?.[0]?.delta?.content;
-              if (tok) {
-                acc += tok;
-                controller.enqueue(sse({ token: tok }));
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buf = "";
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buf += decoder.decode(value, { stream: true });
+            const lines = buf.split("\n");
+            buf = lines.pop() ?? "";
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed.startsWith("data:")) continue;
+              const payload = trimmed.slice(5).trim();
+              if (payload === "[DONE]") continue;
+              try {
+                const json = JSON.parse(payload) as {
+                  choices?: { delta?: { content?: string } }[];
+                };
+                const tok = json.choices?.[0]?.delta?.content;
+                if (tok) {
+                  acc += tok;
+                  controller.enqueue(sse({ token: tok }));
+                }
+              } catch {
+                /* ignore keep-alive / partial frames */
               }
-            } catch {
-              /* ignore keep-alive / partial frames */
             }
           }
+          if (acc) {
+            finish(acc);
+            return;
+          }
+        } catch {
+          if (acc) {
+            finish(acc);
+            return;
+          }
+          finish("");
+          return;
+        } finally {
+          clearTimeout(timeout);
         }
-        finish(acc);
-      } catch {
-        finish(acc);
-      } finally {
-        clearTimeout(timeout);
       }
+      finish("");
     },
   });
 

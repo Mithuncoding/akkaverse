@@ -36,7 +36,7 @@ Everything is bilingual and works in English, ಕನ್ನಡ, or both at once.
 |----------|------------|
 | Framework | Next.js (App Router), React, TypeScript |
 | Styling   | Tailwind CSS, shadcn/ui |
-| AI        | NVIDIA NIM through a server-only Next.js route, plus Wikipedia grounding |
+| AI        | Language-aware NVIDIA NIM model pool through a server-only Next.js route, plus Wikipedia grounding |
 | Voice     | Keyless synthesized Kannada TTS; optional original recordings |
 | OCR       | Tesseract.js (runs in the browser) |
 | Data      | Curated local datasets + cached Wikipedia (REST + PageImages) |

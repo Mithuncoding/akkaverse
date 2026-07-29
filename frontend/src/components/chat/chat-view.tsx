@@ -131,6 +131,12 @@ export function ChatView() {
 
       void (async () => {
         const id = crypto.randomUUID();
+        const effectiveReplyLang: ReplyLang =
+          replyLang === "auto"
+            ? /[\u0C80-\u0CFF]/.test(text)
+              ? "kn"
+              : "en"
+            : replyLang;
 
         // Try real, live token streaming from the server.
         if (aiEnabled) {
@@ -142,7 +148,7 @@ export function ChatView() {
           let streamed = "";
           let webRefs: WebSource[] = [];
           const full = await streamAkka(text, context, {
-            replyLang,
+            replyLang: effectiveReplyLang,
             onSources: (s) => {
               webRefs = s;
             },
@@ -392,7 +398,12 @@ export function ChatView() {
           </Button>
         </form>
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          {t("chat.disclaimer")}
+          {aiEnabled
+            ? bi(
+                "Live AI answers are grounded with cited sources when available.",
+                "ಲೈವ್ AI ಉತ್ತರಗಳು ಲಭ್ಯವಿದ್ದಾಗ ಉಲ್ಲೇಖಿತ ಮೂಲಗಳ ಆಧಾರದಲ್ಲಿರುತ್ತವೆ.",
+              )
+            : t("chat.disclaimer")}
         </p>
       </div>
       </div>

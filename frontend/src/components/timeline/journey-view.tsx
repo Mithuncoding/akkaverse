@@ -3,11 +3,12 @@
 import * as React from "react";
 import { ChevronDown, Compass, Sparkles } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
 import { Reveal } from "@/components/ui/reveal";
 import { JourneyChapter } from "@/components/timeline/journey-chapter";
+import { JourneyNavigator } from "@/components/timeline/journey-navigator";
 import { Luminaries } from "@/components/timeline/luminaries";
+import { MilestoneObservatory } from "@/components/timeline/milestone-observatory";
 import { chapters } from "@/data/journey";
 
 /**
@@ -21,6 +22,7 @@ import { chapters } from "@/data/journey";
 export function JourneyView() {
   const { bi } = useTranslation();
   const [active, setActive] = React.useState(0);
+  const [progress, setProgress] = React.useState(0);
 
   // Scroll-spy: highlight the era currently in view.
   React.useEffect(() => {
@@ -42,8 +44,35 @@ export function JourneyView() {
     return () => io.disconnect();
   }, []);
 
-  const go = (id: string) =>
+  React.useEffect(() => {
+    let frame = 0;
+    const updateProgress = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        const first = document.getElementById(chapters[0].id);
+        const last = document.getElementById(chapters[chapters.length - 1].id);
+        if (!first || !last) return;
+        const start = first.offsetTop;
+        const end = last.offsetTop + last.offsetHeight - window.innerHeight;
+        const next = ((window.scrollY - start) / Math.max(end - start, 1)) * 100;
+        setProgress(Math.min(Math.max(next, 0), 100));
+      });
+    };
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    updateProgress();
+    return () => {
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const go = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState(null, "", `#${id}`);
+  };
 
   return (
     <div className="relative">
@@ -106,45 +135,9 @@ export function JourneyView() {
         </Reveal>
       </section>
 
-      {/* =========================== ERA RAIL =========================== */}
-      <nav className="pointer-events-none fixed left-4 top-1/2 z-40 hidden -translate-y-1/2 lg:block">
-        <ul className="flex flex-col gap-1">
-          {chapters.map((c, i) => (
-            <li key={c.id} className="pointer-events-auto">
-              <button
-                type="button"
-                onClick={() => go(c.id)}
-                className="group flex items-center gap-3"
-                aria-label={c.name}
-              >
-                <span
-                  className={cn(
-                    "grid h-8 w-8 place-items-center rounded-full border text-xs font-bold transition-all duration-300",
-                    active === i
-                      ? "scale-110 border-transparent text-white"
-                      : "border-border bg-background/70 text-muted-foreground backdrop-blur",
-                  )}
-                  style={
-                    active === i
-                      ? { backgroundColor: `rgb(${c.accent})` }
-                      : undefined
-                  }
-                >
-                  {c.numeral}
-                </span>
-                <span
-                  className={cn(
-                    "max-w-0 overflow-hidden whitespace-nowrap rounded-full bg-background/90 text-sm font-medium opacity-0 backdrop-blur transition-all duration-300 group-hover:max-w-[14rem] group-hover:px-3 group-hover:py-1 group-hover:opacity-100",
-                  )}
-                  style={{ color: `rgb(${c.accent})` }}
-                >
-                  {bi(c.name, c.nameKn)}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <JourneyNavigator active={active} progress={progress} onGo={go} />
+
+      <MilestoneObservatory onGo={go} />
 
       {/* =========================== CHAPTERS =========================== */}
       {chapters.map((chapter, i) => (

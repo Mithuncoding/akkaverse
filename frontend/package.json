@@ -4,9 +4,9 @@
   "private": true,
   "description": "Akkaverse — AI platform to preserve and teach Kannada heritage (frontend).",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --use-system-ca node_modules/next/dist/bin/next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node --use-system-ca node_modules/next/dist/bin/next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
@@ -20,7 +20,6 @@
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.468.0",
     "next": "16.2.12",
-    "next-themes": "^0.4.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-simple-maps": "^3.0.0",

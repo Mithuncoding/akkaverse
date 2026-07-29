@@ -104,7 +104,9 @@ export async function retrieveContext(question: string): Promise<Grounding> {
 
     let titles = Array.from(new Set([...titled, ...broad]));
     const filtered = titles.filter(relevant);
-    titles = (filtered.length > 0 ? filtered : titles).slice(0, MAX_TITLES);
+    // No context is better than unrelated context: the model can answer from
+    // its own knowledge, while irrelevant articles actively distort answers.
+    titles = filtered.slice(0, MAX_TITLES);
     if (titles.length === 0) return EMPTY;
 
     // 2) Pull the intro extract + canonical URL for the top matches in one call.
