@@ -156,8 +156,8 @@ export function ScriptLab() {
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[22rem_minmax(0,1fr)] lg:items-start">
-        <div className="overflow-hidden rounded-lg bg-foreground text-background lg:sticky lg:top-36">
-          <div className="flex items-center justify-between border-b border-background/15 px-4 py-3 text-xs font-semibold uppercase text-background/55">
+        <div className="overflow-hidden rounded-lg bg-stone-950 text-stone-50 lg:sticky lg:top-36">
+          <div className="flex items-center justify-between border-b border-white/15 px-4 py-3 text-xs font-semibold uppercase text-white/55">
             <span>
               {String(selectedIndex + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
             </span>
@@ -169,29 +169,31 @@ export function ScriptLab() {
                 {selected.char}
               </div>
               <div className="mt-5 text-xl font-bold">{selected.translit}</div>
-              <div className="mt-1 text-sm text-background/60">{selected.hint}</div>
+              <div className="mt-1 text-sm text-white/60">{selected.hint}</div>
             </div>
           </div>
-          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 border-t border-background/15 p-3">
+          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 border-t border-white/15 p-3">
             <button
               type="button"
               onClick={() => move(-1)}
               aria-label={bi("Previous character", "ಹಿಂದಿನ ಅಕ್ಷರ")}
-              className="grid h-10 w-10 place-items-center rounded-md border border-background/20 transition-colors hover:bg-background hover:text-foreground"
+              className="grid h-10 w-10 place-items-center rounded-md border border-white/20 transition-colors hover:bg-stone-50 hover:text-stone-950"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <ReadAloud
+              key={`${group}-${selected.char}`}
               text={selected.spoken}
               lang="kn-IN"
               label={bi("Hear sound", "ಧ್ವನಿ ಕೇಳಿ")}
-              className="h-10 justify-center rounded-md border-background/20 bg-background/10 text-background hover:bg-background hover:text-foreground"
+              preferCloudKannada
+              className="h-10 justify-center rounded-md border-white/20 bg-white/10 text-stone-50 hover:bg-stone-50 hover:text-stone-950"
             />
             <button
               type="button"
               onClick={() => move(1)}
               aria-label={bi("Next character", "ಮುಂದಿನ ಅಕ್ಷರ")}
-              className="grid h-10 w-10 place-items-center rounded-md border border-background/20 transition-colors hover:bg-background hover:text-foreground"
+              className="grid h-10 w-10 place-items-center rounded-md border border-white/20 transition-colors hover:bg-stone-50 hover:text-stone-950"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -201,7 +203,7 @@ export function ScriptLab() {
             onClick={() => toggleLetterMastery(selected.char)}
             aria-pressed={isMastered}
             className={cn(
-              "flex h-12 w-full items-center justify-center gap-2 border-t border-background/15 text-sm font-bold transition-colors",
+              "flex h-12 w-full items-center justify-center gap-2 border-t border-white/15 text-sm font-bold transition-colors",
               isMastered
                 ? "bg-emerald-500 text-white"
                 : "bg-amber-400 text-stone-950 hover:bg-amber-300",

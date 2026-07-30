@@ -74,7 +74,7 @@ export function LearnView() {
 
   return (
     <div className="min-h-screen">
-      <header className="relative overflow-hidden border-b border-foreground/10 bg-foreground text-background">
+      <header className="relative overflow-hidden border-b border-white/10 bg-stone-950 text-stone-50">
         <div
           aria-hidden
           className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgb(255_255_255/0.05)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/0.05)_1px,transparent_1px)] [background-size:32px_32px]"
@@ -88,7 +88,7 @@ export function LearnView() {
             <h1 className="mt-4 max-w-3xl text-balance text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
               {bi("Kannada for real life", "ಜೀವನಕ್ಕಾಗಿ ಕನ್ನಡ")}
             </h1>
-            <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-background/65 sm:text-lg">
+            <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-white/65 sm:text-lg">
               {bi(
                 "Learn through sound, context, and a little progress every day.",
                 "ಧ್ವನಿ, ಸಂದರ್ಭ ಮತ್ತು ಪ್ರತಿದಿನದ ಸಣ್ಣ ಪ್ರಗತಿಯ ಮೂಲಕ ಕಲಿಯಿರಿ.",
@@ -106,15 +106,15 @@ export function LearnView() {
             </button>
           </div>
 
-          <div className="overflow-hidden rounded-lg border border-background/15 bg-background/5 backdrop-blur-sm">
-            <div className="flex items-center gap-4 border-b border-background/15 p-5 sm:p-6">
+          <div className="overflow-hidden rounded-lg border border-white/15 bg-white/5 backdrop-blur-sm">
+            <div className="flex items-center gap-4 border-b border-white/15 p-5 sm:p-6">
               <span className="grid h-14 w-14 shrink-0 place-items-center rounded-md bg-amber-400 text-xl font-black text-stone-950">
                 {learner.rank.glyph}
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-[10px] font-semibold uppercase text-background/45">
+                    <div className="text-[10px] font-semibold uppercase text-white/45">
                       {bi("Current rank", "ಪ್ರಸ್ತುತ ಹಂತ")}
                     </div>
                     <div className="mt-1 font-black">
@@ -125,13 +125,13 @@ export function LearnView() {
                     {profile.xp} XP
                   </span>
                 </div>
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-background/15">
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/15">
                   <div
                     className="h-full rounded-full bg-amber-400 transition-[width] duration-500"
                     style={{ width: `${learner.progress * 100}%` }}
                   />
                 </div>
-                <div className="mt-1.5 text-[10px] text-background/45">
+                <div className="mt-1.5 text-[10px] text-white/45">
                   {learner.next
                     ? bi(
                         `${learner.next.min - profile.xp} XP to ${learner.next.en}`,
@@ -141,7 +141,7 @@ export function LearnView() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 divide-x divide-background/15">
+            <div className="grid grid-cols-3 divide-x divide-white/15">
               <ProgressStat
                 icon={Target}
                 value={`${daily.xp}/${daily.goal}`}
@@ -234,7 +234,7 @@ function ProgressStat({
     <div className="flex min-h-24 flex-col items-center justify-center px-2 text-center">
       <Icon className={cn("h-4 w-4", tone)} />
       <div className="mt-2 text-xl font-black tabular-nums">{value}</div>
-      <div className="mt-0.5 text-[9px] font-semibold uppercase text-background/45 sm:text-[10px]">
+      <div className="mt-0.5 text-[9px] font-semibold uppercase text-white/45 sm:text-[10px]">
         {label}
       </div>
     </div>

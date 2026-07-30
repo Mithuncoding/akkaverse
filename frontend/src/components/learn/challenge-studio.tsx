@@ -227,7 +227,7 @@ export function ChallengeStudio({
                   index > 0 && "border-t border-border md:border-l md:border-t-0",
                 )}
               >
-                <span className="grid h-11 w-11 place-items-center rounded-md bg-foreground text-background transition-transform group-hover:-translate-y-0.5">
+                <span className="grid h-11 w-11 place-items-center rounded-md bg-primary/10 text-primary transition-transform group-hover:-translate-y-0.5">
                   <Icon className="h-5 w-5" />
                 </span>
                 <div className="mt-7 text-xl font-black">
@@ -262,11 +262,11 @@ export function ChallengeStudio({
     return (
       <section className="mx-auto max-w-3xl" aria-live="polite">
         <div className="overflow-hidden rounded-lg border border-border bg-card">
-          <div className="bg-foreground px-6 py-10 text-center text-background sm:px-10 sm:py-14">
+          <div className="bg-stone-950 px-6 py-10 text-center text-stone-50 sm:px-10 sm:py-14">
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-md bg-amber-400 text-stone-950">
               <Trophy className="h-7 w-7" />
             </span>
-            <div className="mt-6 text-xs font-semibold uppercase text-background/55">
+            <div className="mt-6 text-xs font-semibold uppercase text-white/55">
               {bi(MODE_META[mode].en, MODE_META[mode].kn)}
             </div>
             <h2 className="mt-2 text-3xl font-black sm:text-4xl">
@@ -307,7 +307,7 @@ export function ChallengeStudio({
               <button
                 type="button"
                 onClick={() => start(mode)}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-foreground px-5 text-sm font-bold text-background"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 <RotateCcw className="h-4 w-4" />
                 {bi("Run it again", "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ")}
@@ -370,10 +370,12 @@ export function ChallengeStudio({
             )}
             {hasKannadaPrompt && (
               <ReadAloud
+                key={question.prompt}
                 text={question.prompt}
                 lang="kn-IN"
                 className="mx-auto mt-5 rounded-md"
                 label={bi("Hear it", "ಕೇಳಿ")}
+                preferCloudKannada
               />
             )}
           </div>
@@ -436,7 +438,7 @@ export function ChallengeStudio({
           <button
             type="button"
             onClick={advance}
-            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-foreground px-4 text-sm font-bold text-background"
+            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
           >
             {index + 1 === questions.length
               ? bi("See results", "ಫಲಿತಾಂಶ ನೋಡಿ")

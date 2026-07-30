@@ -230,11 +230,11 @@ export function LearningPath({
           })}
         </section>
 
-        <aside className="overflow-hidden rounded-lg bg-foreground text-background lg:sticky lg:top-36">
+        <aside className="overflow-hidden rounded-lg bg-stone-950 text-stone-50 lg:sticky lg:top-36">
           <div className="p-6 sm:p-7">
             <div className="flex items-start justify-between gap-5">
               <div>
-                <div className="text-xs font-semibold uppercase text-background/50">
+                <div className="text-xs font-semibold uppercase text-white/50">
                   {bi("Today’s mission", "ಇಂದಿನ ಅಭ್ಯಾಸ")}
                 </div>
                 <div className="mt-2 text-2xl font-black">
@@ -245,16 +245,16 @@ export function LearningPath({
               </div>
               <DailyRing progress={daily.progress} value={daily.xp} goal={daily.goal} />
             </div>
-            <div className="mt-8 grid grid-cols-2 divide-x divide-background/15 border-y border-background/15 py-4 text-center">
+            <div className="mt-8 grid grid-cols-2 divide-x divide-white/15 border-y border-white/15 py-4 text-center">
               <div>
                 <div className="text-lg font-black">5</div>
-                <div className="text-[10px] font-semibold uppercase text-background/45">
+                <div className="text-[10px] font-semibold uppercase text-white/45">
                   {bi("Questions", "ಪ್ರಶ್ನೆಗಳು")}
                 </div>
               </div>
               <div>
                 <div className="text-lg font-black">~4</div>
-                <div className="text-[10px] font-semibold uppercase text-background/45">
+                <div className="text-[10px] font-semibold uppercase text-white/45">
                   {bi("Minutes", "ನಿಮಿಷಗಳು")}
                 </div>
               </div>
@@ -339,7 +339,7 @@ function DailyRing({
   return (
     <div className="relative h-16 w-16 shrink-0">
       <svg className="h-full w-full -rotate-90" viewBox="0 0 42 42" aria-hidden>
-        <circle cx="21" cy="21" r="17" fill="none" stroke="currentColor" strokeWidth="3" className="text-background/15" />
+        <circle cx="21" cy="21" r="17" fill="none" stroke="currentColor" strokeWidth="3" className="text-white/15" />
         <circle
           cx="21"
           cy="21"
@@ -357,7 +357,7 @@ function DailyRing({
       <div className="absolute inset-0 grid place-items-center text-center">
         <div>
           <div className="text-sm font-black leading-none">{value}</div>
-          <div className="mt-0.5 text-[8px] font-bold text-background/45">/{goal}</div>
+          <div className="mt-0.5 text-[8px] font-bold text-white/45">/{goal}</div>
         </div>
       </div>
     </div>

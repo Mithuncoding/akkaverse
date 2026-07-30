@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Volume2, Pause, Play } from "lucide-react";
+import { Loader2, Volume2, Pause, Play } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
@@ -13,6 +13,8 @@ import {
   playSpeech,
   pauseSpeech,
   resumeSpeech,
+  stopSpeech,
+  fetchTtsUrl,
 } from "@/lib/speech";
 
 /** Subscribe to the global speech controller. */
@@ -36,6 +38,8 @@ type Props = {
   /** Optional visible label for the button (e.g. "Listen"). */
   label?: string;
   className?: string;
+  /** Prefer the cloud Kannada voice, then fall back to browser speech. */
+  preferCloudKannada?: boolean;
 };
 
 /**
@@ -53,18 +57,37 @@ export function ReadAloud({
   textKn,
   label,
   className,
+  preferCloudKannada = false,
 }: Props) {
   const { locale } = useTranslation();
   const state = useSpeech();
   const [mounted, setMounted] = React.useState(false);
+  const [cloudStatus, setCloudStatus] = React.useState<
+    "idle" | "loading" | "playing" | "paused"
+  >("idle");
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const urlRef = React.useRef<string | null>(null);
+  const requestRef = React.useRef<AbortController | null>(null);
   const id = React.useMemo(() => `ra-${++counter}`, []);
 
   React.useEffect(() => setMounted(true), []);
-  if (!mounted || !canSpeak()) return null;
+  React.useEffect(
+    () => () => {
+      requestRef.current?.abort();
+      audioRef.current?.pause();
+      if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+    },
+    [],
+  );
+
+  if (!mounted || (!preferCloudKannada && !canSpeak())) return null;
 
   const isActive = state.activeId === id;
-  const isPlaying = isActive && state.status === "playing";
-  const isPaused = isActive && state.status === "paused";
+  const isPlaying =
+    cloudStatus === "playing" || (isActive && state.status === "playing");
+  const isPaused =
+    cloudStatus === "paused" || (isActive && state.status === "paused");
+  const isLoading = cloudStatus === "loading";
 
   // Decide what to actually speak.
   const resolve = (): { text: string; lang: "kn-IN" | "en-IN" } => {
@@ -79,14 +102,67 @@ export function ReadAloud({
     return { text: text ?? "", lang };
   };
 
-  const onClick = () => {
+  const playBrowserSpeech = (
+    resolvedText: string,
+    resolvedLang: "kn-IN" | "en-IN",
+  ) => {
+    setCloudStatus("idle");
+    if (canSpeak()) playSpeech(id, resolvedText, resolvedLang);
+  };
+
+  const onClick = async () => {
+    if (cloudStatus === "playing") {
+      audioRef.current?.pause();
+      setCloudStatus("paused");
+      return;
+    }
+    if (cloudStatus === "paused" && audioRef.current) {
+      try {
+        await audioRef.current.play();
+        setCloudStatus("playing");
+      } catch {
+        const resolved = resolve();
+        playBrowserSpeech(resolved.text, resolved.lang);
+      }
+      return;
+    }
     if (isPlaying) {
       pauseSpeech();
     } else if (isPaused) {
       resumeSpeech();
     } else {
-      const r = resolve();
-      if (r.text) playSpeech(id, r.text, r.lang);
+      const resolved = resolve();
+      if (!resolved.text) return;
+      if (!preferCloudKannada || resolved.lang !== "kn-IN") {
+        playBrowserSpeech(resolved.text, resolved.lang);
+        return;
+      }
+
+      setCloudStatus("loading");
+      const controller = new AbortController();
+      requestRef.current = controller;
+      const url = await fetchTtsUrl(resolved.text, "kn", controller.signal);
+      if (controller.signal.aborted) return;
+      requestRef.current = null;
+
+      if (!url) {
+        playBrowserSpeech(resolved.text, resolved.lang);
+        return;
+      }
+
+      stopSpeech();
+      if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+      urlRef.current = url;
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => setCloudStatus("idle");
+      audio.onerror = () => playBrowserSpeech(resolved.text, resolved.lang);
+      try {
+        await audio.play();
+        setCloudStatus("playing");
+      } catch {
+        playBrowserSpeech(resolved.text, resolved.lang);
+      }
     }
   };
 
@@ -94,16 +170,21 @@ export function ReadAloud({
     <button
       type="button"
       onClick={onClick}
+      disabled={isLoading}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
-        isActive
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-wait disabled:opacity-70",
+        isActive || cloudStatus !== "idle"
           ? "border-primary bg-primary/10 text-primary"
           : "border-border bg-background text-muted-foreground hover:text-foreground",
         className,
       )}
-      aria-label={isPlaying ? "Pause" : isPaused ? "Resume" : "Play"}
+      aria-label={
+        isLoading ? "Loading audio" : isPlaying ? "Pause" : isPaused ? "Resume" : "Play"
+      }
     >
-      {isPlaying ? (
+      {isLoading ? (
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+      ) : isPlaying ? (
         <Pause className="h-3.5 w-3.5" />
       ) : isPaused ? (
         <Play className="h-3.5 w-3.5" />

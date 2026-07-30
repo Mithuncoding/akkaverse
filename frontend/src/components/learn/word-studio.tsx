@@ -156,9 +156,11 @@ export function WordStudio() {
               <ChevronLeft className="h-4 w-4" />
             </button>
             <ReadAloud
+              key={card.kn}
               text={card.kn}
               lang="kn-IN"
               label={bi("Hear pronunciation", "ಉಚ್ಚಾರಣೆ ಕೇಳಿ")}
+              preferCloudKannada
               className="h-11 justify-center rounded-md"
             />
             <button
@@ -268,8 +270,8 @@ function WordFace({ card, strength }: { card: Flashcard; strength: number }) {
 function WordBack({ card }: { card: Flashcard }) {
   const { bi } = useTranslation();
   return (
-    <div className="absolute inset-0 flex flex-col overflow-hidden rounded-lg bg-foreground p-6 text-background [backface-visibility:hidden] [transform:rotateY(180deg)] sm:p-10">
-      <div className="text-xs font-semibold uppercase text-background/50">
+    <div className="absolute inset-0 flex flex-col overflow-hidden rounded-lg bg-stone-950 p-6 text-stone-50 [backface-visibility:hidden] [transform:rotateY(180deg)] sm:p-10">
+      <div className="text-xs font-semibold uppercase text-white/50">
         {bi("Meaning & context", "ಅರ್ಥ ಮತ್ತು ಸಂದರ್ಭ")}
       </div>
       <div className="grid flex-1 place-items-center text-center">
@@ -277,10 +279,10 @@ function WordBack({ card }: { card: Flashcard }) {
           <div className="text-3xl font-black sm:text-4xl">{card.en}</div>
           <div className="mx-auto my-7 h-px w-16 bg-amber-400" />
           <div className="text-2xl font-bold text-amber-400">{card.exampleKn}</div>
-          <div className="mt-2 text-sm text-background/65">{card.exampleEn}</div>
+          <div className="mt-2 text-sm text-white/65">{card.exampleEn}</div>
         </div>
       </div>
-      <div className="text-center text-xs font-semibold text-background/45">
+      <div className="text-center text-xs font-semibold text-white/45">
         {bi("Return to Kannada", "ಕನ್ನಡಕ್ಕೆ ಹಿಂತಿರುಗಿ")}
       </div>
     </div>
