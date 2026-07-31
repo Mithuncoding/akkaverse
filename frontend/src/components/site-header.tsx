@@ -39,9 +39,11 @@ export function SiteHeader() {
   const { t, bi } = useTranslation();
   const auth = useAuth();
   const pathname = usePathname();
+  const [mounted, setMounted] = React.useState(false);
   const [moreOpen, setMoreOpen] = React.useState(false);
   const moreRef = React.useRef<HTMLDivElement>(null);
 
+  React.useEffect(() => setMounted(true), []);
   React.useEffect(() => setMoreOpen(false), [pathname]);
 
   React.useEffect(() => {
@@ -56,6 +58,8 @@ export function SiteHeader() {
   }, [moreOpen]);
 
   const moreActive = moreNav.some((m) => pathname.startsWith(m.href));
+  const authenticated = mounted && auth.status === "authenticated";
+  const authLoading = !mounted || auth.status === "loading";
 
   return (
     <header
@@ -152,17 +156,17 @@ export function SiteHeader() {
             asChild
           >
             <Link
-              href={auth.status === "authenticated" ? "/account" : "/login"}
+              href={authenticated ? "/account" : "/login"}
               aria-label={bi("Account", "ಖಾತೆ")}
-              title={auth.status === "authenticated" ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
+              title={authenticated ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
             >
-              {auth.status === "loading" ? (
+              {authLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <UserRound className="h-4 w-4" />
               )}
               <span className="hidden xl:inline">
-                {auth.status === "authenticated" ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
+                {authenticated ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
               </span>
             </Link>
           </Button>
