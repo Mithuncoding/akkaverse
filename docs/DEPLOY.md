@@ -58,9 +58,7 @@ In the Vercel import screen (or later under **Project → Settings → Environme
 - **Security note:** because there is no `NEXT_PUBLIC_` prefix, the key stays on the server and is never bundled into the browser.
 - After adding or changing env vars, **redeploy** (Vercel → Deployments → ⋯ → Redeploy) so they take effect.
 
-For accounts and realtime data, also add `NEXT_PUBLIC_SUPABASE_URL` and
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` after completing
-[SUPABASE-SETUP.md](SUPABASE-SETUP.md). Wikipedia media and Kannada TTS need no keys.
+Wikipedia media and Kannada TTS need no keys. The app runs **fully open (no login)**, so no other environment variables are required.
 
 ---
 
@@ -148,7 +146,6 @@ npm run lint        # eslint
 | AI answers are empty / never stream | Key invalid or an explicit model override is unavailable. Remove the `NIM_*MODEL` overrides to restore the tested defaults, then redeploy. |
 | Locally: AI/Wikipedia calls fail with cert error | Start dev with `NODE_OPTIONS='--use-system-ca'` (see above). |
 | Kannada voice silent | The keyless TTS proxy may be blocked on that network; it falls back to the browser voice automatically. |
-| Original family recording does not appear on another device | Sign in on both devices, wait for **Cloud synced**, and verify the private `voice-legacies` bucket policies from [SUPABASE-SETUP.md](SUPABASE-SETUP.md). |
 | Fonts/Kannada look wrong on first build locally | `next/font` downloads Google fonts at build; on corporate TLS start with `--use-system-ca`. |
 
 ---
@@ -162,7 +159,5 @@ npm run lint        # eslint
 | `NIM_KANNADA_MODEL` | No | `meta/llama-3.1-8b-instruct` | Kannada and bilingual model. |
 | `NIM_FALLBACK_MODEL` | No | `nvidia/llama-3.3-nemotron-super-49b-v1` | Quality fallback model. |
 | `NIM_BASE_URL` | No | `https://integrate.api.nvidia.com/v1` | Override the NIM endpoint. |
-| `NEXT_PUBLIC_SUPABASE_URL` | For accounts | — | Public Supabase project URL. |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | For accounts | — | Public browser key; RLS enforces access. |
 
 **Never** create a `NEXT_PUBLIC_NVIDIA_API_KEY` — that would leak the key to the browser.
