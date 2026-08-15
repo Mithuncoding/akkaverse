@@ -44,9 +44,9 @@ async function wikiFetch(params: Record<string, string>, signal: AbortSignal) {
 function cleanQuery(q: string): string {
   const s = q
     .toLowerCase()
-    .replace(/[?!.]+$/g, " ")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .replace(
-      /\b(who|what|where|when|which|how|why|whose|whom|is|are|was|were|do|does|did|can|could|would|should|please|tell|me|us|about|give|current|currently|latest|now|explain)\b/g,
+      /\b(who|what|where|when|which|how|why|whose|whom|is|are|was|were|do|does|did|can|could|would|should|please|tell|me|us|about|give|current|currently|latest|now|explain|a|an|the|of|on|in|to|for|from|with)\b/g,
       " ",
     )
     .replace(/\s+/g, " ")
@@ -88,17 +88,14 @@ export async function retrieveContext(question: string): Promise<Grounding> {
     const cleaned = cleanQuery(q);
     const [titled, broad] = await Promise.all([
       openSearch(cleaned, ctrl.signal),
-      fullSearch(q, ctrl.signal),
+      fullSearch(cleaned, ctrl.signal),
     ]);
 
     // Drop off-topic noise (opensearch/full-text sometimes surface unrelated
-    // pages). Keep a title only if it shares a meaningful word with the query
-    // or is clearly India/Karnataka-related.
-    const tokens = cleaned.split(/\s+/).filter((w) => w.length >= 4);
+    // pages). Keep a title only if it shares a meaningful word with the query.
+    const tokens = cleaned.split(/\s+/).filter((w) => w.length >= 3);
     const relevant = (title: string) => {
       const t = title.toLowerCase();
-      if (/\b(karnataka|kannada|india|indian|mysore|mysuru|bengaluru)\b/.test(t))
-        return true;
       return tokens.some((w) => t.includes(w));
     };
 

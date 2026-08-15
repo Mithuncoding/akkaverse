@@ -177,17 +177,17 @@ export function HomeView() {
 
           {/* Emotional rotating line — keeps the heritage feeling alive. */}
           <p
-            className="animate-fade-up mt-4 flex items-center gap-2 text-base font-medium text-foreground/80 md:text-lg"
+            className="animate-fade-up mt-4 flex items-center gap-2 text-base font-semibold text-foreground md:text-lg"
             style={{ animationDelay: "120ms" }}
           >
-            <span className="text-muted-foreground">
+            <span className="text-foreground/90">
               {bi("Keeping", "ಜೀವಂತವಾಗಿ")}
             </span>
             <RotatingText
               items={concepts}
-              className="gradient-text font-semibold"
+              className="font-bold text-primary drop-shadow-[0_0_12px_hsl(var(--primary)/0.35)]"
             />
-            <span className="text-muted-foreground">
+            <span className="text-foreground/90">
               {bi("alive.", "ಉಳಿಸುತ್ತಿದೆ.")}
             </span>
           </p>

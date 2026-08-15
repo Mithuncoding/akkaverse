@@ -105,6 +105,7 @@ async function resolveImage(enTitle, knTitle, imageTitle) {
   // PageImages returns a properly-formed 900px thumbnail URL (valid to fetch),
   // so we try it first, then fall back to the summary thumbnails.
   let imageUrl =
+    (imageTitle ? await fetchPageImage("en", imageTitle) : null) ??
     (await fetchPageImage("en", enTitle)) ??
     en?.thumbnail?.source ??
     kn?.thumbnail?.source ??
@@ -171,12 +172,14 @@ async function main() {
   } catch {
     manifest = {};
   }
+  const imagesOnly = process.argv.includes("--images-only");
+  const force = process.argv.includes("--force") || imagesOnly;
   const isComplete = (e) =>
     e && e.extractEn && typeof e.imageUrl === "string" &&
     e.imageUrl.startsWith("/districts/");
 
   for (const d of districts) {
-    if (isComplete(manifest[d.id])) {
+    if (!force && isComplete(manifest[d.id])) {
       console.log(`  • ${d.id.padEnd(22)} ✓ cached`);
       continue;
     }
@@ -193,9 +196,20 @@ async function main() {
       }
     }
     manifest[d.id] = {
-      extractEn: info.extractEn || manifest[d.id]?.extractEn || "",
-      extractKn: info.extractKn ?? manifest[d.id]?.extractKn ?? null,
-      imageUrl: localImage ?? info.imageUrl ?? manifest[d.id]?.imageUrl ?? null,
+      extractEn: imagesOnly
+        ? manifest[d.id]?.extractEn || info.extractEn || ""
+        : info.extractEn || manifest[d.id]?.extractEn || "",
+      extractKn: imagesOnly
+        ? manifest[d.id]?.extractKn ?? info.extractKn ?? null
+        : info.extractKn ?? manifest[d.id]?.extractKn ?? null,
+      imageUrl:
+        localImage ??
+        (manifest[d.id]?.imageUrl?.startsWith("/districts/")
+          ? manifest[d.id].imageUrl
+          : null) ??
+        info.imageUrl ??
+        manifest[d.id]?.imageUrl ??
+        null,
       pageUrl: info.pageUrl ?? manifest[d.id]?.pageUrl ?? null,
     };
     console.log(localImage ? "✓" : info.imageUrl ? "↺ remote" : "no image");

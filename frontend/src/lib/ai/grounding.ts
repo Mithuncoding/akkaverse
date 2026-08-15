@@ -137,12 +137,16 @@ export function buildQuizContext(input: {
   options: string[];
   correct: string;
   topic: string;
+  explanation: string;
+  fact?: string;
 }): string {
   return [
     `Quiz topic: ${input.topic}.`,
     `Question: ${input.question}`,
     `Options: ${input.options.join(" | ")}`,
     `Correct answer: ${input.correct}`,
-    `Task: In 2-3 sentences, explain WHY the correct answer is right and add one memorable fact. Do not just restate the answer.`,
+    `Verified explanation: ${input.explanation}`,
+    input.fact ? `Verified fact: ${input.fact}` : "",
+    "Use only the verified details above and any live reference supplied by the server. Do not invent extra facts or speculate about the wrong options.",
   ].join("\n");
 }

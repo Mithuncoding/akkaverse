@@ -169,6 +169,10 @@ function normalizeReplyLang(v: unknown): ReplyLang {
   return v === "en" || v === "kn" || v === "both" ? v : "auto";
 }
 
+function groundingQuery(question: string, context: string): string {
+  return context.match(/^Question:\s*(.+)$/im)?.[1]?.trim() || question;
+}
+
 /** Health/feature flag for the UI — never leaks the key itself. */
 export async function GET() {
   return NextResponse.json({
@@ -259,7 +263,7 @@ export async function POST(req: NextRequest) {
   if (!cached && KEY) {
     limited = rateLimited(clientIp(req));
     if (!limited) {
-      const g = await retrieveContext(question);
+      const g = await retrieveContext(groundingQuery(question, baseContext));
       if (g.context) {
         context = [baseContext, g.context].filter(Boolean).join("\n\n");
         sources = g.sources;

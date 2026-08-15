@@ -12,22 +12,11 @@
  *     offline fallback. Core routes are warmed during service-worker install.
  */
 
-const VERSION = "akkaverse-v3";
+const VERSION = "akkaverse-v4";
 const IMAGE_CACHE = `${VERSION}-images`;
 const DATA_CACHE = `${VERSION}-data`;
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
-
-const CORE_ROUTES = [
-  "/",
-  "/roots",
-  "/stories",
-  "/learn",
-  "/quiz",
-  "/explore",
-  "/festivals",
-  "/memories",
-];
 
 const MAX_IMAGE_ENTRIES = 300;
 
@@ -35,17 +24,6 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       await self.skipWaiting();
-      const cache = await caches.open(PAGE_CACHE);
-      await Promise.all(
-        CORE_ROUTES.map(async (route) => {
-          try {
-            const response = await fetch(route, { cache: "reload" });
-            if (response.ok) await cache.put(route, response);
-          } catch {
-            // One unavailable route must not prevent the worker from installing.
-          }
-        }),
-      );
     })(),
   );
 });
@@ -132,7 +110,9 @@ async function networkFirstPage(request) {
   const cache = await caches.open(PAGE_CACHE);
   try {
     const response = await fetch(request);
-    if (response && response.ok) await cache.put(request, response.clone());
+    if (response && response.ok && !response.redirected) {
+      await cache.put(request, response.clone());
+    }
     return response;
   } catch {
     const cached = (await cache.match(request)) || (await cache.match("/"));

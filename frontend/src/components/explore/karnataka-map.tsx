@@ -11,7 +11,11 @@ import { ExternalLink, MapPin, Loader2, TreeDeciduous } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n/language-provider";
-import { districtById, type District } from "@/data/districts";
+import {
+  districtById,
+  districtHighlights,
+  type District,
+} from "@/data/districts";
 import { getDistrictInfo, type WikiInfo } from "@/lib/wiki";
 import { festivals } from "@/data/festivals";
 import { AskAkka } from "@/components/ui/ask-akka";
@@ -79,9 +83,20 @@ export function KarnatakaMap() {
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
+                      role="button"
+                      aria-label={d ? bi(d.nameEn, d.nameKn) : id}
+                      aria-pressed={isSelected}
                       onMouseEnter={() => d && setHovered(d)}
                       onMouseLeave={() => setHovered(null)}
+                      onFocus={() => d && setHovered(d)}
+                      onBlur={() => setHovered(null)}
                       onClick={() => d && select(d)}
+                      onKeyDown={(event) => {
+                        if (d && (event.key === "Enter" || event.key === " ")) {
+                          event.preventDefault();
+                          select(d);
+                        }
+                      }}
                       style={{
                         default: {
                           fill: isSelected
@@ -173,6 +188,7 @@ function DistrictPanel({
   loading: boolean;
 }) {
   const { t, bi, locale } = useTranslation();
+  const highlights = selected ? districtHighlights[selected.id] : null;
 
   const extract = React.useMemo(() => {
     if (!info) return "";
@@ -219,20 +235,32 @@ function DistrictPanel({
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : info?.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={info.imageUrl}
-            alt={selected.nameEn}
-            className="h-full w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
+          <DistrictPhoto src={info.imageUrl} district={selected} />
         ) : (
           <div className="flex h-full items-center justify-center text-5xl opacity-30">
             {selected.emoji}
           </div>
         )}
       </div>
+
+      {highlights && (
+        <div className="mt-4">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {bi("Known for", "ಪ್ರಸಿದ್ಧ ಸ್ಥಳಗಳು")}
+          </p>
+          <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+            {(locale === "kn" ? highlights.kn : highlights.en).map((highlight) => (
+              <div
+                key={highlight}
+                className="flex min-h-12 items-center gap-2 rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs font-medium"
+              >
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
+                <span>{highlight}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Live summary */}
       <div className="mt-4">
@@ -305,5 +333,27 @@ function DistrictPanel({
         </a>
       </div>
     </div>
+  );
+}
+
+function DistrictPhoto({ src, district }: { src: string; district: District }) {
+  const [failed, setFailed] = React.useState(false);
+
+  React.useEffect(() => setFailed(false), [src]);
+
+  // A validated local heritage photo prevents a broken/empty image frame if a
+  // deployment or external source ever fails unexpectedly.
+  const imageSrc = failed ? "/places/hampi.jpg" : src;
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={imageSrc}
+      alt={failed ? "Karnataka heritage landscape" : district.nameEn}
+      className="h-full w-full object-cover"
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
   );
 }

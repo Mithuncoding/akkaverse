@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Loader2, Menu, UserRound } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { primaryNav, moreNav } from "@/config/site";
@@ -12,7 +12,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { translations } from "@/i18n/translations";
 import { useTranslation } from "@/i18n/language-provider";
-import { useAuth } from "@/components/auth/auth-provider";
 
 /** Bilingual nav label, stacked in "both" mode to stay compact. */
 function NavText({ labelKey }: { labelKey: string }) {
@@ -36,14 +35,11 @@ function NavText({ labelKey }: { labelKey: string }) {
  * bilingual nav labels. Desktop shows a focused primary nav + a "More" menu.
  */
 export function SiteHeader() {
-  const { t, bi } = useTranslation();
-  const auth = useAuth();
+  const { t } = useTranslation();
   const pathname = usePathname();
-  const [mounted, setMounted] = React.useState(false);
   const [moreOpen, setMoreOpen] = React.useState(false);
   const moreRef = React.useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => setMounted(true), []);
   React.useEffect(() => setMoreOpen(false), [pathname]);
 
   React.useEffect(() => {
@@ -58,8 +54,6 @@ export function SiteHeader() {
   }, [moreOpen]);
 
   const moreActive = moreNav.some((m) => pathname.startsWith(m.href));
-  const authenticated = mounted && auth.status === "authenticated";
-  const authLoading = !mounted || auth.status === "loading";
 
   return (
     <header
@@ -146,30 +140,11 @@ export function SiteHeader() {
         <div className="flex items-center gap-1.5 sm:gap-2">
           <LanguageToggle />
           <ModeToggle />
-          <Button size="sm" className="hidden shadow-glow lg:inline-flex" asChild>
-            <Link href="/chat">{t("common.getStarted")}</Link>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 gap-1.5 rounded-xl px-2 sm:px-3"
-            asChild
-          >
-            <Link
-              href={authenticated ? "/account" : "/login"}
-              aria-label={bi("Account", "ಖಾತೆ")}
-              title={authenticated ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
-            >
-              {authLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <UserRound className="h-4 w-4" />
-              )}
-              <span className="hidden xl:inline">
-                {authenticated ? auth.displayName : bi("Sign in", "ಸೈನ್ ಇನ್")}
-              </span>
-            </Link>
-          </Button>
+          {!pathname.startsWith("/chat") && (
+            <Button size="sm" className="hidden shadow-glow lg:inline-flex" asChild>
+              <Link href="/chat">{t("common.getStarted")}</Link>
+            </Button>
+          )}
           {/* Mobile hamburger — opens the full navigation sheet */}
           <button
             type="button"

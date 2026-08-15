@@ -253,7 +253,7 @@ export function ChatView() {
 
       {/* Guide picker — choose WHO you talk to about Karnataka. */}
       <div className="mx-auto mb-4 max-w-3xl">
-        <div className="edge-carousel scroll-touch no-scrollbar -mx-[1.15rem] flex gap-2 px-[1.15rem] sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0">
+        <div className="edge-carousel scroll-touch no-scrollbar -mx-[1.15rem] flex gap-2 overflow-x-auto px-[1.15rem] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0">
           {GUIDES.map((g) => {
             const active = g.id === guideId;
             return (

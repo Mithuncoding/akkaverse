@@ -18,7 +18,6 @@ import {
   Landmark,
   TreeDeciduous,
   ArrowRight,
-  UserRound,
   type LucideIcon,
 } from "lucide-react";
 
@@ -28,7 +27,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { translations } from "@/i18n/translations";
 import { useTranslation } from "@/i18n/language-provider";
-import { useAuth } from "@/components/auth/auth-provider";
 
 /**
  * Mobile-first navigation.
@@ -86,8 +84,7 @@ function NavLabel({ labelKey }: { labelKey: string }) {
 
 export function MobileNav() {
   const pathname = usePathname();
-  const { t, bi } = useTranslation();
-  const auth = useAuth();
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
 
   // Lock body scroll + close on Escape while the sheet is open.
@@ -249,30 +246,6 @@ export function MobileNav() {
         </div>
 
         {/* Controls */}
-        <div className="mt-5 px-5">
-          <Link
-            href={auth.status === "authenticated" ? "/account" : "/login"}
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-3 rounded-2xl border border-border bg-background/60 p-4"
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
-              <UserRound className="h-5 w-5" />
-            </span>
-            <span>
-              <span className="block text-sm font-semibold">
-                {auth.status === "authenticated"
-                  ? auth.displayName
-                  : bi("Sign in or create account", "ಸೈನ್ ಇನ್ ಅಥವಾ ಖಾತೆ ರಚಿಸಿ")}
-              </span>
-              <span className="block text-xs text-muted-foreground">
-                {auth.status === "authenticated"
-                  ? auth.user?.email
-                  : bi("Sync your private heritage", "ನಿಮ್ಮ ಖಾಸಗಿ ಪರಂಪರೆಯನ್ನು ಸಿಂಕ್ ಮಾಡಿ")}
-              </span>
-            </span>
-          </Link>
-        </div>
-
         <div className="mt-5 flex items-center justify-between gap-3 px-5">
           <LanguageToggle />
           <ModeToggle />

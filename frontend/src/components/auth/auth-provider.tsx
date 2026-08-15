@@ -46,6 +46,16 @@ function nameFor(user: User | null): string {
   return user.email?.split("@")[0] ?? "Kannadiga";
 }
 
+async function clearPrivatePageCaches() {
+  if (typeof window === "undefined" || !("caches" in window)) return;
+  const keys = await window.caches.keys();
+  await Promise.all(
+    keys
+      .filter((key) => key.startsWith("akkaverse-") && key.endsWith("-pages"))
+      .map((key) => window.caches.delete(key)),
+  );
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<User | null>(null);
   const [status, setStatus] = React.useState<AuthStatus>(
@@ -60,11 +70,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     let active = true;
-    supabase.auth.getUser().then(({ data, error }) => {
+    supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
-      const next = error ? null : data.user;
+      const next = data.session?.user ?? null;
       setUser(next);
       setStatus(next ? "authenticated" : "anonymous");
+
+      if (next) {
+        void supabase.auth.getUser().then(({ data: verified, error }) => {
+          if (!active || error || !verified.user) return;
+          setUser(verified.user);
+        });
+      }
     });
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -164,6 +181,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = React.useCallback(async () => {
     const supabase = getSupabaseBrowserClient();
     if (supabase) await supabase.auth.signOut();
+    await clearPrivatePageCaches();
+    setUser(null);
+    setStatus("anonymous");
   }, []);
 
   const deleteAccount = React.useCallback(async (): Promise<AuthActionResult> => {
@@ -172,6 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.rpc("delete_my_account");
     if (error) return { error: error.message };
     await supabase.auth.signOut({ scope: "local" });
+    await clearPrivatePageCaches();
     setUser(null);
     setStatus("anonymous");
     return {};

@@ -291,6 +291,8 @@ function HintButton({ q }: { q: BankQuestion }) {
       options: q.options.en,
       correct: q.options.en[q.answer],
       topic: categoryById(q.cat).label.en,
+      explanation: q.explain.en,
+      fact: q.fact?.en,
     });
     let acc = "";
     const full = await streamAkka(
@@ -350,6 +352,8 @@ function LearnPanel({
         options: q.options.en,
         correct: q.options.en[q.answer],
         topic: categoryById(q.cat).label.en,
+        explanation: q.explain.en,
+        fact: q.fact?.en,
       }),
     [q],
   );
@@ -359,7 +363,7 @@ function LearnPanel({
     setTeachBusy(true);
     let acc = "";
     const full = await streamAkka(
-      `Teach me more about this in 2-3 sentences: why the correct answer is right, why the others are wrong, and one memorable fact.${locale === "kn" ? " Reply in Kannada." : ""}`,
+      `Explain why the correct answer is right in 2-3 sentences using only the verified context. Do not add unsupported facts or speculate about the other options.${locale === "kn" ? " Reply in Kannada." : ""}`,
       context,
       { onToken: (t) => { acc += t; setTeach(acc); } },
     );

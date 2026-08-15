@@ -109,7 +109,7 @@ export const cinematic: Record<string, StoryCinematic> = {
     motif: "🛕",
     coords: [76.673, 12.272],
     gallery: [
-      "Statue of Mahishasura",
+      "Mysore district",
       "Mahishasura",
       "Chamundeshwari Temple",
       "Chamundi Hills",
