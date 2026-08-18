@@ -35,7 +35,6 @@ export const siteConfig = {
     { labelKey: "nav.stories", href: "/stories" },
     { labelKey: "nav.timeline", href: "/timeline" },
     { labelKey: "nav.quiz", href: "/quiz" },
-    { labelKey: "nav.memories", href: "/memories" },
     { labelKey: "nav.about", href: "/about" },
   ] as NavItem[],
 } as const;
@@ -57,7 +56,6 @@ export const primaryNav: NavItem[] = [
 /** Secondary destinations, tucked into the header "More" menu. */
 export const moreNav: NavItem[] = [
   { labelKey: "nav.festivals", href: "/festivals" },
-  { labelKey: "nav.memories", href: "/memories" },
   { labelKey: "nav.about", href: "/about" },
 ];
 
@@ -117,12 +115,5 @@ export const features: FeatureItem[] = [
     icon: "BookOpen",
     available: true,
     href: "/stories",
-  },
-  {
-    titleKey: "feature.memories.title",
-    descKey: "feature.memories.desc",
-    icon: "Heart",
-    available: true,
-    href: "/memories",
   },
 ];

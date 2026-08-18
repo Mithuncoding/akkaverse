@@ -132,7 +132,7 @@ export function HomeView() {
       en: "Pass it on",
       dEn: "Give it all to those yet to come.",
       dKn: "ಇದೆಲ್ಲವನ್ನೂ ಮುಂದೆ ಬರುವವರಿಗೆ ದಾಟಿಸಿ.",
-      href: "/memories",
+      href: "/roots",
     },
   ];
 

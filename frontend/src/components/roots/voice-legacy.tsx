@@ -41,10 +41,12 @@ import {
 import {
   canRecordVoice,
   deleteVoiceAudio,
+  getVoiceAudio,
   saveVoiceAudio,
 } from "@/lib/roots/voice-audio";
 import {
   deleteCloudVoice,
+  signedVoiceUrl,
   uploadVoiceToCloud,
 } from "@/lib/roots/voice-cloud";
 import {
@@ -92,6 +94,41 @@ function demoWords(person: Person): { title: string; kannada: string; english: s
   };
 }
 
+async function originalAudioBlob(capsule: VoiceCapsule): Promise<Blob | null> {
+  if (capsule.audioId) {
+    const local = await getVoiceAudio(capsule.audioId).catch(() => null);
+    if (local) return local;
+  }
+
+  const remoteUrl = capsule.cloudAudioPath
+    ? await signedVoiceUrl(capsule.cloudAudioPath).catch(() => null)
+    : capsule.sharedAudioUrl;
+  if (!remoteUrl) return null;
+
+  const response = await fetch(remoteUrl).catch(() => null);
+  return response?.ok ? response.blob() : null;
+}
+
+function audioFile(blob: Blob, title: string): File {
+  const mime = blob.type.split(";")[0];
+  const extension =
+    {
+      "audio/mpeg": "mp3",
+      "audio/mp4": "m4a",
+      "audio/wav": "wav",
+      "audio/ogg": "ogg",
+      "audio/webm": "webm",
+    }[mime] ?? "webm";
+  const name = title
+    .trim()
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 80);
+  return new File([blob], `${name || "voice-legacy"}.${extension}`, {
+    type: mime || "audio/webm",
+  });
+}
+
 export function VoiceLegacy({ people }: { people: Person[] }) {
   const { bi } = useTranslation();
   const { voiceCapsules } = useRoots();
@@ -99,7 +136,8 @@ export function VoiceLegacy({ people }: { people: Person[] }) {
 
   const familyMembers = new Set(voiceCapsules.map((capsule) => capsule.personId));
   const originalCount = voiceCapsules.filter(
-    (capsule) => capsule.audioId || capsule.cloudAudioPath,
+    (capsule) =>
+      capsule.audioId || capsule.cloudAudioPath || capsule.sharedAudioUrl,
   ).length;
 
   return (
@@ -211,7 +249,15 @@ function CapsuleCard({ capsule }: { capsule: VoiceCapsule }) {
     );
     try {
       if (navigator.share) {
-        await navigator.share({ title: capsule.title, text, url });
+        const original = await originalAudioBlob(capsule);
+        const file = original ? audioFile(original, capsule.title) : null;
+        const files = file ? [file] : [];
+        await navigator.share({
+          title: capsule.title,
+          text,
+          url,
+          ...(file && navigator.canShare?.({ files }) ? { files } : {}),
+        });
       } else {
         await navigator.clipboard.writeText(url);
       }
@@ -320,10 +366,11 @@ function CapsuleCard({ capsule }: { capsule: VoiceCapsule }) {
 
         <div className="mt-5">
           <VoicePlayer
-            key={`${capsule.audioId ?? "ai"}-${capsule.cloudAudioPath ?? "local"}`}
+            key={`${capsule.audioId ?? "ai"}-${capsule.cloudAudioPath ?? "local"}-${capsule.sharedAudioUrl ?? "private"}`}
             text={capsule.kannada || capsule.english}
             audioId={capsule.audioId}
             cloudAudioPath={capsule.cloudAudioPath}
+            originalAudioUrl={capsule.sharedAudioUrl}
             compact
           />
         </div>
@@ -374,13 +421,18 @@ function CapsuleCard({ capsule }: { capsule: VoiceCapsule }) {
             </button>
           )}
         </div>
-        {(capsule.audioId || capsule.cloudAudioPath) &&
+        {(capsule.audioId || capsule.cloudAudioPath || capsule.sharedAudioUrl) &&
           capsule.visibility !== "private" && (
           <p className="mt-2 text-[11px] text-muted-foreground">
-            {bi(
-              "The family link shares the words with AI narration; the original recording stays on this device.",
-              "ಕುಟುಂಬದ ಲಿಂಕ್ ಪದಗಳನ್ನು AI ನಿರೂಪಣೆಯೊಂದಿಗೆ ಹಂಚುತ್ತದೆ; ಮೂಲ ಧ್ವನಿ ಈ ಸಾಧನದಲ್ಲೇ ಇರುತ್ತದೆ.",
-            )}
+            {capsule.sharedAudioUrl
+              ? bi(
+                  "The family link includes this original recording with permission.",
+                  "ಕುಟುಂಬದ ಲಿಂಕ್ ಅನುಮತಿಯೊಂದಿಗೆ ಈ ಮೂಲ ಧ್ವನಿಯನ್ನು ಒಳಗೊಂಡಿದೆ.",
+                )
+              : bi(
+                  "On supported devices, Pass it on includes the original recording; the link itself uses AI narration.",
+                  "ಬೆಂಬಲಿತ ಸಾಧನಗಳಲ್ಲಿ, ಮುಂದಕ್ಕೆ ಕಳುಹಿಸಿ ಮೂಲ ಧ್ವನಿಯನ್ನು ಒಳಗೊಂಡಿರುತ್ತದೆ; ಲಿಂಕ್ ಸ್ವತಃ AI ನಿರೂಪಣೆಯನ್ನು ಬಳಸುತ್ತದೆ.",
+                )}
           </p>
         )}
         {audioError && (

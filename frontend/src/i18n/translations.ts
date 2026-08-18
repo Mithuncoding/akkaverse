@@ -34,7 +34,6 @@ const en: Dict = {
   "nav.quiz": "Quiz",
   "nav.tools": "Tools",
   "nav.about": "Our Story",
-  "nav.memories": "Memory Wall",
   "nav.roots": "Roots",
   "nav.more": "More",
   "nav.menu": "Menu",
@@ -91,9 +90,6 @@ const en: Dict = {
   "feature.tools.title": "Kannada OCR & Voice",
   "feature.tools.desc":
     "Extract Kannada text from images, translate, and listen — speak and be understood.",
-  "feature.memories.title": "Memory Wall",
-  "feature.memories.desc":
-    "Add a proverb, folk song, or a memory from your elders — a living community scrapbook of Kannada heritage.",
 
   // ---- timeline ----
   "timeline.badge": "Heritage Timeline",
@@ -243,7 +239,6 @@ const kn: Dict = {
   "nav.quiz": "ರಸಪ್ರಶ್ನೆ",
   "nav.tools": "ಉಪಕರಣಗಳು",
   "nav.about": "ನಮ್ಮ ಕಥೆ",
-  "nav.memories": "ನೆನಪಿನ ಗೋಡೆ",
   "nav.roots": "ಬೇರುಗಳು",
   "nav.more": "ಇನ್ನಷ್ಟು",
   "nav.menu": "ಮೆನು",
@@ -300,9 +295,6 @@ const kn: Dict = {
   "feature.tools.title": "ಕನ್ನಡ OCR ಮತ್ತು ಧ್ವನಿ",
   "feature.tools.desc":
     "ಚಿತ್ರಗಳಿಂದ ಕನ್ನಡ ಪಠ್ಯವನ್ನು ಹೊರತೆಗೆಯಿರಿ, ಭಾಷಾಂತರಿಸಿ ಮತ್ತು ಕೇಳಿ.",
-  "feature.memories.title": "ನೆನಪಿನ ಗೋಡೆ",
-  "feature.memories.desc":
-    "ಗಾದೆ, ಜನಪದ ಹಾಡು, ಅಥವಾ ಹಿರಿಯರ ನೆನಪುಗಳನ್ನು ಸೇರಿಸಿ — ಕನ್ನಡ ಪರಂಪರೆಯ ಜೀವಂತ ಸಂಗ್ರಹ.",
 
   // ---- timeline ----
   "timeline.badge": "ಪರಂಪರೆಯ ಕಾಲರೇಖೆ",

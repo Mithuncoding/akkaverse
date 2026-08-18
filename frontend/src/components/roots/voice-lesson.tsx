@@ -30,8 +30,11 @@ function firstSentence(text: string, max = 220): string {
 export function VoiceLesson({ payload }: { payload: VoiceLegacyPayload }) {
   const { bi } = useTranslation();
   const [answer, setAnswer] = React.useState<number | null>(null);
+  const kannadaWords = new Set(
+    payload.kannada.match(/[\u0C80-\u0CFF]+/g) ?? [],
+  );
   const words = VOCABULARY.filter(([kannada]) =>
-    payload.kannada.includes(kannada),
+    kannadaWords.has(kannada),
   ).slice(0, 4);
   const correct = firstSentence(payload.english) || payload.english;
   const options = [
@@ -62,7 +65,11 @@ export function VoiceLesson({ payload }: { payload: VoiceLegacyPayload }) {
         </p>
         <p className="mt-1 text-sm text-muted-foreground">{correct}</p>
         <div className="mt-4">
-          <VoicePlayer text={payload.kannada || payload.english} compact />
+          <VoicePlayer
+            text={payload.kannada || payload.english}
+            originalAudioUrl={payload.originalAudioUrl}
+            compact
+          />
         </div>
       </div>
 

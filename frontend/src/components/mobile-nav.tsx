@@ -14,7 +14,6 @@ import {
   Milestone,
   Brain,
   PartyPopper,
-  Heart,
   Landmark,
   TreeDeciduous,
   ArrowRight,
@@ -58,7 +57,6 @@ const ALL: Dest[] = [
   { href: "/stories", labelKey: "nav.stories", icon: BookOpen },
   { href: "/timeline", labelKey: "nav.timeline", icon: Milestone },
   { href: "/quiz", labelKey: "nav.quiz", icon: Brain },
-  { href: "/memories", labelKey: "nav.memories", icon: Heart },
   { href: "/about", labelKey: "nav.about", icon: Landmark },
 ];
 

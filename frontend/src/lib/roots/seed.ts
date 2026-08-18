@@ -1,4 +1,4 @@
-import type { Person, RootsData } from "@/lib/roots/store";
+import type { Person, RootsData, VoiceCapsule } from "@/lib/roots/store";
 
 /**
  * The maker's own family — seeded as the default Roots tree so the experience
@@ -12,6 +12,26 @@ import type { Person, RootsData } from "@/lib/roots/store";
 const CBP = "Chikkaballapura";
 
 const P = (p: Person): Person => p;
+
+export function seedRagiMuddeVoiceCapsule(): VoiceCapsule {
+  return {
+    id: "seed-voice-ragi-mudde",
+    personId: "gm-dad",
+    personName: "Rathnamma",
+    kind: "recipe",
+    title: "Rathnamma Ajji's Ragi Mudde",
+    kannada:
+      "ಈ ಮೂಲ ಧ್ವನಿಯಲ್ಲಿ ರತ್ನಮ್ಮ ಅಜ್ಜಿ ಮನೆಯ ರೀತಿಯಲ್ಲಿ ರಾಗಿ ಮುದ್ದೆ ಮಾಡುವ ವಿಧಾನವನ್ನು ವಿವರಿಸುತ್ತಾರೆ.",
+    english:
+      "In this original recording, Rathnamma Ajji explains how she makes ragi mudde at home.",
+    village: "Hosur (Sidlaghatta)",
+    district: CBP,
+    sharedAudioUrl: "/voices/ajji-ragi-mudde.mp3",
+    visibility: "family",
+    consentConfirmed: true,
+    createdAt: Date.now() - 2,
+  };
+}
 
 export function seedFamily(): RootsData {
   const people: Person[] = [
@@ -303,7 +323,7 @@ export function seedFamily(): RootsData {
         createdAt: Date.now() - 1,
       },
     ],
-    voiceCapsules: [],
+    voiceCapsules: [seedRagiMuddeVoiceCapsule()],
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };

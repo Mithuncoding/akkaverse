@@ -15,11 +15,13 @@ export function VoicePlayer({
   text,
   audioId,
   cloudAudioPath,
+  originalAudioUrl,
   compact = false,
 }: {
   text: string;
   audioId?: string;
   cloudAudioPath?: string;
+  originalAudioUrl?: string;
   compact?: boolean;
 }) {
   const { bi } = useTranslation();
@@ -27,7 +29,7 @@ export function VoicePlayer({
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const urlRef = React.useRef<string | null>(null);
   const objectUrlRef = React.useRef(false);
-  const hasOriginal = Boolean(audioId || cloudAudioPath);
+  const hasOriginal = Boolean(audioId || cloudAudioPath || originalAudioUrl);
 
   React.useEffect(
     () => () => {
@@ -63,6 +65,10 @@ export function VoicePlayer({
         }
         if (!urlRef.current && cloudAudioPath) {
           urlRef.current = await signedVoiceUrl(cloudAudioPath);
+          objectUrlRef.current = false;
+        }
+        if (!urlRef.current && originalAudioUrl) {
+          urlRef.current = originalAudioUrl;
           objectUrlRef.current = false;
         }
         if (!urlRef.current && !hasOriginal) {

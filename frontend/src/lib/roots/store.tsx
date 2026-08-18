@@ -2,7 +2,10 @@
 
 import * as React from "react";
 
-import { seedFamily } from "@/lib/roots/seed";
+import {
+  seedFamily,
+  seedRagiMuddeVoiceCapsule,
+} from "@/lib/roots/seed";
 import { useAuth } from "@/components/auth/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -88,6 +91,8 @@ export type VoiceCapsule = {
   audioId?: string;
   /** Private Supabase Storage path for authenticated cross-device playback. */
   cloudAudioPath?: string;
+  /** Same-origin recording intentionally included in family share links. */
+  sharedAudioUrl?: string;
   visibility: VoiceCapsuleVisibility;
   consentConfirmed: boolean;
   createdAt: number;
@@ -130,14 +135,23 @@ function normalizeRoots(value: unknown): RootsData | null {
   if (!value || typeof value !== "object") return null;
   const parsed = value as Partial<RootsData>;
   if (parsed.version !== 1 || !Array.isArray(parsed.people)) return null;
+  const voiceCapsules = Array.isArray(parsed.voiceCapsules)
+    ? parsed.voiceCapsules
+    : [];
+  const seededVoice = seedRagiMuddeVoiceCapsule();
+  const demoVoiceCapsules =
+    parsed.people.some((person) => person.id === "mithun")
+      ? [
+          seededVoice,
+          ...voiceCapsules.filter((capsule) => capsule.id !== seededVoice.id),
+        ]
+      : voiceCapsules;
   return {
     ...empty(),
     ...parsed,
     people: parsed.people,
     legacy: Array.isArray(parsed.legacy) ? parsed.legacy : [],
-    voiceCapsules: Array.isArray(parsed.voiceCapsules)
-      ? parsed.voiceCapsules
-      : [],
+    voiceCapsules: demoVoiceCapsules,
     createdAt:
       typeof parsed.createdAt === "number" ? parsed.createdAt : Date.now(),
     updatedAt:
@@ -253,6 +267,7 @@ export function RootsProvider({ children }: { children: React.ReactNode }) {
         const parsed = raw ? read(nextStorageKey) : null;
         if (parsed && seededVer === SEED_VERSION) {
           initial = parsed;
+          write(initial, nextStorageKey);
         } else {
           initial = seedFamily();
           write(initial, nextStorageKey);

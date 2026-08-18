@@ -9,6 +9,7 @@ export type VoiceLegacyPayload = {
   english: string;
   village?: string;
   district?: string;
+  originalAudioUrl?: string;
   createdAt: number;
 };
 
@@ -33,6 +34,13 @@ function fromBase64Url(input: string): string {
 const clean = (value: unknown, max: number) =>
   typeof value === "string" ? value.trim().slice(0, max) : "";
 
+const cleanOriginalAudioUrl = (value: unknown) => {
+  const url = clean(value, 240);
+  return /^\/voices\/[a-z0-9/_-]+\.(mp3|m4a|mp4|wav|webm|ogg)$/i.test(url)
+    ? url
+    : undefined;
+};
+
 const KINDS: VoiceLegacyKind[] = [
   "blessing",
   "proverb",
@@ -54,6 +62,7 @@ export function capsuleSharePayload(
     english: capsule.english,
     village: capsule.village,
     district: capsule.district,
+    originalAudioUrl: capsule.sharedAudioUrl,
     createdAt: capsule.createdAt,
   };
 }
@@ -69,6 +78,7 @@ export function encodeVoiceLegacy(payload: VoiceLegacyPayload): string {
       en: clean(payload.english, 2400),
       l: clean(payload.village, 120),
       d: clean(payload.district, 120),
+      a: cleanOriginalAudioUrl(payload.originalAudioUrl),
       c: Number.isFinite(payload.createdAt) ? payload.createdAt : Date.now(),
     }),
   );
@@ -92,6 +102,7 @@ export function decodeVoiceLegacy(token: string): VoiceLegacyPayload | null {
       english,
       village: clean(value.l, 120) || undefined,
       district: clean(value.d, 120) || undefined,
+      originalAudioUrl: cleanOriginalAudioUrl(value.a),
       createdAt:
         typeof value.c === "number" && Number.isFinite(value.c)
           ? value.c

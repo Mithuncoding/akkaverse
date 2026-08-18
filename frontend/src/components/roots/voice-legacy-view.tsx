@@ -105,12 +105,20 @@ export function VoiceLegacyView() {
             </p>
 
             <div className="mt-8 rounded-2xl border border-amber-900/15 bg-amber-50/50 p-4">
-              <VoicePlayer text={payload.kannada || payload.english} />
+              <VoicePlayer
+                text={payload.kannada || payload.english}
+                originalAudioUrl={payload.originalAudioUrl}
+              />
               <p className="mt-2 text-xs leading-relaxed text-amber-900/65">
-                {bi(
-                  "This link uses a temporary synthesized Kannada narrator. It does not imitate or claim to be the family member's original voice.",
-                  "ಈ ಲಿಂಕ್ ತಾತ್ಕಾಲಿಕ ಸಂಶ್ಲೇಷಿತ ಕನ್ನಡ ನಿರೂಪಕವನ್ನು ಬಳಸುತ್ತದೆ. ಇದು ಕುಟುಂಬದ ಸದಸ್ಯರ ಮೂಲ ಧ್ವನಿಯನ್ನು ಅನುಕರಿಸುವುದಿಲ್ಲ ಅಥವಾ ಹಾಗೆಂದು ಹೇಳುವುದಿಲ್ಲ.",
-                )}
+                {payload.originalAudioUrl
+                  ? bi(
+                      "Shared with family permission in the speaker's original voice.",
+                      "ಕುಟುಂಬದ ಅನುಮತಿಯೊಂದಿಗೆ ಮಾತನಾಡಿದವರ ಮೂಲ ಧ್ವನಿಯಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಲಾಗಿದೆ.",
+                    )
+                  : bi(
+                      "This link uses a temporary synthesized Kannada narrator. It does not imitate or claim to be the family member's original voice.",
+                      "ಈ ಲಿಂಕ್ ತಾತ್ಕಾಲಿಕ ಸಂಶ್ಲೇಷಿತ ಕನ್ನಡ ನಿರೂಪಕವನ್ನು ಬಳಸುತ್ತದೆ. ಇದು ಕುಟುಂಬದ ಸದಸ್ಯರ ಮೂಲ ಧ್ವನಿಯನ್ನು ಅನುಕರಿಸುವುದಿಲ್ಲ ಅಥವಾ ಹಾಗೆಂದು ಹೇಳುವುದಿಲ್ಲ.",
+                    )}
               </p>
             </div>
           </div>
@@ -128,10 +136,15 @@ export function VoiceLegacyView() {
               {bi("A private family artifact", "ಖಾಸಗಿ ಕುಟುಂಬದ ನೆನಪು")}
             </h2>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              {bi(
-                "This link contains only the words, name, and place shown here. It cannot open the sender's family tree or private recordings.",
-                "ಈ ಲಿಂಕ್ ಇಲ್ಲಿ ಕಾಣುವ ಪದಗಳು, ಹೆಸರು ಮತ್ತು ಸ್ಥಳವನ್ನು ಮಾತ್ರ ಹೊಂದಿದೆ. ಕಳುಹಿಸಿದವರ ಕುಟುಂಬ ಮರ ಅಥವಾ ಖಾಸಗಿ ಧ್ವನಿಗಳನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ.",
-              )}
+              {payload.originalAudioUrl
+                ? bi(
+                    "This link contains this recording and the details shown here. It cannot open the sender's family tree or any other private recordings.",
+                    "ಈ ಲಿಂಕ್ ಈ ಧ್ವನಿ ಮತ್ತು ಇಲ್ಲಿ ಕಾಣುವ ವಿವರಗಳನ್ನು ಮಾತ್ರ ಹೊಂದಿದೆ. ಕಳುಹಿಸಿದವರ ಕುಟುಂಬ ಮರ ಅಥವಾ ಬೇರೆ ಯಾವುದೇ ಖಾಸಗಿ ಧ್ವನಿಗಳನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+                  )
+                : bi(
+                    "This link contains only the words, name, and place shown here. It cannot open the sender's family tree or private recordings.",
+                    "ಈ ಲಿಂಕ್ ಇಲ್ಲಿ ಕಾಣುವ ಪದಗಳು, ಹೆಸರು ಮತ್ತು ಸ್ಥಳವನ್ನು ಮಾತ್ರ ಹೊಂದಿದೆ. ಕಳುಹಿಸಿದವರ ಕುಟುಂಬ ಮರ ಅಥವಾ ಖಾಸಗಿ ಧ್ವನಿಗಳನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+                  )}
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-card/75 p-5">
