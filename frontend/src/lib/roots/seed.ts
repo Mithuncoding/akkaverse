@@ -13,7 +13,7 @@ const CBP = "Chikkaballapura";
 
 const P = (p: Person): Person => p;
 
-export function seedRagiMuddeVoiceCapsule(): VoiceCapsule {
+function seedRagiMuddeVoiceCapsule(): VoiceCapsule {
   return {
     id: "seed-voice-ragi-mudde",
     personId: "gm-dad",
@@ -31,6 +31,30 @@ export function seedRagiMuddeVoiceCapsule(): VoiceCapsule {
     consentConfirmed: true,
     createdAt: Date.now() - 2,
   };
+}
+
+function seedVaralakshmiVoiceCapsule(): VoiceCapsule {
+  return {
+    id: "seed-voice-varalakshmi-introduction",
+    personId: "varalakshmi",
+    personName: "Varalakshmi",
+    kind: "story",
+    title: "Varalakshmi's Introduction",
+    kannada:
+      "ಈ ಮೂಲ ಧ್ವನಿಯಲ್ಲಿ ವರಲಕ್ಷ್ಮಿ ಅವರು ತಮ್ಮನ್ನು ಪರಿಚಯಿಸಿಕೊಳ್ಳುತ್ತಾರೆ.",
+    english:
+      "In this original recording, Varalakshmi introduces herself.",
+    village: "Lakkahalli",
+    district: CBP,
+    sharedAudioUrl: "/voices/varalakshmi-introduction.mp3",
+    visibility: "family",
+    consentConfirmed: true,
+    createdAt: Date.now() - 1,
+  };
+}
+
+export function seedVoiceCapsules(): VoiceCapsule[] {
+  return [seedVaralakshmiVoiceCapsule(), seedRagiMuddeVoiceCapsule()];
 }
 
 export function seedFamily(): RootsData {
@@ -323,7 +347,7 @@ export function seedFamily(): RootsData {
         createdAt: Date.now() - 1,
       },
     ],
-    voiceCapsules: [seedRagiMuddeVoiceCapsule()],
+    voiceCapsules: seedVoiceCapsules(),
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };

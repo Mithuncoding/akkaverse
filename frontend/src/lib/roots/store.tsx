@@ -4,7 +4,7 @@ import * as React from "react";
 
 import {
   seedFamily,
-  seedRagiMuddeVoiceCapsule,
+  seedVoiceCapsules,
 } from "@/lib/roots/seed";
 import { useAuth } from "@/components/auth/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -138,12 +138,15 @@ function normalizeRoots(value: unknown): RootsData | null {
   const voiceCapsules = Array.isArray(parsed.voiceCapsules)
     ? parsed.voiceCapsules
     : [];
-  const seededVoice = seedRagiMuddeVoiceCapsule();
+  const seededVoices = seedVoiceCapsules();
+  const seededVoiceIds = new Set(seededVoices.map((capsule) => capsule.id));
   const demoVoiceCapsules =
     parsed.people.some((person) => person.id === "mithun")
       ? [
-          seededVoice,
-          ...voiceCapsules.filter((capsule) => capsule.id !== seededVoice.id),
+          ...seededVoices,
+          ...voiceCapsules.filter(
+            (capsule) => !seededVoiceIds.has(capsule.id),
+          ),
         ]
       : voiceCapsules;
   return {
