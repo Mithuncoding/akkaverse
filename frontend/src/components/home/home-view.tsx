@@ -1,176 +1,240 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight,
-  Heart,
-  Languages,
-  Map,
-  Mic2,
   Sparkles,
-  Volume2,
+  GraduationCap,
+  BookOpen,
+  Map,
+  Milestone,
+  Brain,
+  PartyPopper,
+  ArrowRight,
+  Landmark,
+  Heart,
+  TreeDeciduous,
+  type LucideIcon,
 } from "lucide-react";
 
+import { features } from "@/config/site";
 import { Button } from "@/components/ui/button";
+import { DailyHeritage } from "@/components/home/daily-heritage";
 import { PhotoMarquee } from "@/components/home/photo-marquee";
 import { Reveal } from "@/components/ui/reveal";
+import { CountUp } from "@/components/ui/count-up";
+import { RotatingText } from "@/components/ui/rotating-text";
 import { Kicker } from "@/components/ui/kicker";
-import { VoicePlayer } from "@/components/roots/voice-player";
 import { useTranslation } from "@/i18n/language-provider";
+
+/** Map icon names (from config strings) to lucide components in the UI layer. */
+const ICONS: Record<string, LucideIcon> = {
+  Sparkles,
+  GraduationCap,
+  BookOpen,
+  Map,
+  Milestone,
+  Brain,
+  PartyPopper,
+  Heart,
+  TreeDeciduous,
+};
 
 /**
  * HomeView — the bilingual landing experience.
  * Client component so all copy reacts instantly to the EN ⇄ ಕನ್ನಡ toggle.
  */
 export function HomeView() {
-  const { bi, locale } = useTranslation();
-  const bilingual = locale === "both";
+  const { t, bi } = useTranslation();
 
-  const voices = [
+  const stats: {
+    icon: LucideIcon;
+    value: number;
+    format?: boolean;
+    suffix?: string;
+    en: string;
+    kn: string;
+  }[] = [
+    { icon: Landmark, value: 30, en: "Districts mapped", kn: "ಜಿಲ್ಲೆಗಳು" },
+    { icon: PartyPopper, value: 12, en: "Festivals", kn: "ಹಬ್ಬಗಳು" },
+    { icon: BookOpen, value: 8, en: "Living stories", kn: "ಕಥೆಗಳು" },
     {
-      name: "Varalakshmi",
-      relationEn: "A mother's introduction",
-      relationKn: "ಅಮ್ಮನ ಪರಿಚಯ",
-      textEn: "A voice from Lakkahalli, kept in her own words.",
-      textKn: "ಲಕ್ಕಹಳ್ಳಿಯಿಂದ ಅವರದೇ ಮಾತುಗಳಲ್ಲಿ ಉಳಿಸಿದ ಧ್ವನಿ.",
-      audio: "/voices/varalakshmi-introduction.mp3",
-    },
-    {
-      name: "Rathnamma Ajji",
-      relationEn: "A grandmother's recipe",
-      relationKn: "ಅಜ್ಜಿಯ ಅಡುಗೆ ವಿಧಾನ",
-      textEn: "Her way of making ragi mudde, preserved for the family.",
-      textKn: "ಅವರ ರಾಗಿ ಮುದ್ದೆ ಮಾಡುವ ವಿಧಾನ, ಕುಟುಂಬಕ್ಕಾಗಿ ಉಳಿಸಲಾಗಿದೆ.",
-      audio: "/voices/ajji-ragi-mudde.mp3",
+      icon: Milestone,
+      value: 2000,
+      format: true,
+      suffix: "+",
+      en: "Years of history",
+      kn: "ವರ್ಷಗಳ ಇತಿಹಾಸ",
     },
   ];
 
-  const pathways = [
+  // Cultural concepts that cycle in the hero — heritage as a living thing.
+  const concepts = [
+    bi("stories", "ಕಥೆಗಳು"),
+    bi("language", "ಭಾಷೆ"),
+    bi("temples", "ದೇವಾಲಯಗಳು"),
+    bi("festivals", "ಹಬ್ಬಗಳು"),
+    bi("wisdom", "ಜ್ಞಾನ"),
+    bi("art", "ಕಲೆ"),
+  ];
+
+  // The emotional spine: one thread from your family outward into the culture.
+  const journey: {
+    icon: LucideIcon;
+    kn: string;
+    en: string;
+    dEn: string;
+    dKn: string;
+    href: string;
+  }[] = [
     {
-      icon: Mic2,
-      number: "01",
-      titleEn: "Preserve a real voice",
-      titleKn: "ನಿಜವಾದ ಧ್ವನಿಯನ್ನು ಉಳಿಸಿ",
-      textEn: "Record a blessing, recipe, song, or story with clear family consent.",
-      textKn: "ಕುಟುಂಬದ ಸ್ಪಷ್ಟ ಅನುಮತಿಯೊಂದಿಗೆ ಆಶೀರ್ವಾದ, ಅಡುಗೆ, ಹಾಡು ಅಥವಾ ಕಥೆಯನ್ನು ದಾಖಲಿಸಿ.",
-      actionEn: "Open Voice Legacy",
-      actionKn: "ಧ್ವನಿ ಪರಂಪರೆ ತೆರೆಯಿರಿ",
+      icon: TreeDeciduous,
+      kn: "ನಿಮ್ಮ ಬೇರುಗಳು",
+      en: "Your Roots",
+      dEn: "Begin with your own family — the elders who made you.",
+      dKn: "ನಿಮ್ಮ ಕುಟುಂಬದಿಂದ ಆರಂಭಿಸಿ — ನಿಮ್ಮನ್ನು ರೂಪಿಸಿದ ಹಿರಿಯರು.",
       href: "/roots",
     },
     {
-      icon: Languages,
-      number: "02",
-      titleEn: "Turn memory into learning",
-      titleKn: "ನೆನಪನ್ನು ಕಲಿಕೆಯಾಗಿ ಮಾಡಿ",
-      textEn: "Listen, understand the meaning, and carry Kannada words into everyday life.",
-      textKn: "ಕೇಳಿ, ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ ಮತ್ತು ಕನ್ನಡ ಪದಗಳನ್ನು ದಿನನಿತ್ಯದ ಬದುಕಿಗೆ ಕೊಂಡೊಯ್ಯಿರಿ.",
-      actionEn: "Start learning",
-      actionKn: "ಕಲಿಯಲು ಆರಂಭಿಸಿ",
+      icon: Map,
+      kn: "ಅವರ ನೆಲ",
+      en: "Their Land",
+      dEn: "Walk the villages and districts they came from.",
+      dKn: "ಅವರು ಬಂದ ಊರುಗಳು ಮತ್ತು ಜಿಲ್ಲೆಗಳಲ್ಲಿ ನಡೆಯಿರಿ.",
+      href: "/explore",
+    },
+    {
+      icon: BookOpen,
+      kn: "ಜೀವಂತ ಕಥೆಗಳು",
+      en: "Living Stories",
+      dEn: "Live the legends that shaped who they were.",
+      dKn: "ಅವರನ್ನು ರೂಪಿಸಿದ ದಂತಕಥೆಗಳನ್ನು ಅನುಭವಿಸಿ.",
+      href: "/stories",
+    },
+    {
+      icon: PartyPopper,
+      kn: "ಹಬ್ಬಗಳು",
+      en: "Festivals",
+      dEn: "Celebrate what they celebrated, season after season.",
+      dKn: "ಅವರು ಆಚರಿಸಿದ್ದನ್ನು ನೀವೂ ಆಚರಿಸಿ.",
+      href: "/festivals",
+    },
+    {
+      icon: GraduationCap,
+      kn: "ಮಾತೃಭಾಷೆ",
+      en: "The Mother Tongue",
+      dEn: "Learn the Kannada words they whispered at home.",
+      dKn: "ಅವರು ಮನೆಯಲ್ಲಿ ಆಡಿದ ಕನ್ನಡ ಪದಗಳನ್ನು ಕಲಿಯಿರಿ.",
       href: "/learn",
     },
     {
-      icon: Map,
-      number: "03",
-      titleEn: "Discover the world behind it",
-      titleKn: "ಅದರ ಹಿಂದಿನ ಜಗತ್ತನ್ನು ಅನ್ವೇಷಿಸಿ",
-      textEn: "Walk through the districts, histories, festivals, and stories that shaped your family.",
-      textKn: "ನಿಮ್ಮ ಕುಟುಂಬವನ್ನು ರೂಪಿಸಿದ ಜಿಲ್ಲೆಗಳು, ಇತಿಹಾಸ, ಹಬ್ಬಗಳು ಮತ್ತು ಕಥೆಗಳನ್ನು ಅನ್ವೇಷಿಸಿ.",
-      actionEn: "Explore Karnataka",
-      actionKn: "ಕರ್ನಾಟಕ ಅನ್ವೇಷಿಸಿ",
-      href: "/explore",
+      icon: Heart,
+      kn: "ಮುಂದಿನ ಪೀಳಿಗೆ",
+      en: "Pass it on",
+      dEn: "Give it all to those yet to come.",
+      dKn: "ಇದೆಲ್ಲವನ್ನೂ ಮುಂದೆ ಬರುವವರಿಗೆ ದಾಟಿಸಿ.",
+      href: "/roots",
     },
   ];
 
   return (
     <>
       {/* ----------------------------- HERO ----------------------------- */}
-      <section className="relative isolate h-[calc(100svh-9rem)] min-h-[500px] max-h-[620px] overflow-hidden border-b border-white/10 bg-black">
-        <Image
-          src="/districts/chikkaballapura.jpg"
-          alt="Sunrise over Chikkaballapura"
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20" />
+      <section className="relative overflow-hidden">
+        {/* Aurora backdrop */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="heritage-glow absolute inset-0 animate-glow-pulse" />
+          <div className="aurora-blob left-[8%] top-10 h-64 w-64 animate-float-slow bg-primary/40" />
+          <div className="aurora-blob right-[10%] top-24 h-72 w-72 animate-float bg-amber-400/30" />
+          <div className="aurora-blob left-1/2 top-44 h-80 w-80 -translate-x-1/2 animate-float-slow bg-orange-500/20" />
+          {/* Signature Kannada glyph — culture rendered as ambient texture. */}
+          <span
+            aria-hidden
+            className="signature-glyph animate-float-slow absolute left-1/2 top-[42%] -z-10 -translate-x-1/2 -translate-y-1/2 text-[15rem] font-bold leading-none xs:text-[20rem] sm:text-[26rem] md:text-[40rem]"
+          >
+            ಕ
+          </span>
+          <div className="absolute inset-0 bg-dotgrid [mask-image:radial-gradient(60%_50%_at_50%_30%,#000,transparent)]" />
+        </div>
 
-        <div className="container relative flex h-full items-end pb-10 sm:pb-14 md:items-center md:pb-0">
-          <div className="w-full min-w-0 max-w-3xl text-white">
-            <div className="animate-fade-up flex items-center gap-3 text-xs font-semibold uppercase text-amber-200 sm:text-sm">
-              <span className="h-px w-8 bg-amber-300" />
-              <Mic2 className="h-4 w-4" />
-              {bilingual
-                ? "Voice Legacy · ಧ್ವನಿ ಪರಂಪರೆ"
-                : bi("A voice-first heritage archive", "ಧ್ವನಿ ಆಧಾರಿತ ಪರಂಪರೆ ಸಂಗ್ರಹ")}
-            </div>
+        <div className="container relative flex flex-col items-center py-16 text-center sm:py-24 md:py-36">
+          <span className="glass animate-fade-up inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-muted-foreground shadow-soft sm:text-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+            </span>
+            🪔 {t("home.badge")}
+          </span>
 
-            <h1 className={`animate-fade-up mt-5 text-balance text-4xl font-bold leading-[1.05] ${bilingual ? "sm:text-5xl lg:text-6xl" : "sm:text-6xl lg:text-7xl"}`}>
-              {bilingual ? (
-                <>
-                  <span className="block">Your family&apos;s Kannada, kept alive.</span>
-                  <span lang="kn" className="mt-2 block text-xl font-semibold leading-snug text-amber-200 sm:text-2xl lg:text-3xl">
-                    ನಿಮ್ಮ ಕುಟುಂಬದ ಕನ್ನಡ, ಸದಾ ಜೀವಂತ.
+          <h1 className="animate-fade-up mt-6 max-w-4xl text-balance text-[2rem] font-bold leading-[1.1] tracking-tight xs:text-5xl sm:mt-7 md:text-7xl">
+            {t("home.heroPre")}{" "}
+            <span className="gradient-text">{t("home.heroHighlight")}</span>{" "}
+            {t("home.heroPost")}
+          </h1>
+
+          <p className="animate-fade-up mt-5 max-w-2xl text-pretty text-base text-muted-foreground sm:mt-6 sm:text-lg md:text-xl">
+            {t("home.heroSubtitle")}
+          </p>
+
+          {/* Emotional rotating line — keeps the heritage feeling alive. */}
+          <p
+            className="animate-fade-up mt-4 flex items-center gap-2 text-base font-semibold text-foreground md:text-lg"
+            style={{ animationDelay: "120ms" }}
+          >
+            <span className="text-foreground/90">
+              {bi("Keeping", "ಜೀವಂತವಾಗಿ")}
+            </span>
+            <RotatingText
+              items={concepts}
+              className="font-bold text-primary drop-shadow-[0_0_12px_hsl(var(--primary)/0.35)]"
+            />
+            <span className="text-foreground/90">
+              {bi("alive.", "ಉಳಿಸುತ್ತಿದೆ.")}
+            </span>
+          </p>
+
+          {/* Diaspora heart-line — the audience this is really for. */}
+          <p
+            className="animate-fade-up mt-5 max-w-xl text-pretty text-sm text-muted-foreground/90 sm:text-base"
+            style={{ animationDelay: "200ms" }}
+          >
+            {bi(
+              "For every Kannadiga far from home — and every child who should never forget where they came from.",
+              "ಮನೆಯಿಂದ ದೂರವಿರುವ ಪ್ರತಿ ಕನ್ನಡಿಗನಿಗೆ — ಮತ್ತು ತಮ್ಮ ಬೇರುಗಳನ್ನು ಎಂದಿಗೂ ಮರೆಯಬಾರದ ಪ್ರತಿ ಮಗುವಿಗೆ.",
+            )}
+          </p>
+
+          <div className="animate-fade-up mt-9 flex w-full max-w-sm flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row">
+            <Button size="lg" className="w-full shadow-glow sm:w-auto" asChild>
+              <Link href="/roots">
+                {bi("Begin with your Roots", "ನಿಮ್ಮ ಬೇರುಗಳಿಂದ ಆರಂಭಿಸಿ")}{" "}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="glass w-full sm:w-auto" asChild>
+              <Link href="/chat">{bi("Ask Akka", "ಅಕ್ಕರನ್ನು ಕೇಳಿ")}</Link>
+            </Button>
+          </div>
+
+          {/* Stat strip */}
+          <div className="animate-fade-up mt-12 grid w-full max-w-3xl grid-cols-2 gap-3 sm:mt-16 sm:grid-cols-4 sm:gap-4">
+            {stats.map((s) => {
+              const Icon = s.icon;
+              return (
+                <div
+                  key={s.en}
+                  className="glass group flex flex-col items-center rounded-2xl px-4 py-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
+                >
+                  <Icon className="mb-2 h-5 w-5 text-primary transition-transform duration-300 group-hover:scale-110" />
+                  <span className="text-2xl font-bold tracking-tight tabular-nums">
+                    <CountUp value={s.value} format={s.format} />
+                    {s.suffix}
                   </span>
-                </>
-              ) : (
-                bi(
-                  "Your family's Kannada, kept alive.",
-                  "ನಿಮ್ಮ ಕುಟುಂಬದ ಕನ್ನಡ, ಸದಾ ಜೀವಂತ.",
-                )
-              )}
-            </h1>
-
-            <p className={`animate-fade-up max-w-2xl text-pretty text-base leading-relaxed text-white/80 sm:text-lg ${bilingual ? "mt-3" : "mt-5 md:text-xl"}`}>
-              {bilingual ? (
-                <>
-                  <span className="block">
-                    Record an elder&apos;s blessing, recipe, or story. Akkaverse keeps the original voice for the next generation.
+                  <span className="mt-0.5 text-center text-xs text-muted-foreground">
+                    {bi(s.en, s.kn)}
                   </span>
-                  <span lang="kn" className="mt-1 block text-sm text-white/70 sm:text-base">
-                    ಹಿರಿಯರ ಆಶೀರ್ವಾದ, ಅಡುಗೆ ವಿಧಾನ ಅಥವಾ ಕಥೆಯನ್ನು ದಾಖಲಿಸಿ. ಅಕ್ಕವರ್ಸ್ ಮೂಲ ಧ್ವನಿಯನ್ನು ಮುಂದಿನ ಪೀಳಿಗೆಗಾಗಿ ಉಳಿಸುತ್ತದೆ.
-                  </span>
-                </>
-              ) : (
-                bi(
-                  "Record the blessing, recipe, or story only your elders can tell. Akkaverse keeps the original voice and turns its meaning into a bilingual lesson for the next generation.",
-                  "ನಿಮ್ಮ ಹಿರಿಯರು ಮಾತ್ರ ಹೇಳಬಲ್ಲ ಆಶೀರ್ವಾದ, ಅಡುಗೆ ವಿಧಾನ ಅಥವಾ ಕಥೆಯನ್ನು ದಾಖಲಿಸಿ. ಅಕ್ಕವರ್ಸ್ ಮೂಲ ಧ್ವನಿಯನ್ನು ಉಳಿಸಿ, ಅದರ ಅರ್ಥವನ್ನು ಮುಂದಿನ ಪೀಳಿಗೆಗೆ ದ್ವಿಭಾಷಾ ಪಾಠವನ್ನಾಗಿ ಮಾಡುತ್ತದೆ.",
-                )
-              )}
-            </p>
-
-            <div className={`animate-fade-up flex w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row ${bilingual ? "mt-5" : "mt-8"}`}>
-              <Button size="lg" className="w-full bg-amber-400 text-black shadow-lg hover:bg-amber-300 sm:w-auto" asChild>
-                <Link href="/roots">
-                  <Volume2 className="h-4 w-4" />
-                  {bilingual
-                    ? "Voices · ಧ್ವನಿಗಳು"
-                    : bi("Hear our family voices", "ನಮ್ಮ ಕುಟುಂಬದ ಧ್ವನಿಗಳನ್ನು ಕೇಳಿ")}
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="w-full border-white/35 bg-black/20 text-white backdrop-blur-sm hover:bg-white hover:text-black sm:w-auto" asChild>
-                <Link href="/explore">
-                  {bilingual
-                    ? "Explore · ಅನ್ವೇಷಿಸಿ"
-                    : bi("Explore Karnataka", "ಕರ್ನಾಟಕ ಅನ್ವೇಷಿಸಿ")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            <div className={`animate-fade-up flex flex-wrap gap-x-6 gap-y-2 border-t border-white/20 pt-4 text-xs font-medium text-white/70 sm:text-sm ${bilingual ? "mt-5" : "mt-8"}`}>
-              <span>
-                {bilingual ? "2 voices · 2 ಧ್ವನಿಗಳು" : bi("2 original family voices", "2 ಮೂಲ ಕುಟುಂಬ ಧ್ವನಿಗಳು")}
-              </span>
-              <span>{bilingual ? "EN + ಕನ್ನಡ" : bi("English + ಕನ್ನಡ", "ಇಂಗ್ಲಿಷ್ + ಕನ್ನಡ")}</span>
-              <span>
-                {bilingual ? "Private · ಖಾಸಗಿ" : bi("Private by default", "ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಖಾಸಗಿ")}
-              </span>
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -192,92 +256,127 @@ export function HomeView() {
         <PhotoMarquee />
       </section>
 
-      {/* ------------------------ ORIGINAL VOICES ------------------------ */}
-      <section className="border-y border-border bg-secondary/25 py-16 sm:py-24">
-        <div className="container grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <Reveal>
-            <Kicker en="From our family" kn="ನಮ್ಮ ಕುಟುಂಬದಿಂದ" />
-            <h2 className="mt-3 max-w-xl text-3xl font-semibold leading-tight md:text-5xl">
-              {bi(
-                "Real voices. Not recreations.",
-                "ನಿಜವಾದ ಧ್ವನಿಗಳು. ಮರುಸೃಷ್ಟಿಗಳಲ್ಲ.",
-              )}
-            </h2>
-            <p className="mt-4 max-w-lg leading-relaxed text-muted-foreground">
-              {bi(
-                "These are the people behind Akkaverse. Their recordings stay clearly labeled, consented, and connected to the family story they belong to.",
-                "ಇವರು ಅಕ್ಕವರ್ಸ್ ಹಿಂದಿರುವವರು. ಅವರ ಧ್ವನಿಗಳನ್ನು ಸ್ಪಷ್ಟ ಗುರುತು, ಅನುಮತಿ ಮತ್ತು ಕುಟುಂಬದ ಕಥೆಯೊಂದಿಗೆ ಉಳಿಸಲಾಗಿದೆ.",
-              )}
-            </p>
-            <Link href="/roots" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-              {bi("Visit our living family archive", "ನಮ್ಮ ಜೀವಂತ ಕುಟುಂಬ ಸಂಗ್ರಹ ನೋಡಿ")}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Reveal>
+      {/* ------------------------- THE JOURNEY ------------------------- */}
+      <section className="container py-14 sm:py-20">
+        <Reveal className="mx-auto mb-10 max-w-2xl text-center sm:mb-14">
+          <Kicker en="The Journey" kn="ನಮ್ಮ ಪಯಣ" align="center" />
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
+            {bi(
+              "One thread — from your family to the world they lived in",
+              "ನಿಮ್ಮ ಕುಟುಂಬದಿಂದ ಅವರು ಬದುಕಿದ ಜಗತ್ತಿನವರೆಗೆ — ಒಂದೇ ಎಳೆ",
+            )}
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            {bi(
+              "Akkaverse isn't a set of pages. It's one story — yours.",
+              "ಅಕ್ಕವರ್ಸ್ ಕೇವಲ ಪುಟಗಳಲ್ಲ. ಇದು ಒಂದು ಕಥೆ — ನಿಮ್ಮದೇ.",
+            )}
+          </p>
+        </Reveal>
 
-          <div className="divide-y divide-border border-y border-border">
-            {voices.map((voice, index) => (
-              <Reveal key={voice.name} delay={index * 90} className="py-6 sm:py-7">
-                <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
-                  <div className="flex items-start gap-4">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-primary/25 bg-primary/10 text-primary">
-                      <Volume2 className="h-5 w-5" />
+        <div className="mx-auto max-w-3xl">
+          {journey.map((c, i) => {
+            const Icon = c.icon;
+            return (
+              <Reveal key={c.href} delay={(i % 3) * 80}>
+                <Link
+                  href={c.href}
+                  className="group relative flex items-start gap-4 rounded-2xl border border-transparent p-4 transition-all hover:border-primary/30 hover:bg-card/60 sm:gap-5 sm:p-5"
+                >
+                  <div className="flex flex-col items-center">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary transition-all group-hover:from-primary group-hover:to-amber-500 group-hover:text-primary-foreground">
+                      <Icon className="h-5 w-5" />
                     </span>
-                    <div>
-                      <p className="text-lg font-semibold">{voice.name}</p>
-                      <p className="text-sm font-medium text-primary">
-                        {bi(voice.relationEn, voice.relationKn)}
-                      </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {bi(voice.textEn, voice.textKn)}
-                      </p>
+                    {i < journey.length - 1 && (
+                      <span
+                        aria-hidden
+                        className="mt-1 h-8 w-px bg-gradient-to-b from-primary/30 to-transparent"
+                      />
+                    )}
+                  </div>
+                  <div className="pt-1">
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                      <span className="text-[0.7rem] font-semibold tabular-nums text-primary/60">
+                        0{i + 1}
+                      </span>
+                      <h3 className="text-lg font-semibold tracking-tight">
+                        {c.kn}
+                      </h3>
+                      <span className="text-sm text-muted-foreground">
+                        {c.en}
+                      </span>
                     </div>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {bi(c.dEn, c.dKn)}
+                    </p>
                   </div>
-                  <div className="pl-[3.75rem] sm:pl-0">
-                    <VoicePlayer
-                      text={bi(voice.textEn, voice.textKn)}
-                      originalAudioUrl={voice.audio}
-                      compact
-                    />
-                  </div>
-                </div>
+                  <ArrowRight className="ml-auto mt-2 h-4 w-4 shrink-0 -translate-x-1 text-primary opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                </Link>
               </Reveal>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* ---------------------------- PATHWAYS ---------------------------- */}
-      <section className="container py-16 sm:py-24">
-        <Reveal className="max-w-2xl">
-          <Kicker en="Begin anywhere" kn="ಎಲ್ಲಿಂದಾದರೂ ಆರಂಭಿಸಿ" />
-          <h2 className="mt-3 text-3xl font-semibold leading-tight md:text-5xl">
-            {bi(
-              "One family memory can open an entire culture.",
-              "ಒಂದು ಕುಟುಂಬದ ನೆನಪು ಇಡೀ ಸಂಸ್ಕೃತಿಯನ್ನು ತೆರೆಯಬಹುದು.",
-            )}
+      {/* ------------------------ DAILY HERITAGE ------------------------ */}
+      <section className="container pb-8">
+        <DailyHeritage />
+      </section>
+
+      {/* --------------------------- FEATURES --------------------------- */}
+      <section className="container py-14 sm:py-20">
+        <Reveal className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
+          <span className="text-sm font-semibold uppercase tracking-widest text-primary">
+            {bi("Explore", "ಅನ್ವೇಷಿಸಿ")}
+          </span>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
+            {t("home.featuresTitle")}
           </h2>
+          <p className="mt-3 text-muted-foreground">
+            {t("home.featuresSubtitle")}
+          </p>
         </Reveal>
 
-        <div className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
-          {pathways.map((pathway, index) => {
-            const Icon = pathway.icon;
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature, i) => {
+            const Icon = ICONS[feature.icon] ?? Sparkles;
             return (
-              <Reveal key={pathway.number} delay={index * 90}>
-                <Link href={pathway.href} className="group block border-t border-foreground/20 pt-5">
-                  <div className="flex items-center justify-between text-primary">
-                    <span className="text-sm font-semibold tabular-nums">{pathway.number}</span>
+              <Reveal key={feature.titleKey} delay={(i % 3) * 90}>
+                <Link
+                  href={feature.href}
+                  onPointerMove={(e) => {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    e.currentTarget.style.setProperty(
+                      "--mx",
+                      `${e.clientX - r.left}px`,
+                    );
+                    e.currentTarget.style.setProperty(
+                      "--my",
+                      `${e.clientY - r.top}px`,
+                    );
+                  }}
+                  className="glow-ring spotlight group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card/80 p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-glow"
+                >
+                  <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary shadow-inner transition-all duration-300 group-hover:from-primary group-hover:to-amber-500 group-hover:text-primary-foreground group-hover:scale-105">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-6 text-xl font-semibold">
-                    {bi(pathway.titleEn, pathway.titleKn)}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {bi(pathway.textEn, pathway.textKn)}
+
+                  <div className="relative mt-4 flex items-center gap-2">
+                    <h3 className="font-semibold">{t(feature.titleKey)}</h3>
+                    {!feature.available && (
+                      <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        {t("common.soon")}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="relative mt-2 text-sm text-muted-foreground">
+                    {t(feature.descKey)}
                   </p>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                    {bi(pathway.actionEn, pathway.actionKn)}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+
+                  <span className="relative mt-4 inline-flex -translate-x-1 items-center gap-1 text-sm font-medium text-primary opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+                    {bi("Open", "ತೆರೆಯಿರಿ")}
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 </Link>
               </Reveal>
@@ -287,32 +386,25 @@ export function HomeView() {
       </section>
 
       {/* ----------------------------- CTA ------------------------------ */}
-      <section className="border-y border-border bg-primary/[0.07]">
-        <Reveal className="container grid gap-8 py-14 sm:py-20 md:grid-cols-[1fr_auto] md:items-center">
-          <div>
-            <p className="text-sm font-semibold text-primary">
-              {bi("Start with one conversation", "ಒಂದು ಸಂಭಾಷಣೆಯಿಂದ ಆರಂಭಿಸಿ")}
-            </p>
-            <h2 className="mt-2 max-w-2xl text-3xl font-semibold leading-tight md:text-4xl">
-              {bi(
-                "Whose voice would your family never want to lose?",
-                "ನಿಮ್ಮ ಕುಟುಂಬ ಎಂದಿಗೂ ಕಳೆದುಕೊಳ್ಳಬಾರದ ಧ್ವನಿ ಯಾರದು?",
-              )}
+      <section className="container py-12">
+        <Reveal className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-amber-500/10 px-5 py-12 text-center shadow-soft sm:px-6 sm:py-16">
+          <div className="aurora-blob right-[-4rem] top-[-4rem] h-64 w-64 animate-float bg-primary/30" />
+          <div className="aurora-blob left-[-4rem] bottom-[-4rem] h-64 w-64 animate-float-slow bg-amber-400/20" />
+          <div className="relative mx-auto flex max-w-xl flex-col items-center gap-4">
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+              {t("home.ctaSectionTitle")}
             </h2>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
-            <Button size="lg" asChild>
-              <Link href="/roots">
-                <Mic2 className="h-4 w-4" />
-                {bi("Preserve a voice", "ಧ್ವನಿಯನ್ನು ಉಳಿಸಿ")}
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/chat">
-                <Sparkles className="h-4 w-4" />
-                {bi("Ask Akka", "ಅಕ್ಕರನ್ನು ಕೇಳಿ")}
-              </Link>
-            </Button>
+            <p className="text-muted-foreground">{t("home.ctaSectionText")}</p>
+            <div className="mt-2 flex w-full max-w-sm flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row">
+              <Button size="lg" className="w-full shadow-glow sm:w-auto" asChild>
+                <Link href="/timeline">{t("home.ctaSectionBtn")}</Link>
+              </Button>
+              <Button size="lg" variant="outline" className="glass w-full sm:w-auto" asChild>
+                <Link href="/festivals">
+                  {bi("See festivals", "ಹಬ್ಬಗಳನ್ನು ನೋಡಿ")}
+                </Link>
+              </Button>
+            </div>
           </div>
         </Reveal>
       </section>
@@ -331,12 +423,7 @@ export function HomeView() {
               </span>
             </p>
           </div>
-          <p className="text-xs">
-            {bi(
-              "Private by default · bilingual · built for families",
-              "ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಖಾಸಗಿ · ದ್ವಿಭಾಷಾ · ಕುಟುಂಬಗಳಿಗಾಗಿ",
-            )}
-          </p>
+          <p className="text-xs">100% free · no API keys · open heritage</p>
         </div>
       </footer>
     </>
