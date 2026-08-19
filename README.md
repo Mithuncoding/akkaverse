@@ -9,7 +9,7 @@ family archive and original recordings stay private on your own device. An
 **AI guide grounded in real Wikipedia sources** answers questions in English or
 Kannada, and the entire experience is bilingual.
 
-**Live demo:** _add your Vercel URL here_ · **No credentials needed — just open and use it.**
+**Live demo:** https://akkaverse.vercel.app/ · **No credentials needed — just open and use it.**
 
 ---
 
